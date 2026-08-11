@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import questionnaireJson from "../data/india/us/passport/reissue/questionnaire.v1.json";
+import questionnaireJson from "../data/india/us/passport/reissue/questionnaire.v2.json";
 import { clearHiddenAnswers, isAnswered, visibleQuestions } from "./core/questionnaire";
 import { evaluatePassport } from "./core/evaluatePassport";
 import type { PassportAnswers, Question, Questionnaire } from "./types";
@@ -159,7 +159,7 @@ export default function App() {
         </header>
 
         <section className="hero card">
-          <p className="eyebrow">INDIA · U.S. · PASSPORT RE-ISSUE · SAN FRANCISCO</p>
+          <p className="eyebrow">INDIA · U.S. · PASSPORT RE-ISSUE · CURRENT SF/LA SERVICING TRANSITION</p>
           <h1>Verify the application path <em>before</em> the appointment.</h1>
           <p className="lead">
             Answer a short set of questions. The evaluator checks application type, jurisdiction, re-issue reasons, Tatkaal eligibility,
@@ -175,7 +175,7 @@ export default function App() {
         </section>
 
         <section className="notice">
-          <strong>Independent guidance.</strong> Official Checklist is not affiliated with the Government of India, CGI San Francisco or VFS Global.
+          <strong>Independent guidance.</strong> Official Checklist is not affiliated with the Government of India, CGI San Francisco, CGI Los Angeles or VFS Global.
           Official sources control whenever guidance changes or conflicts.
         </section>
       </main>
@@ -245,6 +245,7 @@ export default function App() {
           <p>The decision graph is backed by current CGI San Francisco and VFS Global source nodes. Recheck source freshness before final submission.</p>
           <div className="source-links">
             <a href="https://www.cgisf.gov.in/page/passport-related-services/" target="_blank" rel="noreferrer">CGI San Francisco passport services ↗</a>
+            <a href="https://www.cgisf.gov.in/page.php?id=consulates-in-us" target="_blank" rel="noreferrer">Current U.S. consular jurisdictions ↗</a>
             <a href="https://services.vfsglobal.com/usa/en/ind/apply-passport" target="_blank" rel="noreferrer">VFS India passport services ↗</a>
           </div>
         </section>
@@ -282,6 +283,7 @@ export default function App() {
           <h1>{QUESTION_LABELS[current.id] ?? current.id}</h1>
           {current.id === "government_selected_mission" && <p className="helper">Use the mission exactly as shown on your submitted Government application.</p>}
           {current.id === "change_existing_particulars" && <p className="helper">Select every change that applies. Do not hide a change to get a simpler checklist.</p>}
+          {current.id === "minor_15_17_validity" && <p className="helper">CGI says applicants aged 15–17 may request a 10-year passport or validity until age 18. Fee handling differs, so select the exact application branch.</p>}
           <QuestionControl question={current} value={answers[current.id]} onChange={updateAnswer} />
 
           <div className="nav-row">
