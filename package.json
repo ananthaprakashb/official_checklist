@@ -1,0 +1,17 @@
+{
+  "name": "official-checklist",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Machine-verifiable OKF checklists for official government and consular processes.",
+  "scripts": {
+    "validate": "tsx scripts/validate-okf.ts",
+    "test": "npm run validate"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "yaml": "^2.6.1",
+    "zod": "^3.24.1"
+  }
+}
