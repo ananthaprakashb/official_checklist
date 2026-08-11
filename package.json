@@ -1,6 +1,6 @@
 {
   "name": "official-checklist",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "description": "Machine-verifiable OKF checklists and interactive preflight for official government and consular processes.",
   "scripts": {
@@ -11,7 +11,8 @@
     "validate:okf": "tsx scripts/validate-okf.ts",
     "validate:data": "tsx scripts/validate-questionnaires.ts",
     "test:evaluator": "tsx scripts/test-evaluator.ts",
-    "validate": "npm run validate:okf && npm run validate:data && npm run test:evaluator && npm run typecheck",
+    "test:engine": "tsx scripts/test-process-engine.ts",
+    "validate": "npm run validate:okf && npm run validate:data && npm run test:evaluator && npm run test:engine && npm run typecheck",
     "test": "npm run validate"
   },
   "dependencies": {
