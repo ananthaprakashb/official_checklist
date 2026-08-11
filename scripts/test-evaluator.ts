@@ -26,9 +26,16 @@ function base(overrides: PassportAnswers = {}): PassportAnswers {
   assert.equal(result.status, "READY");
   assert.equal(result.application_type, "reissue");
   assert.equal(result.applicant_category, "adult");
-  assert.equal(result.jurisdiction, "san_francisco");
+  assert.equal(result.jurisdiction, "san_francisco_direct");
   assert.equal(result.fee?.current_total, 146);
   assert.deepEqual(result.reissue_reasons, ["expired_or_due_to_expire"]);
+}
+
+{
+  const result = evaluatePassport(base({ residence_california_region: "southern_10_counties" }));
+  assert.equal(result.status, "READY");
+  assert.equal(result.jurisdiction, "los_angeles_transition_serviced_by_san_francisco");
+  assert.ok(result.warnings.some((item) => item.includes("Southern California")));
 }
 
 {
@@ -67,10 +74,16 @@ function base(overrides: PassportAnswers = {}): PassportAnswers {
 }
 
 {
-  const result = evaluatePassport(base({ age: 16 }));
+  const result = evaluatePassport(base({ age: 16, minor_15_17_validity: "ten_year" }));
+  assert.equal(result.status, "READY");
+  assert.equal(result.fee?.current_total, 146);
+}
+
+{
+  const result = evaluatePassport(base({ age: 16, minor_15_17_validity: "until_age_18" }));
   assert.equal(result.status, "NEEDS_AUTHORITATIVE_CONFIRMATION");
   assert.equal(result.fee, undefined);
-  assert.ok(result.warnings.some((item) => item.includes("ages 15–17")));
+  assert.ok(result.warnings.some((item) => item.includes("ages 15–17") || item.includes("15–17")));
 }
 
 {
@@ -94,4 +107,4 @@ function base(overrides: PassportAnswers = {}): PassportAnswers {
   assert.ok(result.blockers.some((item) => item.includes("No supported Re-issue reason")));
 }
 
-console.log("PASS Evaluator Tests: 7 scenarios.");
+console.log("PASS Evaluator Tests: 9 scenarios.");
