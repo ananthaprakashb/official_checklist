@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "generated": "2026-08-10",
+  "processes": [
+    {
+      "id": "india-us-passport-reissue",
+      "slug": "india/passport/reissue/us",
+      "country_code": "IN",
+      "country_name": "India",
+      "applicant_country": "United States",
+      "service": "Passport",
+      "title": "Indian Passport Re-issue in the U.S.",
+      "short_title": "Passport Re-issue",
+      "summary": "Verify the correct Re-issue branch, jurisdiction, Tatkaal eligibility, fees, documents, Government-form selections and VFS alignment before submission.",
+      "status": "live",
+      "module": "india-us-passport-reissue-v1",
+      "questionnaire_id": "india-us-passport-reissue-v2",
+      "verified": "2026-08-10",
+      "stale_after": "2026-09-09",
+      "tags": ["passport", "reissue", "vfs", "consular"]
+    },
+    {
+      "id": "india-us-oci",
+      "slug": "india/oci/us",
+      "country_code": "IN",
+      "country_name": "India",
+      "applicant_country": "United States",
+      "service": "OCI",
+      "title": "OCI Services in the U.S.",
+      "short_title": "OCI",
+      "summary": "Planned OKF workflow for OCI registration, re-issue and miscellaneous OCI services.",
+      "status": "coming_soon",
+      "tags": ["oci", "consular"]
+    },
+    {
+      "id": "usa-passport",
+      "slug": "usa/passport",
+      "country_code": "US",
+      "country_name": "United States",
+      "applicant_country": "United States",
+      "service": "Passport",
+      "title": "U.S. Passport Services",
+      "short_title": "U.S. Passport",
+      "summary": "Planned workflow for first passport, renewal, minor passport, replacement and urgent passport routing.",
+      "status": "coming_soon",
+      "tags": ["passport", "usa"]
+    }
+  ]
+}
