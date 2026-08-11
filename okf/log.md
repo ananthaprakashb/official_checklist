@@ -1,5 +1,17 @@
 # OKF Change Log
 
+## 2026-08-10 — v0.4 generalized process engine and publication
+
+- Replaced the passport-specific application shell with a global process catalog and reusable process runner.
+- Added `data/process-catalog.v1.json` with stable ids, clean route slugs, live/coming-soon status and freshness metadata.
+- Registered the current India/U.S. passport Re-issue evaluator as the first live process module.
+- Added planned OCI and U.S. Passport catalog entries without publishing unverified rules.
+- Added a generic process registry/presentation contract so future workflows can plug into the UI without adding process-specific branches to `App.tsx`.
+- Added Pages-safe clean-route navigation and direct-link restoration for process slugs.
+- Added process-engine validation requiring every catalog entry marked `live` to have a registered evaluator and executable regression path.
+- Added contributor documentation for onboarding a new official process from sources → OKF → questionnaire → evaluator → registry → catalog.
+- Added an automatic GitHub Pages build/deploy workflow and configurable Vite production base path.
+
 ## 2026-08-10 — v0.3 interactive evaluator
 
 - Added a reusable TypeScript evaluator for the India/U.S. passport Re-issue questionnaire.

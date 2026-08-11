@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="noindex" />
+    <title>Official Checklist</title>
+  </head>
+  <body>
+    <script>
+      (function () {
+        var repoBase = "/official_checklist/";
+        var path = window.location.pathname;
+        var base = path.indexOf(repoBase) >= 0 ? repoBase : "/";
+        var route = base === "/" ? path.replace(/^\//, "") : path.slice(path.indexOf(repoBase) + repoBase.length);
+        var params = new URLSearchParams(window.location.search);
+        if (route) params.set("route", route);
+        var target = window.location.origin + base + (params.toString() ? "?" + params.toString() : "") + window.location.hash;
+        window.location.replace(target);
+      })();
+    </script>
+  </body>
+</html>
