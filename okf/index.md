@@ -6,7 +6,7 @@ Canonical entrypoint for the machine-readable official-process graph.
 
 ### Indian passport — core decisions
 
-- [San Francisco jurisdiction](jurisdictions/india-us-san-francisco.md)
+- [San Francisco / Los Angeles servicing transition](jurisdictions/india-us-san-francisco.md)
 - [Passport service classification](decisions/india-us-passport-service-classification.md)
 - [Applicant category](decisions/india-us-passport-applicant-category.md)
 - [Re-issue reason router](decisions/india-us-passport-reissue-reason.md)
@@ -24,7 +24,7 @@ Canonical entrypoint for the machine-readable official-process graph.
 - [Submission workflow](submission/india-us-passport-submission.md)
 - [Preflight validation](validation/india-us-passport-preflight.md)
 
-### San Francisco processes
+### San Francisco-serviced processes
 
 - [Adult re-issue](processes/india/us/passport/reissue/san-francisco/adult.md)
 - [Minor re-issue](processes/india/us/passport/reissue/san-francisco/minor.md)
@@ -36,6 +36,7 @@ Canonical entrypoint for the machine-readable official-process graph.
 - [CGI San Francisco — Passport FAQ](sources/cgisf-passport-faq.md)
 - [CGI San Francisco — Passport Related Services](sources/cgisf-passport-services.md)
 - [CGI San Francisco — Tatkaal Passport Services](sources/cgisf-tatkaal-passport-services.md)
+- [CGI San Francisco — Current U.S. consular jurisdictions](sources/cgisf-us-consular-jurisdictions-2026.md)
 - [CGI San Francisco — GPSP 2.0 migration notice](sources/cgisf-gpsp2-migration.md)
 - [VFS — Apply for passport](sources/vfs-us-india-passport.md)
 - [VFS — Passport information/fees](sources/vfs-passport-information-usa.md)
@@ -48,7 +49,13 @@ Canonical entrypoint for the machine-readable official-process graph.
 
 ## Machine-readable UI contract
 
-Questionnaire data is maintained outside the OKF link graph at `data/india/us/passport/reissue/questionnaire.v1.json`, with its output contract at `schemas/passport-process-result.schema.json`. Both are validated by CI.
+Versioned questionnaire data is maintained outside the OKF link graph under `data/india/us/passport/reissue/`.
+
+- `questionnaire.v1.json` — initial Phase 2 contract retained for compatibility.
+- `questionnaire.v2.json` — current Phase 3 contract with the 2026 San Francisco/Los Angeles servicing transition and explicit age 15–17 validity selection.
+- `schemas/passport-process-result.schema.json` — evaluator output contract.
+
+All questionnaire versions, rule-node references, evaluator regression tests, TypeScript compilation and the production web build are validated in CI.
 
 ## Repository history
 

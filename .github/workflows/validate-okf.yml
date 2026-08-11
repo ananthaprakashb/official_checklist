@@ -17,5 +17,7 @@ jobs:
           node-version: 22
       - name: Install dependencies
         run: npm install
-      - name: Validate OKF graph
+      - name: Validate OKF, data and evaluator
         run: npm run validate
+      - name: Build web application
+        run: npm run build

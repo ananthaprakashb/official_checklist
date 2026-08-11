@@ -1,18 +1,31 @@
 {
   "name": "official-checklist",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
-  "description": "Machine-verifiable OKF checklists for official government and consular processes.",
+  "description": "Machine-verifiable OKF checklists and interactive preflight for official government and consular processes.",
   "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
     "validate:okf": "tsx scripts/validate-okf.ts",
     "validate:data": "tsx scripts/validate-questionnaires.ts",
-    "validate": "npm run validate:okf && npm run validate:data",
+    "test:evaluator": "tsx scripts/test-evaluator.ts",
+    "validate": "npm run validate:okf && npm run validate:data && npm run test:evaluator && npm run typecheck",
     "test": "npm run validate"
+  },
+  "dependencies": {
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.7",
+    "@vitejs/plugin-react": "^4.7.0",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
+    "vite": "^7.1.1",
     "yaml": "^2.6.1",
     "zod": "^3.24.1"
   }
