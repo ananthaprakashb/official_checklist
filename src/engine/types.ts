@@ -38,8 +38,11 @@ export type ProcessModule = {
   entry: ProcessCatalogEntry;
   questionnaire: Questionnaire;
   storageKey: string;
+  eyebrow: string;
   questionLabels: Record<string, string>;
+  questionHints?: Record<string, string>;
   labelOption: (value: string) => string;
+  sourceLinks: Array<{ label: string; url: string }>;
   evaluate: (answers: PassportAnswers) => unknown;
   present: (result: unknown) => ProcessPresentation;
 };
