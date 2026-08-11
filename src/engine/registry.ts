@@ -42,8 +42,19 @@ const modules = new Map<string, ProcessModule>([
       entry: passportEntry,
       questionnaire,
       storageKey: `official-checklist:${questionnaire.id}:answers`,
+      eyebrow: "INDIA · U.S. · PASSPORT RE-ISSUE · CURRENT SF/LA SERVICING TRANSITION",
       questionLabels: QUESTION_LABELS,
+      questionHints: {
+        government_selected_mission: "Use the mission exactly as shown on your submitted Government application.",
+        change_existing_particulars: "Select every change that applies. Do not hide a change to get a simpler checklist.",
+        minor_15_17_validity: "CGI says applicants aged 15–17 may request a 10-year passport or validity until age 18. Select the exact application branch."
+      },
       labelOption,
+      sourceLinks: [
+        { label: "CGI San Francisco passport services", url: "https://www.cgisf.gov.in/page/passport-related-services/" },
+        { label: "Current U.S. consular jurisdictions", url: "https://www.cgisf.gov.in/page.php?id=consulates-in-us" },
+        { label: "VFS India passport services", url: "https://services.vfsglobal.com/usa/en/ind/apply-passport" }
+      ],
       evaluate: (answers: PassportAnswers) => evaluatePassport(answers),
       present: presentPassport
     }
