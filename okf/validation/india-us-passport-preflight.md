@@ -9,39 +9,49 @@ status: verified
 sources:
   - ../sources/cgisf-passport-faq.md
   - ../sources/cgisf-gpsp2-migration.md
-  - ../sources/vfs-us-india-passport.md
+  - ../sources/vfs-passport-information-usa.md
+  - ../sources/vfs-adult-reissue-checklist-may-2026.md
+  - ../sources/vfs-minor-reissue-checklist-may-2026.md
 ---
 
 # Indian Passport Preflight — USA
 
-The preflight runs before the user treats an application as ready for payment, appointment, mail, or walk-in submission.
+Run this gate before payment is treated as final, before appointment/travel to VFS, and again before mail/walk-in submission.
 
-## Inputs to compare
+## Resolved facts to compare
 
-Capture the applicant facts and, when available, the selections shown on the Government of India/VFS application:
-
-- first passport vs existing/previous passport;
+- existing/previous passport vs first passport;
 - adult vs minor;
-- residence and selected Indian Mission/jurisdiction;
-- requested service: Fresh vs Re-issue;
-- re-issue reason;
-- personal-particular changes;
-- Regular vs Tatkaal;
-- lost/stolen/damaged status;
-- Government application/reference identifier used in the service-provider flow;
-- mandatory photo, signature, and supporting-document upload completion.
+- current residence and Indian Mission/jurisdiction;
+- Fresh vs Re-issue;
+- complete set of re-issue reasons;
+- all changed personal particulars;
+- booklet/validity selection;
+- Regular vs Tatkaal eligibility;
+- lost/stolen/damaged and damaged-beyond-recognition flags;
+- adult/minor checklist branch and Annexure requirements;
+- Government ARN and VFS reference/payment mapping;
+- online photo/signature upload completion;
+- fee tier;
+- selected submission mode and address/package rules.
 
 ## Hard blockers
 
-Return `NOT_READY` when any of the following is detected:
+Return `NOT_READY` for any confirmed mismatch:
 
-1. **Application type mismatch** — applicant facts resolve to Re-issue but the submitted application says Fresh Passport, or vice versa.
-2. **Applicant category mismatch** — adult/minor branch does not match the applicant's age/category.
-3. **Jurisdiction mismatch** — selected Indian Mission is inconsistent with the applicant's verified consular jurisdiction.
-4. **Re-issue reason mismatch** — facts disclose a change/loss/damage/expiry condition that is not represented by the selected reason.
-5. **Tatkaal incompatibility** — the applicant is routed to Tatkaal despite an official exclusion or unresolved eligibility ambiguity.
-6. **Reference mismatch** — identifiers used between the Government application and the service-provider workflow do not correspond when the workflow requires them to correspond.
-7. **Mandatory GPSP 2.0 uploads incomplete** — required photo, signature, or supporting-document uploads have not been completed before physical submission.
+1. **Application type mismatch** — facts require Re-issue but Government/VFS says Fresh, or vice versa.
+2. **Applicant category mismatch** — adult/minor branch differs from resolved age/category.
+3. **Checklist mismatch** — adult checklist used for a minor or minor checklist used for an adult.
+4. **Jurisdiction mismatch** — selected Indian Mission does not match the verified jurisdiction.
+5. **Reason mismatch** — expiry/pages/lost/damaged/change facts are omitted or represented by the wrong Re-issue reason.
+6. **Change-particular mismatch** — Government data differs from the current passport without selecting the corresponding change branch and supporting-document route.
+7. **Tatkaal incompatibility** — an official exclusion applies, or Tatkaal eligibility is unresolved but the application is represented as Tatkaal-ready.
+8. **Reference mismatch** — Government ARN and VFS payment/application reference do not align where the current checklist requires alignment.
+9. **Mandatory upload incomplete** — required Government-portal photograph/signature upload is missing.
+10. **Lost/damaged branch incomplete** — applicable lost/damaged checklist, Annexure F, or lost/damaged fee tier is missing.
+11. **Minor consent branch incomplete** — required parent signatures, Annexure D, or conditional Annexure C is missing.
+12. **Fee mismatch** — calculated/selected fee tier does not match applicant category, booklet, processing route and lost/damaged status.
+13. **Submission mismatch** — package/address/mode contradicts the current process-specific submission rules.
 
 ## Result model
 
@@ -51,11 +61,25 @@ NOT_READY
 NEEDS_AUTHORITATIVE_CONFIRMATION
 ```
 
-For `NOT_READY`, the UI must identify the exact blocking field, show the expected value, show the observed value, and link to the source node supporting the decision.
+For `NOT_READY`, return a structured blocker with:
 
-For `NEEDS_AUTHORITATIVE_CONFIRMATION`, the UI must not guess. It should preserve the unresolved fact/source conflict for review.
+```text
+field
+expected
+observed
+reason
+source_node
+recovery_action
+```
 
-## Related decisions
+For `NEEDS_AUTHORITATIVE_CONFIRMATION`, do not guess. Preserve the unresolved fact/source conflict and prevent the UI from displaying a green readiness state.
 
-- [Passport service classification](../decisions/india-us-passport-service-classification.md)
-- [Adult Tatkaal eligibility](../decisions/india-us-passport-tatkaal-eligibility.md)
+## Related graph
+
+- [Service classification](../decisions/india-us-passport-service-classification.md)
+- [Applicant category](../decisions/india-us-passport-applicant-category.md)
+- [Re-issue reason](../decisions/india-us-passport-reissue-reason.md)
+- [Personal-particular changes](../decisions/india-us-passport-change-particulars.md)
+- [Regular vs Tatkaal](../decisions/india-us-passport-processing-route.md)
+- [Fees](../fees/india-us-passport-reissue-fees.md)
+- [Submission](../submission/india-us-passport-submission.md)

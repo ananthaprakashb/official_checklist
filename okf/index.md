@@ -4,13 +4,32 @@ Canonical entrypoint for the machine-readable official-process graph.
 
 ## India — applicants in the United States
 
-### Indian passport
+### Indian passport — core decisions
 
 - [San Francisco jurisdiction](jurisdictions/india-us-san-francisco.md)
 - [Passport service classification](decisions/india-us-passport-service-classification.md)
+- [Applicant category](decisions/india-us-passport-applicant-category.md)
+- [Re-issue reason router](decisions/india-us-passport-reissue-reason.md)
+- [Change in existing personal particulars](decisions/india-us-passport-change-particulars.md)
+- [Booklet and validity router](decisions/india-us-passport-booklet-validity.md)
+- [Regular vs Tatkaal router](decisions/india-us-passport-processing-route.md)
 - [Adult Tatkaal eligibility](decisions/india-us-passport-tatkaal-eligibility.md)
-- [Preflight application-type validation](validation/india-us-passport-preflight.md)
-- [Adult re-issue — San Francisco](processes/india/us/passport/reissue/san-francisco/adult.md)
+
+### Requirements, fees and submission
+
+- [Common re-issue documents](requirements/india-us-passport-common-documents.md)
+- [Conditional re-issue documents](requirements/india-us-passport-conditional-documents.md)
+- [Minor re-issue documents](requirements/india-us-passport-minor-documents.md)
+- [Current re-issue fee matrix](fees/india-us-passport-reissue-fees.md)
+- [Submission workflow](submission/india-us-passport-submission.md)
+- [Preflight validation](validation/india-us-passport-preflight.md)
+
+### San Francisco processes
+
+- [Adult re-issue](processes/india/us/passport/reissue/san-francisco/adult.md)
+- [Minor re-issue](processes/india/us/passport/reissue/san-francisco/minor.md)
+- [Adult lost passport](processes/india/us/passport/reissue/san-francisco/lost.md)
+- [Adult damaged passport](processes/india/us/passport/reissue/san-francisco/damaged.md)
 
 ### Authoritative sources
 
@@ -18,7 +37,18 @@ Canonical entrypoint for the machine-readable official-process graph.
 - [CGI San Francisco — Passport Related Services](sources/cgisf-passport-services.md)
 - [CGI San Francisco — Tatkaal Passport Services](sources/cgisf-tatkaal-passport-services.md)
 - [CGI San Francisco — GPSP 2.0 migration notice](sources/cgisf-gpsp2-migration.md)
-- [VFS Global — India passport services in the USA](sources/vfs-us-india-passport.md)
+- [VFS — Apply for passport](sources/vfs-us-india-passport.md)
+- [VFS — Passport information/fees](sources/vfs-passport-information-usa.md)
+- [VFS — Adult re-issue checklist May 2026](sources/vfs-adult-reissue-checklist-may-2026.md)
+- [VFS — Adult lost checklist May 2026](sources/vfs-adult-lost-checklist-may-2026.md)
+- [VFS — Adult damaged checklist May 2026](sources/vfs-adult-damaged-checklist-may-2026.md)
+- [VFS — Minor re-issue checklist May 2026](sources/vfs-minor-reissue-checklist-may-2026.md)
+- [VFS — Minor lost checklist May 2026](sources/vfs-minor-lost-checklist-may-2026.md)
+- [VFS — Minor damaged checklist May 2026](sources/vfs-minor-damaged-checklist-may-2026.md)
+
+## Machine-readable UI contract
+
+Questionnaire data is maintained outside the OKF link graph at `data/india/us/passport/reissue/questionnaire.v1.json`, with its output contract at `schemas/passport-process-result.schema.json`. Both are validated by CI.
 
 ## Repository history
 
