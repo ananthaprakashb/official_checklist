@@ -9,6 +9,11 @@ export function isQuestionVisible(question: Question, answers: PassportAnswers):
       const actual = answers[sourceKey];
       return typeof actual === "number" && actual < Number(expected);
     }
+    if (key.endsWith("_gte")) {
+      const sourceKey = key.slice(0, -4);
+      const actual = answers[sourceKey];
+      return typeof actual === "number" && actual >= Number(expected);
+    }
     return answers[key] === expected;
   });
 }
