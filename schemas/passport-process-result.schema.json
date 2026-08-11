@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://official-checklist.local/schemas/passport-process-result.schema.json",
+  "title": "Official Checklist Passport Process Result",
+  "type": "object",
+  "required": ["status", "service", "application_type", "applicant_category", "jurisdiction", "reissue_reasons", "processing", "required_documents", "blockers", "warnings", "sources_verified"],
+  "properties": {
+    "status": {"enum": ["READY", "NOT_READY", "NEEDS_AUTHORITATIVE_CONFIRMATION"]},
+    "service": {"const": "indian_passport"},
+    "application_type": {"enum": ["fresh", "reissue"]},
+    "applicant_category": {"enum": ["adult", "minor"]},
+    "jurisdiction": {"type": "string"},
+    "reissue_reasons": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "changes": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "processing": {"enum": ["regular", "tatkaal_eligible", "tatkaal_ineligible", "tatkaal_needs_authoritative_confirmation"]},
+    "booklet": {"enum": ["ordinary_36_pages", "jumbo_60_pages"]},
+    "fee": {
+      "type": "object",
+      "properties": {
+        "currency": {"const": "USD"},
+        "current_total": {"type": "number", "minimum": 0},
+        "convenience_charge_may_apply": {"type": "boolean"},
+        "verified": {"type": "string", "format": "date"}
+      },
+      "required": ["currency", "current_total", "verified"]
+    },
+    "required_documents": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "conditional_documents": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "blockers": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "warnings": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "next_step": {"type": "string"},
+    "sources_verified": {"type": "string", "format": "date"}
+  },
+  "additionalProperties": false
+}

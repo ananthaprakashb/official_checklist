@@ -8,99 +8,77 @@ stale_after: 2026-09-09
 status: verified
 sources:
   - ../../../../../../sources/cgisf-passport-faq.md
-  - ../../../../../../sources/cgisf-passport-services.md
+  - ../../../../../../sources/cgisf-tatkaal-passport-services.md
   - ../../../../../../sources/cgisf-gpsp2-migration.md
-  - ../../../../../../sources/vfs-us-india-passport.md
+  - ../../../../../../sources/vfs-passport-information-usa.md
+  - ../../../../../../sources/vfs-adult-reissue-checklist-may-2026.md
 ---
 
 # Indian Passport Adult Re-issue — San Francisco
 
-Reference process for an adult applicant in the Consulate General of India, San Francisco jurisdiction who needs another Indian passport in lieu of an existing passport.
+End-to-end Phase 2 process for an adult applicant in the CGI San Francisco jurisdiction who needs another Indian passport in lieu of an existing passport.
 
-## Phase A — classify before applying
+## 1. Classify the applicant and service
 
-1. Establish whether the applicant already holds or previously held an Indian passport.
-2. Establish adult/minor category.
-3. Determine the applicant's current U.S. consular jurisdiction.
-4. Determine the reason another passport is required.
-5. Run [Passport service classification](../../../../../../decisions/india-us-passport-service-classification.md).
+1. Run [Applicant category](../../../../../../decisions/india-us-passport-applicant-category.md) → must resolve `adult`.
+2. Run [Passport service classification](../../../../../../decisions/india-us-passport-service-classification.md) → must resolve `passport_reissue`.
+3. Confirm [San Francisco jurisdiction](../../../../../../jurisdictions/india-us-san-francisco.md).
 
-**STOP:** do not proceed to a document checklist when service classification is unresolved.
+**STOP:** do not expose downstream documents or payment if any of these are unresolved or mismatched.
 
-## Phase B — establish the re-issue reason
+## 2. Resolve the exact re-issue branch
 
-Capture all facts that affect the selected Government application branch, including:
+Run [Re-issue reason router](../../../../../../decisions/india-us-passport-reissue-reason.md).
 
-- expired/due-to-expire passport;
-- validity expired more than three years ago;
-- pages exhausted;
-- lost passport;
-- damaged passport;
-- change in existing personal particulars, including applicable name/address/appearance/signature/date/place-of-birth changes.
+For any changed passport field, also run [Change in existing personal particulars](../../../../../../decisions/india-us-passport-change-particulars.md).
 
-When more than one fact applies, do not hide secondary facts merely to force a simpler category. The selected reason/change fields must accurately represent the applicant's situation according to current official guidance.
+Branch outputs include expiry/due-to-expire, expired over three years, pages exhausted, lost, damaged, personal-particular changes, or multiple simultaneous reasons.
 
-## Phase C — Regular vs Tatkaal
+## 3. Select booklet and processing route
 
-If the applicant requests Tatkaal, run [Adult Tatkaal eligibility](../../../../../../decisions/india-us-passport-tatkaal-eligibility.md).
+Run [Booklet and validity router](../../../../../../decisions/india-us-passport-booklet-validity.md).
 
-**STOP:** an excluded or unresolved Tatkaal case must not be represented as Tatkaal-eligible.
+If Tatkaal is requested, run [Adult Tatkaal eligibility](../../../../../../decisions/india-us-passport-tatkaal-eligibility.md) **after all reason/change flags are known**.
 
-## Phase D — Government/VFS application path
+## 4. Generate the personalized requirement set
 
-Use the current official VFS/Passport Seva path for the verified service classification and jurisdiction.
+Start with [Common re-issue documents](../../../../../../requirements/india-us-passport-common-documents.md), then add [Conditional documents](../../../../../../requirements/india-us-passport-conditional-documents.md) for every resolved reason/change.
 
-Before physical submission, current CGI San Francisco GPSP 2.0 guidance requires the Government application flow to include upload of:
+Special branches:
 
-- an ICAO-compliant photograph;
-- scanned signature;
-- required supporting documents.
+- [Adult lost passport](lost.md)
+- [Adult damaged passport](damaged.md)
 
-The exact current forms, document checklist, fees, appointment/submission mode, and service-provider steps must be read from the linked authoritative source nodes at execution time rather than copied permanently into UI code.
+## 5. Resolve fees
 
-## Phase E — preflight before appointment/submission
+Use [Current re-issue fee matrix](../../../../../../fees/india-us-passport-reissue-fees.md) only after applicant category, booklet, lost/damaged status and Tatkaal eligibility are known.
 
-Run [Passport preflight](../../../../../../validation/india-us-passport-preflight.md).
+## 6. Government application + VFS
 
-The process is **not ready** until these dimensions agree:
+The current workflow requires the Government online application, correct jurisdiction, `Passport Re-issue`, mandatory online photo/signature upload and the matching application reference in the VFS flow. Once submitted online, an erroneous Government form cannot simply be edited; the current checklist directs the applicant to complete a new online application.
+
+## 7. Run preflight
+
+Run [Passport preflight](../../../../../../validation/india-us-passport-preflight.md). The gate must compare:
 
 ```text
 Applicant facts
-    ↓
-Service classification
-    ↓
-Consular jurisdiction
-    ↓
-Re-issue reason / changes
-    ↓
-Regular or Tatkaal eligibility
-    ↓
-Government application selections
-    ↓
-VFS/service-provider selections and identifiers
-    ↓
-Required uploads and supporting-document branch
-    ↓
-READY FOR NEXT OFFICIAL STEP
+  → Adult category
+  → Re-issue service
+  → San Francisco jurisdiction
+  → Exact reason(s) + personal-particular changes
+  → Booklet/validity
+  → Regular/Tatkaal eligibility
+  → Government application selections
+  → Government/VFS reference alignment
+  → Required online uploads
+  → Personalized document set
+  → Correct fee tier
+  → Submission mode
 ```
 
-## User-facing result
+Only `READY` may advance to [submission](../../../../../../submission/india-us-passport-submission.md).
 
-A successful preflight should summarize at minimum:
+## User-facing output
 
-```text
-Service: Indian Passport
-Application type: Re-issue
-Applicant: Adult
-Jurisdiction: San Francisco
-Reason: <verified reason(s)>
-Processing: Regular | Tatkaal
-Preflight: READY
-Official sources last verified: <date>
-```
-
-A failed preflight must state **which field is wrong and why**, rather than only saying that the application is invalid.
-
-## Scope boundary for v0.1
-
-This node does not yet attempt to encode every document variation. The first milestone is correct process routing and blocker detection. Document-specific nodes will be added only after the relevant branch has been selected and source-verified.
+The generated result must include the chosen service/category/reasons, processing route, fee tier, mandatory and conditional documents, blockers/warnings, source verification date, and the exact next official step.

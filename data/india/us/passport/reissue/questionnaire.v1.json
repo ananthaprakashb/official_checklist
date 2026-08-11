@@ -1,0 +1,40 @@
+{
+  "id": "india-us-passport-reissue-v1",
+  "version": 1,
+  "verified": "2026-08-10",
+  "stale_after": "2026-09-09",
+  "questions": [
+    {"id":"residence_state","type":"select","required":true,"options":["CA","CO","HI","UT","WY","GU","OTHER"]},
+    {"id":"residence_california_region","type":"select","required_when":{"residence_state":"CA"},"options":["northern_or_central","southern_or_other","not_sure"]},
+    {"id":"age","type":"number","required":true,"min":0},
+    {"id":"has_existing_or_previous_passport","type":"boolean","required":true},
+    {"id":"passport_validity","type":"select","required":true,"options":["valid_not_due","due_to_expire","expired_within_3_years","expired_more_than_3_years"]},
+    {"id":"pages_exhausted","type":"boolean","required":true},
+    {"id":"passport_lost_or_stolen","type":"boolean","required":true},
+    {"id":"passport_damaged","type":"boolean","required":true},
+    {"id":"damaged_beyond_recognition","type":"boolean","required_when":{"passport_damaged":true}},
+    {"id":"change_existing_particulars","type":"multiselect","required":true,"options":["none","name","spouse_name","indian_address","usa_address","appearance","signature","date_of_birth","place_of_birth","father_name","mother_name","sex"]},
+    {"id":"requested_processing","type":"select","required":true,"options":["regular","tatkaal"]},
+    {"id":"booklet","type":"select","required":true,"options":["ordinary_36_pages","jumbo_60_pages"]},
+    {"id":"one_parent_consent_missing","type":"boolean","required_when":{"age_lt":18}},
+    {"id":"government_form_already_submitted","type":"boolean","required":true},
+    {"id":"government_selected_service","type":"select","required_when":{"government_form_already_submitted":true},"options":["fresh","reissue","not_sure"]},
+    {"id":"government_selected_mission","type":"string","required_when":{"government_form_already_submitted":true}},
+    {"id":"government_reason_matches","type":"select","required_when":{"government_selected_service":"reissue"},"options":["yes","no","not_sure"]},
+    {"id":"government_arn","type":"string","required_when":{"government_form_already_submitted":true}},
+    {"id":"vfs_registration_complete","type":"boolean","required":true},
+    {"id":"vfs_reference_matches_government_arn","type":"select","required_when":{"vfs_registration_complete":true},"options":["yes","no","not_sure"]},
+    {"id":"online_photo_uploaded","type":"boolean","required_when":{"government_form_already_submitted":true}},
+    {"id":"online_signature_uploaded","type":"boolean","required_when":{"government_form_already_submitted":true}}
+  ],
+  "rule_nodes": [
+    "okf/decisions/india-us-passport-service-classification.md",
+    "okf/decisions/india-us-passport-applicant-category.md",
+    "okf/decisions/india-us-passport-reissue-reason.md",
+    "okf/decisions/india-us-passport-change-particulars.md",
+    "okf/decisions/india-us-passport-booklet-validity.md",
+    "okf/decisions/india-us-passport-processing-route.md",
+    "okf/validation/india-us-passport-preflight.md"
+  ],
+  "result_schema":"schemas/passport-process-result.schema.json"
+}
