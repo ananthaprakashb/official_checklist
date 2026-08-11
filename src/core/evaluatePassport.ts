@@ -1,7 +1,8 @@
 import type { PassportAnswers, ProcessResult, ProcessingResult } from "../types";
 
 const VERIFIED = "2026-08-10";
-const SF_STATES = new Set(["CO", "HI", "UT", "WY", "GU"]);
+const SF_DIRECT_STATES = new Set(["CO", "HI", "UT", "WY", "GU"]);
+const LA_TRANSITION_STATES = new Set(["AZ", "NV", "NM"]);
 
 const COMMON_DOCUMENTS = [
   "Government online passport application for the verified Re-issue branch",
@@ -35,23 +36,32 @@ function unique(values: string[]): string[] {
   return [...new Set(values.filter(Boolean))];
 }
 
-function resolveJurisdiction(answers: PassportAnswers, warnings: string[], blockers: string[]): { value: string; needsConfirmation: boolean } {
+function resolveJurisdiction(answers: PassportAnswers, warnings: string[], blockers: string[]): { value: string; needsConfirmation: boolean; expectsSanFranciscoMission: boolean } {
   const state = asString(answers, "residence_state");
-  if (SF_STATES.has(state)) return { value: "san_francisco", needsConfirmation: false };
+  if (SF_DIRECT_STATES.has(state)) return { value: "san_francisco_direct", needsConfirmation: false, expectsSanFranciscoMission: true };
+  if (LA_TRANSITION_STATES.has(state)) {
+    warnings.push("This location is in the formal Los Angeles consular jurisdiction, but current CGI guidance says San Francisco continues providing consular services until further notice.");
+    return { value: "los_angeles_transition_serviced_by_san_francisco", needsConfirmation: false, expectsSanFranciscoMission: true };
+  }
 
   if (state === "CA") {
     const region = asString(answers, "residence_california_region");
-    if (region === "northern_or_central") return { value: "san_francisco", needsConfirmation: false };
-    if (region === "not_sure" || !region) {
-      warnings.push("California consular region is not confirmed. Verify the current CGI jurisdiction before continuing.");
-      return { value: "san_francisco_needs_confirmation", needsConfirmation: true };
+    if (region === "northern_or_central") return { value: "san_francisco_direct", needsConfirmation: false, expectsSanFranciscoMission: true };
+    if (region === "southern_10_counties") {
+      warnings.push("Southern California is formally assigned to CGI Los Angeles, while current CGI/VFS guidance continues passport servicing through San Francisco during the transition.");
+      return { value: "los_angeles_transition_serviced_by_san_francisco", needsConfirmation: false, expectsSanFranciscoMission: true };
     }
-    blockers.push("The current Phase 3 evaluator covers the San Francisco jurisdiction; the selected California region is outside that verified branch.");
-    return { value: "outside_san_francisco_scope", needsConfirmation: false };
+    warnings.push("California region is not specific enough to resolve the current San Francisco/Los Angeles transition.");
+    return { value: "needs_jurisdiction_confirmation", needsConfirmation: true, expectsSanFranciscoMission: false };
   }
 
-  blockers.push("The current Phase 3 evaluator covers the San Francisco jurisdiction only. Route this applicant to the correct Indian Mission before using this checklist.");
-  return { value: "unsupported_in_v1", needsConfirmation: false };
+  if (state === "AS") {
+    warnings.push("Current VFS passport guidance routes American Samoa through the San Francisco application centre, but the CGI jurisdiction table does not explicitly list it. Confirm the Mission before submission.");
+    return { value: "needs_jurisdiction_confirmation", needsConfirmation: true, expectsSanFranciscoMission: false };
+  }
+
+  blockers.push("The current Phase 3 evaluator does not yet contain the official Mission rule for this state or territory. Route the applicant to the correct Indian Mission before using this checklist.");
+  return { value: "unsupported_in_v2", needsConfirmation: false, expectsSanFranciscoMission: false };
 }
 
 function resolveReasons(answers: PassportAnswers): string[] {
@@ -62,9 +72,7 @@ function resolveReasons(answers: PassportAnswers): string[] {
   if (asBoolean(answers, "pages_exhausted")) reasons.push("pages_exhausted");
   if (asBoolean(answers, "passport_lost_or_stolen")) reasons.push("lost");
   if (asBoolean(answers, "passport_damaged")) reasons.push("damaged");
-  if (asStringArray(answers, "change_existing_particulars").some((change) => change !== "none")) {
-    reasons.push("change_existing_personal_particulars");
-  }
+  if (asStringArray(answers, "change_existing_particulars").some((change) => change !== "none")) reasons.push("change_existing_personal_particulars");
   return unique(reasons);
 }
 
@@ -74,9 +82,7 @@ function resolveProcessing(
   changes: string[],
   warnings: string[]
 ): { value: ProcessingResult; needsConfirmation: boolean } {
-  if (asString(answers, "requested_processing") !== "tatkaal") {
-    return { value: "regular", needsConfirmation: false };
-  }
+  if (asString(answers, "requested_processing") !== "tatkaal") return { value: "regular", needsConfirmation: false };
 
   const hardBlock =
     asBoolean(answers, "passport_lost_or_stolen") ||
@@ -87,7 +93,7 @@ function resolveProcessing(
   if (hardBlock) return { value: "tatkaal_ineligible", needsConfirmation: false };
 
   if (changes.includes("name")) {
-    warnings.push("Tatkaal excludes major name changes, but the questionnaire does not yet distinguish major from other name changes. Authoritative confirmation is required.");
+    warnings.push("Current official sources differ in wording: VFS lists name change as Tatkaal-ineligible while CGI San Francisco distinguishes major name change. Confirm the exact name-change category before using Tatkaal.");
     return { value: "tatkaal_needs_authoritative_confirmation", needsConfirmation: true };
   }
 
@@ -114,14 +120,19 @@ function resolveFee(
     total = lostOrDamaged ? (booklet === "jumbo_60_pages" ? 321 : 271) : booklet === "jumbo_60_pages" ? 196 : 146;
   } else if (age < 15) {
     if (booklet === "jumbo_60_pages") {
-      warnings.push("The current verified fee table has a single under-15 five-year tier and does not provide a separate 60-page row. Confirm the booklet choice before payment.");
+      warnings.push("The current verified VFS fee table has a single under-15 five-year row and no separate 60-page row. Confirm the booklet choice before payment.");
       needsConfirmation = true;
     } else {
       total = lostOrDamaged ? 236 : 111;
     }
   } else {
-    warnings.push("For ages 15–17, the current OKF requires an explicit validity selection. Questionnaire v1 does not yet capture it, so fee confirmation is deferred.");
-    needsConfirmation = true;
+    const validity = asString(answers, "minor_15_17_validity");
+    if (validity === "ten_year") {
+      total = lostOrDamaged ? (booklet === "jumbo_60_pages" ? 321 : 271) : booklet === "jumbo_60_pages" ? 196 : 146;
+    } else {
+      warnings.push("CGI confirms that ages 15–17 may choose validity until age 18, but the current VFS fee table displayed for Re-issue lists the 10-year 15–18 tier. Confirm the applicable fee before payment.");
+      needsConfirmation = true;
+    }
   }
 
   if (total !== undefined && processing === "tatkaal_eligible") total += 125;
@@ -145,9 +156,7 @@ function resolveDocuments(answers: PassportAnswers, category: "adult" | "minor",
   if (category === "minor") {
     required.push("Annexure D with parental signatures/notarization required by the current minor checklist");
     required.push("Minor and parental signatures/thumb impression completed in the prescribed places");
-    if (asBoolean(answers, "one_parent_consent_missing")) {
-      required.push("Annexure C for the one-parent-consent-missing branch");
-    }
+    if (asBoolean(answers, "one_parent_consent_missing")) required.push("Annexure C for the one-parent-consent-missing branch");
   }
 
   if (asBoolean(answers, "passport_lost_or_stolen") || asBoolean(answers, "passport_damaged")) {
@@ -184,7 +193,7 @@ export function evaluatePassport(answers: PassportAnswers): ProcessResult {
   const applicationType: "fresh" | "reissue" = hasExisting ? "reissue" : "fresh";
 
   if (!Number.isFinite(age) || age < 0) blockers.push("Applicant age is required before the correct adult/minor checklist can be selected.");
-  if (!hasExisting) blockers.push("This evaluator is for passport Re-issue. A first-time passport application must use the Fresh Passport flow.");
+  if (!hasExisting) blockers.push("This evaluator is for Passport Re-issue. A first-time passport application must use the Fresh Passport flow.");
 
   const jurisdiction = resolveJurisdiction(answers, warnings, blockers);
   needsConfirmation ||= jurisdiction.needsConfirmation;
@@ -194,9 +203,7 @@ export function evaluatePassport(answers: PassportAnswers): ProcessResult {
   if (rawChanges.includes("none") && rawChanges.length > 1) blockers.push("'None' cannot be selected together with a personal-particular change.");
 
   const reasons = resolveReasons(answers);
-  if (applicationType === "reissue" && reasons.length === 0) {
-    blockers.push("No supported Re-issue reason was identified. Verify expiry, pages, loss/damage, or requested personal-particular changes.");
-  }
+  if (applicationType === "reissue" && reasons.length === 0) blockers.push("No supported Re-issue reason was identified. Verify expiry, pages, loss/damage, or requested personal-particular changes.");
 
   const processing = resolveProcessing(answers, category, changes, warnings);
   needsConfirmation ||= processing.needsConfirmation;
@@ -212,13 +219,11 @@ export function evaluatePassport(answers: PassportAnswers): ProcessResult {
 
   if (asBoolean(answers, "government_form_already_submitted")) {
     const selectedService = asString(answers, "government_selected_service");
-    if (selectedService !== "reissue") {
-      blockers.push("Government application type mismatch: this applicant resolves to Passport Re-issue, but the submitted application is not confirmed as Re-issue.");
-    }
+    if (selectedService !== "reissue") blockers.push("Government application type mismatch: this applicant resolves to Passport Re-issue, but the submitted application is not confirmed as Re-issue.");
 
     const selectedMission = asString(answers, "government_selected_mission").toLowerCase();
-    if (jurisdiction.value === "san_francisco" && !selectedMission.includes("san francisco")) {
-      blockers.push("Government application mission mismatch: the verified jurisdiction is San Francisco, but the submitted mission does not match.");
+    if (jurisdiction.expectsSanFranciscoMission && !selectedMission.includes("san francisco")) {
+      blockers.push("Government application mission mismatch: current official servicing guidance routes this branch through San Francisco, but the submitted mission does not match.");
     }
 
     const reasonMatches = asString(answers, "government_reason_matches");
@@ -250,7 +255,7 @@ export function evaluatePassport(answers: PassportAnswers): ProcessResult {
   let nextStep = "Review the personalized checklist and continue with the next official step.";
   if (status === "NOT_READY") nextStep = "Fix the blocking application mismatch(es) before payment, appointment, mailing, or submission.";
   else if (status === "NEEDS_AUTHORITATIVE_CONFIRMATION") nextStep = "Resolve the flagged official-rule question before relying on the checklist for payment or submission.";
-  else if (!asBoolean(answers, "government_form_already_submitted")) nextStep = "Start the Government Passport Re-issue application using the verified branch and jurisdiction.";
+  else if (!asBoolean(answers, "government_form_already_submitted")) nextStep = "Start the Government Passport Re-issue application using the verified branch and current servicing Mission.";
   else if (!asBoolean(answers, "vfs_registration_complete")) nextStep = "Complete the VFS registration/payment flow using the same Government ARN and verified application branch.";
 
   return {
