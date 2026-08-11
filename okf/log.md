@@ -1,5 +1,15 @@
 # OKF Change Log
 
+## 2026-08-10 — v0.3 interactive evaluator
+
+- Added a reusable TypeScript evaluator for the India/U.S. passport Re-issue questionnaire.
+- Added deterministic runtime resolution for applicant category, San Francisco jurisdiction, Re-issue reasons, personal-particular changes, Regular/Tatkaal routing, fee tier, required/conditional documents and preflight status.
+- Added explicit runtime blockers for Fresh-vs-Re-issue mismatch, mission mismatch, reason mismatch, ARN/VFS mismatch and mandatory online upload gaps.
+- Added conservative `NEEDS_AUTHORITATIVE_CONFIRMATION` handling for unresolved jurisdiction, major-name-change Tatkaal classification, DOB/POB/parent-name evidence and the minor 15–17 validity branch.
+- Added regression tests covering seven high-value routing and mismatch scenarios.
+- Added a responsive React questionnaire UI with saved browser answers, personalized checklist results, print/PDF support and result JSON copy.
+- Added TypeScript and production-build checks to the CI merge gate.
+
 ## 2026-08-10 — v0.2 India/U.S. passport decision graph
 
 - Added adult/minor applicant-category routing.
