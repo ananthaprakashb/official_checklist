@@ -1,77 +1,106 @@
 # Official Checklist
 
-**Official Checklist** is an open, machine-verifiable system for complicated government and consular processes across countries.
+**Official Checklist** is an open, machine-verifiable platform for complicated government and consular processes across countries.
 
 The project converts official instructions into OKF decision graphs so a user can determine the **correct process branch before** submitting a form, paying a fee, mailing documents, or attending an appointment.
-
-## Why this exists
-
-Official procedures are often spread across government portals, consulates, contracted service providers, PDFs, FAQs, and advisories. A checklist can still be wrong when the applicant picked the wrong service type. Official Checklist therefore validates the decision path first and the documents second.
 
 Core principle:
 
 > **Never tell a user what documents to collect until the correct application type has been verified.**
 
-## Current product
+## Phase 4 product
 
-The first interactive evaluator covers Indian passport Re-issue for applicants in the United States, beginning with the Consulate General of India, San Francisco jurisdiction.
+The web application is now a **process catalog + reusable process engine**, rather than a passport-specific screen.
 
-The browser flow:
+The first live process is:
 
-1. asks process facts from the versioned questionnaire contract;
-2. resolves applicant category, jurisdiction, Re-issue reasons, Regular/Tatkaal route and fee branch;
-3. compares submitted Government/VFS selections when the applicant has already started the process;
-4. returns `READY`, `NOT_READY`, or `NEEDS_AUTHORITATIVE_CONFIRMATION`;
-5. generates required and conditional document checklists;
-6. allows printing/saving the personalized result or copying its JSON representation.
+- India → Passport → Re-issue → applicants in the United States
+- clean process route: `india/passport/reissue/us`
 
-Answers are stored only in browser local storage in this prototype. Passport documents are not uploaded.
+The catalog also carries planned processes (currently OCI in the U.S. and U.S. Passport services) as `coming_soon`. A planned process cannot become `live` until its OKF bundle, questionnaire and evaluator are registered and pass CI.
 
 ## Architecture
 
 ```text
 Authoritative official sources
             ↓
-       OKF graph
+       OKF knowledge graph
             ↓
-Versioned questionnaire contract
+ Versioned questionnaires
             ↓
-Reusable TypeScript evaluator
-       ↙             ↘
- React web UI      future API/mobile clients
+   Process catalog / registry
+            ↓
+Reusable deterministic process engine
+       ↙                 ↘
+ React web catalog       future API/mobile clients
             ↓
 READY / NOT_READY / NEEDS_AUTHORITATIVE_CONFIRMATION
 ```
 
-### OKF validation
+The shared React shell knows how to:
 
-This repository follows the OKF v0.2 strict-link approach:
+- show the global process catalog;
+- route to a process by slug;
+- render a registered questionnaire;
+- persist draft answers locally;
+- display standardized blockers, warnings, checklists and next steps;
+- print/save results and export result JSON.
 
-1. **Schema Validation** — Markdown concept nodes use strongly typed YAML frontmatter.
-2. **Graph Integrity** — every internal Markdown link must resolve; broken references fail validation.
-3. **Official Process Guardrails** — critical process nodes must cite authoritative sources, freshness metadata is checked, and unsafe/link-pattern violations fail validation.
+Process-specific rules stay in evaluator modules and OKF nodes rather than `App.tsx`.
 
-`/okf/index.md` is the canonical knowledge entrypoint and `/okf/log.md` is the changelog.
+## Current runtime safeguards
 
-### Runtime safeguards
-
-- versioned questionnaire data is validated against referenced rule nodes;
-- evaluator regression tests cover critical routing and mismatch scenarios;
-- TypeScript type checking runs in CI;
-- the production web build is a merge gate;
+- critical OKF nodes require authoritative source nodes and freshness metadata;
+- broken internal graph references fail CI;
+- every questionnaire/rule-node reference is validated;
+- evaluator regression tests cover high-risk routing and mismatch cases;
+- process-engine tests require every catalog entry marked `live` to have a registered evaluator;
+- TypeScript checking and the production Vite build are merge gates;
 - unresolved official-rule ambiguity is surfaced instead of guessed.
+
+## GitHub Pages publication
+
+Merges to `main` are prepared for automatic publication with `.github/workflows/deploy-pages.yml`.
+
+The repository Pages target is:
+
+```text
+https://ananthaprakashb.github.io/official_checklist/
+```
+
+The Vite production base path is configurable through `VITE_BASE_PATH`; the default repository deployment uses `/official_checklist/`. A Pages-safe `404.html` restores clean process URLs for direct links.
+
+GitHub repository settings must use **Pages → Build and deployment → Source: GitHub Actions** for the deployment workflow to publish. A later custom domain can switch the build base to `/`.
 
 ## Repository layout
 
 ```text
-okf/                       OKF knowledge graph
-data/                      machine-readable questionnaire contracts
+okf/                       authoritative OKF knowledge graph
+data/process-catalog.v1.json
+                            global process catalog
+data/.../questionnaire.*   versioned intake contracts
 schemas/                   result contracts
-src/core/                  reusable deterministic evaluator
-src/                       React web application
-scripts/                   graph/data/evaluator validation
-.github/workflows/          CI pipeline
+src/core/                  process-specific deterministic evaluators
+src/engine/                catalog registry, routing and shared engine contracts
+src/                       React catalog + generic process runner
+scripts/                   graph/data/evaluator/engine validation
+docs/adding-a-process.md   process onboarding guide
+.github/workflows/          validation and Pages deployment
 ```
+
+## Adding another process
+
+See [`docs/adding-a-process.md`](docs/adding-a-process.md).
+
+The intended sequence is:
+
+1. authoritative sources and OKF graph;
+2. versioned questionnaire;
+3. deterministic evaluator;
+4. regression scenarios;
+5. catalog entry as `coming_soon`;
+6. registry module;
+7. switch catalog status to `live` only after CI passes.
 
 ## Local development
 
