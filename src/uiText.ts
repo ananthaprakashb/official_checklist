@@ -1,7 +1,8 @@
 export const QUESTION_LABELS: Record<string, string> = {
   residence_state: "Which U.S. state or territory do you live in?",
-  residence_california_region: "Which part of California do you live in?",
+  residence_california_region: "Which California jurisdiction area do you live in?",
   age: "What is the applicant's age?",
+  minor_15_17_validity: "Which passport validity is being requested?",
   has_existing_or_previous_passport: "Has the applicant ever held an Indian passport?",
   passport_validity: "What is the current passport status?",
   pages_exhausted: "Are the passport pages exhausted?",
@@ -30,10 +31,16 @@ export const OPTION_LABELS: Record<string, string> = {
   UT: "Utah",
   WY: "Wyoming",
   GU: "Guam",
+  AZ: "Arizona",
+  NV: "Nevada",
+  NM: "New Mexico",
+  AS: "American Samoa",
   OTHER: "Another state / territory",
   northern_or_central: "Northern or Central California",
-  southern_or_other: "Southern California / another region",
+  southern_10_counties: "Southern California — Los Angeles jurisdiction",
   not_sure: "Not sure",
+  until_age_18: "Valid until age 18",
+  ten_year: "10-year validity",
   valid_not_due: "Valid and not close to expiry",
   due_to_expire: "Due to expire",
   expired_within_3_years: "Expired within the last 3 years",
@@ -57,7 +64,10 @@ export const OPTION_LABELS: Record<string, string> = {
   fresh: "Fresh Passport",
   reissue: "Passport Re-issue",
   yes: "Yes",
-  no: "No"
+  no: "No",
+  san_francisco_direct: "San Francisco jurisdiction",
+  los_angeles_transition_serviced_by_san_francisco: "Los Angeles jurisdiction — currently serviced through San Francisco",
+  needs_jurisdiction_confirmation: "Jurisdiction needs confirmation"
 };
 
 export function labelOption(value: string): string {
