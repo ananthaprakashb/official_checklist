@@ -1,7 +1,24 @@
 {
   "version": 1,
-  "generated": "2026-08-10",
+  "generated": "2026-08-12",
   "processes": [
+    {
+      "id": "india-us-passport-services",
+      "slug": "india/passport/us",
+      "country_code": "IN",
+      "country_name": "India",
+      "applicant_country": "United States",
+      "service": "Passport Services",
+      "title": "Indian Passport Services in the U.S.",
+      "short_title": "Passport Services",
+      "summary": "Classify the correct Indian passport or passport-related service before collecting documents: Fresh, Re-issue, Short Validity Passport renewal, Emergency Certificate, PCC, GEP verification, Surrender, Diplomatic/Official Passport, Identity Certificate, or passport appeal.",
+      "status": "live",
+      "module": "india-us-passport-services-v1",
+      "questionnaire_id": "india-us-passport-service-router-v1",
+      "verified": "2026-08-12",
+      "stale_after": "2026-09-11",
+      "tags": ["passport", "classifier", "pcc", "gep", "surrender", "emergency-certificate", "consular"]
+    },
     {
       "id": "india-us-passport-reissue",
       "slug": "india/passport/reissue/us",
@@ -15,8 +32,8 @@
       "status": "live",
       "module": "india-us-passport-reissue-v1",
       "questionnaire_id": "india-us-passport-reissue-v2",
-      "verified": "2026-08-10",
-      "stale_after": "2026-09-09",
+      "verified": "2026-08-12",
+      "stale_after": "2026-09-11",
       "tags": ["passport", "reissue", "vfs", "consular"]
     },
     {

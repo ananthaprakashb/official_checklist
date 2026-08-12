@@ -1,0 +1,81 @@
+{
+  "id": "india-us-passport-service-router-v1",
+  "version": 1,
+  "verified": "2026-08-12",
+  "stale_after": "2026-09-11",
+  "questions": [
+    {
+      "id": "requested_passport_service",
+      "type": "select",
+      "required": true,
+      "options": [
+        "fresh_ordinary_passport",
+        "passport_reissue",
+        "renewal_short_validity_passport",
+        "emergency_certificate",
+        "police_clearance_certificate",
+        "global_entry_background_verification",
+        "surrender_indian_passport",
+        "diplomatic_passport",
+        "official_passport",
+        "identity_certificate",
+        "passport_adverse_action_appeal",
+        "not_sure"
+      ]
+    },
+    {
+      "id": "fresh_ever_held_ordinary_passport",
+      "type": "boolean",
+      "required_when": { "requested_passport_service": "fresh_ordinary_passport" }
+    },
+    {
+      "id": "reissue_ever_held_ordinary_passport",
+      "type": "boolean",
+      "required_when": { "requested_passport_service": "passport_reissue" }
+    },
+    {
+      "id": "svp_ever_held_ordinary_passport",
+      "type": "boolean",
+      "required_when": { "requested_passport_service": "renewal_short_validity_passport" }
+    },
+    {
+      "id": "ec_one_way_return_to_india",
+      "type": "boolean",
+      "required_when": { "requested_passport_service": "emergency_certificate" }
+    },
+    {
+      "id": "pcc_tourist_visa_only",
+      "type": "boolean",
+      "required_when": { "requested_passport_service": "police_clearance_certificate" }
+    },
+    {
+      "id": "surrender_acquired_foreign_nationality",
+      "type": "boolean",
+      "required_when": { "requested_passport_service": "surrender_indian_passport" }
+    },
+    {
+      "id": "appeal_adverse_action_received",
+      "type": "boolean",
+      "required_when": { "requested_passport_service": "passport_adverse_action_appeal" }
+    }
+  ],
+  "rule_nodes": [
+    "okf/decisions/india-us-passport-service-classification.md",
+    "okf/decisions/india-us-passport-ordinary-issuance.md",
+    "okf/decisions/india-us-passport-reissue-reason.md",
+    "okf/decisions/india-us-passport-emergency-travel-route.md",
+    "okf/decisions/india-us-passport-related-services.md",
+    "okf/decisions/india-us-passport-special-document-route.md",
+    "okf/decisions/india-us-passport-adverse-action-route.md",
+    "okf/processes/india/us/passport/fresh.md",
+    "okf/processes/india/us/passport/short-validity-renewal.md",
+    "okf/processes/india/us/passport/emergency-certificate.md",
+    "okf/processes/india/us/passport/pcc.md",
+    "okf/processes/india/us/passport/gep.md",
+    "okf/processes/india/us/passport/surrender.md",
+    "okf/processes/india/us/passport/diplomatic-official.md",
+    "okf/processes/india/us/passport/identity-certificate.md",
+    "okf/processes/india/us/passport/adverse-action-appeal.md"
+  ],
+  "result_schema": "schemas/passport-service-router-result.schema.json"
+}

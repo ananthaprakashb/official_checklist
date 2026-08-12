@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { evaluateProcess, getProcessBySlug, getProcessModule, listProcesses } from "../src/engine/registry";
 
 const processes = listProcesses();
-assert.ok(processes.length >= 3, "catalog should contain the live process and planned expansion entries");
+assert.ok(processes.length >= 4, "catalog should contain passport service router, detailed reissue, and planned expansion entries");
 assert.equal(new Set(processes.map((entry) => entry.id)).size, processes.length, "process ids must be unique");
 assert.equal(new Set(processes.map((entry) => entry.slug)).size, processes.length, "process slugs must be unique");
 
@@ -14,6 +14,37 @@ for (const entry of processes) {
     assert.ok(getProcessModule(entry.id), `${entry.id}: live process is not registered`);
   }
 }
+
+const serviceRouter = getProcessBySlug("india/passport/us");
+assert.equal(serviceRouter?.id, "india-us-passport-services");
+assert.ok(getProcessModule("india-us-passport-services"));
+
+const freshPresentation = evaluateProcess("india-us-passport-services", {
+  requested_passport_service: "fresh_ordinary_passport",
+  fresh_ever_held_ordinary_passport: false
+});
+assert.equal(freshPresentation.status, "READY");
+assert.equal(freshPresentation.title, "Fresh Ordinary Passport");
+assert.ok(freshPresentation.requiredItems.some((item) => item.includes("Fresh Ordinary Passport")));
+
+const wrongFreshPresentation = evaluateProcess("india-us-passport-services", {
+  requested_passport_service: "fresh_ordinary_passport",
+  fresh_ever_held_ordinary_passport: true
+});
+assert.equal(wrongFreshPresentation.status, "NOT_READY");
+assert.ok(wrongFreshPresentation.blockers.length > 0);
+
+const ecPresentation = evaluateProcess("india-us-passport-services", {
+  requested_passport_service: "emergency_certificate",
+  ec_one_way_return_to_india: true
+});
+assert.equal(ecPresentation.status, "READY");
+assert.equal(ecPresentation.title, "Emergency Certificate");
+
+const specialPresentation = evaluateProcess("india-us-passport-services", {
+  requested_passport_service: "identity_certificate"
+});
+assert.equal(specialPresentation.status, "NEEDS_AUTHORITATIVE_CONFIRMATION");
 
 const bySlug = getProcessBySlug("india/passport/reissue/us");
 assert.equal(bySlug?.id, "india-us-passport-reissue");
