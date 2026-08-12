@@ -1,40 +1,66 @@
 ---
 type: submission-method
 id: submission-india-us-passport-reissue
-title: Indian Passport Re-issue Submission - USA
+title: Indian Passport and Related Services Submission - USA
 generated: 2026-08-10
-verified: 2026-08-10
-stale_after: 2026-09-09
+verified: 2026-08-12
+stale_after: 2026-09-11
 status: verified
 sources:
-  - ../sources/vfs-passport-information-usa.md
-  - ../sources/cgisf-passport-faq.md
-  - ../sources/cgisf-tatkaal-passport-services.md
+  - ../sources/vfs-us-passport-aug-2026.md
+  - ../sources/vfs-us-pcc-2026.md
+  - ../sources/vfs-us-surrender-2026.md
+  - ../sources/cgisf-emergency-certificate-aug-2026.md
+  - ../sources/passport-seva-diplomatic-official-2026.md
 ---
 
-# Indian Passport Re-issue Submission — USA
+# Indian Passport and Related Services Submission — USA
 
-Submission occurs only after service type, jurisdiction, reason, documents, fee tier and preflight are resolved.
+Submission is selected **after** service family, document category, jurisdiction, applicant category and branch-specific requirements are resolved.
 
-## Current VFS flow
+## Service-to-channel router
 
-1. Complete and submit the Government online application.
-2. Record the Government ARN.
-3. Complete the VFS questionnaire/profile using the same application identity/reference.
-4. Pay the applicable fees and select the available submission/courier option for the verified jurisdiction/process.
-5. Submit the physical application package with the current checklist and supporting documents.
+### Ordinary Passport — Fresh / Re-issue
 
-## Shipping controls
+Use the current Government passport application plus the official VFS passport-services workflow for the resolved U.S. jurisdiction. Preserve the Government ARN/reference and VFS identity/payment alignment required by the current checklist.
 
-- one application per package;
-- return/shipping address must follow current VFS address-matching requirements;
-- include required confirmation/receipt and acceptable shipping label/materials;
-- incomplete or incorrect applications may be held or returned under current VFS policies.
+### Police Clearance Certificate
 
-## Appointment / walk-in controls
+Use the PCC-specific Government/VFS route and PCC checklist. Never substitute the ordinary passport Fresh/Re-issue checklist.
 
-The available in-person/appointment/walk-in mode can vary by service and location. Do not infer appointment necessity from another process. For Tatkaal in the San Francisco jurisdiction, current CGI guidance states VFS walk-in submission is available during published hours with no appointment required; regular re-issue users should follow the current VFS flow presented for their selected mode.
+### Surrender of Indian Passport
+
+Use the surrender-specific VFS/Passport Seva workflow. Do not use the ordinary passport submission branch merely because a physical passport is enclosed.
+
+### Emergency Certificate
+
+Use the responsible Indian Mission's EC procedure. EC is Mission-controlled; do not assume ordinary VFS passport submission or appointment rules apply.
+
+### GEP Background Verification
+
+Use the current GEP-specific Government/Mission workflow. Do not infer PCC submission rules.
+
+### Diplomatic / Official Passport
+
+Use the designated Government/Passport Seva institutional channel for the entitled category. Do not route through ordinary VFS passport services unless the current authority explicitly says so.
+
+### Identity Certificate
+
+Use the issuing authority/jurisdiction specifically prescribed for the applicant category. If the U.S.-specific channel is not resolved by a current authoritative source, return `NEEDS_AUTHORITATIVE_CONFIRMATION`.
+
+### Adverse action / appeal
+
+Follow the authority and submission mechanism in the operative notice/Passport Seva appeal route. A routine new passport application is not a substitute for an appeal.
+
+## Ordinary-passport shipping controls
+
+Where the current VFS passport workflow applies:
+
+- one application per package when required by the current checklist;
+- return/shipping address must follow current VFS address-matching rules;
+- include required payment/confirmation and courier materials;
+- incomplete or incorrectly classified applications may be held or returned.
 
 ## Final gate
 
-Submission is blocked unless [Passport preflight](../validation/india-us-passport-preflight.md) returns `READY`.
+No branch is submission-ready unless [Indian passport preflight](../validation/india-us-passport-preflight.md) returns `READY` for that exact service family. Unsupported or unresolved branches return `NEEDS_AUTHORITATIVE_CONFIRMATION`.

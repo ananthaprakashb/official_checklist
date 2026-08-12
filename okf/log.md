@@ -1,5 +1,17 @@
 # OKF Change Log
 
+## 2026-08-12 — v0.5 Indian passport service-family expansion
+
+- Expanded the India/U.S. OKF from Re-issue-first coverage to the full authoritative passport/travel-document and passport-related service taxonomy.
+- Added master classification for Ordinary Passport Fresh/Re-issue, Emergency Certificate, PCC, GEP background verification, Surrender of Indian Passport, Diplomatic Passport, Official Passport, Identity Certificate and adverse-action appeal/review.
+- Added Passport Seva's explicit Re-issue case family for Renewal of Short Validity Passport and preserved lost/stolen as a distinct fact set.
+- Added Fresh-passport document and fee branches without extrapolating unsupported fee combinations.
+- Added EC-specific documents and fee handling based on current Mission guidance.
+- Added PCC, GEP and Surrender requirement envelopes that preserve dynamic official checklists rather than inventing universal document sets.
+- Added process envelopes for Fresh, SVP renewal, EC, PCC, GEP, Surrender, Diplomatic/Official Passport, Identity Certificate and adverse-action appeals.
+- Generalized submission routing and preflight so non-passport-issuance services cannot accidentally inherit the ordinary Fresh/Re-issue workflow.
+- Preserved the current interactive application as Re-issue-only until each new service receives its own versioned questionnaire/evaluator and regression tests.
+
 ## 2026-08-10 — v0.4 generalized process engine and publication
 
 - Replaced the passport-specific application shell with a global process catalog and reusable process runner.
@@ -17,7 +29,7 @@
 - Added a reusable TypeScript evaluator for the India/U.S. passport Re-issue questionnaire.
 - Added deterministic runtime resolution for applicant category, current San Francisco/Los Angeles servicing arrangement, Re-issue reasons, personal-particular changes, Regular/Tatkaal routing, fee tier, required/conditional documents and preflight status.
 - Added explicit runtime blockers for Fresh-vs-Re-issue mismatch, mission mismatch, reason mismatch, ARN/VFS mismatch and mandatory online upload gaps.
-- Revalidated 2026 jurisdiction guidance and encoded the formal CGI Los Angeles jurisdiction plus the current CGI statement that San Francisco continues servicing that jurisdiction until further notice.
+- Revalidated 2026 jurisdiction guidance and encoded the formal CGI Los Angeles jurisdiction plus the current CGI statement that San Francisco continues to provide consular services for that jurisdiction until further notice.
 - Added questionnaire v2 with Southern California/Arizona/Nevada/New Mexico transition routing and explicit minor age 15–17 validity selection.
 - Added conservative `NEEDS_AUTHORITATIVE_CONFIRMATION` handling for unresolved jurisdiction, name-change Tatkaal wording differences, DOB/POB/parent-name evidence, American Samoa Mission mapping, under-15 jumbo booklet pricing and the age-15–17 validity-until-18 fee branch.
 - Added regression tests covering nine high-value routing, transition and mismatch scenarios.

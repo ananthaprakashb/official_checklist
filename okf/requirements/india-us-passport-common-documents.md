@@ -3,10 +3,11 @@ type: requirement
 id: requirement-india-us-passport-common-documents
 title: Indian Passport Re-issue Common Documents - USA
 generated: 2026-08-10
-verified: 2026-08-10
-stale_after: 2026-09-09
+verified: 2026-08-12
+stale_after: 2026-09-11
 status: verified
 sources:
+  - ../sources/vfs-us-passport-aug-2026.md
   - ../sources/vfs-adult-reissue-checklist-may-2026.md
   - ../sources/vfs-minor-reissue-checklist-may-2026.md
   - ../sources/vfs-passport-information-usa.md
@@ -22,7 +23,7 @@ These requirements apply to the standard re-issue path unless a branch-specific 
 - correct Indian Mission/jurisdiction;
 - `Passport Re-issue` selected;
 - Government ARN aligned with the VFS payment/application flow;
-- online photo and signature upload completed before submission;
+- **online photograph and signature upload completed before submission**;
 - physical photographs meeting the workflow-specific current checklist requirements;
 - current original Indian passport plus required copies when available/applicable;
 - Affidavit for Change in Appearance & Signature;
@@ -30,6 +31,12 @@ These requirements apply to the standard re-issue path unless a branch-specific 
 - acceptable evidence of valid U.S. status, in the form/notarization required by the current checklist;
 - acceptable U.S. proof of address matching the application;
 - VFS payment/application confirmation and courier/submission materials required by the chosen mode.
+
+## Current VFS photo gate
+
+The current U.S. VFS passport page says applications received via courier without the required online photograph/signature upload are returned unprocessed. Treat missing upload as a hard `NOT_READY` blocker, not a warning.
+
+Current VFS ICAO guidance calls for a color 630x810-pixel photograph with white background and no computer alteration. A process-specific checklist can impose additional requirements.
 
 ## Data-match rule
 
