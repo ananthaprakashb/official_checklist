@@ -42,4 +42,4 @@ Do not tell a lost-passport applicant to apply Tatkaal merely because travel is 
 ## Next
 
 - [Emergency Certificate requirements](../requirements/india-us-emergency-certificate-documents.md)
-- [Emergency Certificate process](../processes/india/us/passport/emergency-certificate/san-francisco.md)
+- [Emergency Certificate process](../processes/india/us/passport/emergency-certificate.md)
