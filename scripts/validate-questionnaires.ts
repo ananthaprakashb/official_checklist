@@ -1,30 +1,39 @@
 import { existsSync, readFileSync, readdirSync } from "node:fs";
-import { basename, resolve } from "node:path";
+import { basename, dirname, relative, resolve } from "node:path";
 
-const directory = resolve("data/india/us/passport/reissue");
-const files = readdirSync(directory)
-  .filter((name) => /^questionnaire\.v\d+\.json$/.test(name))
+const root = resolve("data/india/us/passport");
+const errors: string[] = [];
+const questionnaireIds = new Set<string>();
+const versionsByDirectory = new Map<string, Set<number>>();
+let totalQuestions = 0;
+
+function walk(directory: string): string[] {
+  return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+    const full = resolve(directory, entry.name);
+    return entry.isDirectory() ? walk(full) : [full];
+  });
+}
+
+const files = walk(root)
+  .filter((path) => /^questionnaire\.v\d+\.json$/.test(basename(path)))
   .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
 
-const errors: string[] = [];
-const versions = new Set<number>();
-const questionnaireIds = new Set<string>();
-let totalQuestions = 0;
-let latestVersion = 0;
-
-for (const file of files) {
-  const path = resolve(directory, file);
+for (const path of files) {
+  const file = basename(path);
   const data = JSON.parse(readFileSync(path, "utf8"));
-  const prefix = `${basename(path)}:`;
+  const rel = relative(process.cwd(), path).replaceAll("\\", "/");
+  const prefix = `${rel}:`;
   const filenameVersion = Number(file.match(/v(\d+)/)?.[1]);
+  const directory = dirname(path);
+  const versions = versionsByDirectory.get(directory) ?? new Set<number>();
 
   if (!data.id || !Number.isInteger(data.version)) errors.push(`${prefix} questionnaire id/version missing or invalid`);
   if (data.version !== filenameVersion) errors.push(`${prefix} JSON version ${data.version} does not match filename version ${filenameVersion}`);
-  if (versions.has(data.version)) errors.push(`${prefix} duplicate questionnaire version ${data.version}`);
+  if (versions.has(data.version)) errors.push(`${prefix} duplicate questionnaire version ${data.version} in ${relative(root, directory)}`);
   if (questionnaireIds.has(data.id)) errors.push(`${prefix} duplicate questionnaire id ${data.id}`);
   versions.add(data.version);
+  versionsByDirectory.set(directory, versions);
   questionnaireIds.add(data.id);
-  latestVersion = Math.max(latestVersion, data.version ?? 0);
 
   if (!Array.isArray(data.questions) || data.questions.length === 0) errors.push(`${prefix} questionnaire must contain questions`);
   const ids = new Set<string>();
@@ -64,4 +73,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log(`PASS Questionnaire Validation: ${files.length} versions, latest v${latestVersion}, ${totalQuestions} total questions.`);
+console.log(`PASS Questionnaire Validation: ${files.length} questionnaire files across ${versionsByDirectory.size} process directories, ${totalQuestions} total questions.`);
