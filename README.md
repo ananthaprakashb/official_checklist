@@ -58,6 +58,22 @@ Process-specific rules stay in evaluator modules and OKF nodes rather than `App.
 - TypeScript checking and the production Vite build are merge gates;
 - unresolved official-rule ambiguity is surfaced instead of guessed.
 
+## Cloudflare Pages publication
+
+This is a static React/Vite site. It does **not** require the Cloudflare Vite Worker plugin or a Wrangler Worker entrypoint.
+
+Use these Cloudflare Pages build settings:
+
+```text
+Framework preset: React (Vite)
+Build command: npm run build
+Build output directory: dist
+Root directory: /
+Node version: 22
+```
+
+The default Vite production base is `/`, which works for `*.pages.dev` and custom domains. No `VITE_BASE_PATH` variable is required for Cloudflare Pages.
+
 ## GitHub Pages publication
 
 Merges to `main` are prepared for automatic publication with `.github/workflows/deploy-pages.yml`.
@@ -68,9 +84,9 @@ The repository Pages target is:
 https://ananthaprakashb.github.io/official_checklist/
 ```
 
-The Vite production base path is configurable through `VITE_BASE_PATH`; the default repository deployment uses `/official_checklist/`. A Pages-safe `404.html` restores clean process URLs for direct links.
+The Vite production base path is configurable through `VITE_BASE_PATH`. Static/custom-domain builds default to `/`; the GitHub Pages workflow explicitly sets `VITE_BASE_PATH=/official_checklist/`. A Pages-safe `404.html` restores clean process URLs for direct links.
 
-GitHub repository settings must use **Pages → Build and deployment → Source: GitHub Actions** for the deployment workflow to publish. A later custom domain can switch the build base to `/`.
+GitHub repository settings must use **Pages → Build and deployment → Source: GitHub Actions** for the deployment workflow to publish.
 
 ## Repository layout
 
@@ -107,6 +123,13 @@ The intended sequence is:
 ```bash
 npm install
 npm run dev
+```
+
+For a clean reproducible install, especially after dependency/config changes:
+
+```bash
+npm ci
+npm run build
 ```
 
 ## Validation and production build
