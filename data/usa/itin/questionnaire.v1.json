@@ -1,0 +1,15 @@
+{
+  "id": "usa-itin-router-v1",
+  "version": 1,
+  "verified": "2026-08-30",
+  "stale_after": "2026-09-29",
+  "questions": [
+    { "id": "itin_action", "type": "select", "required": true, "options": ["new_itin", "renew_itin", "respond_to_notice", "check_delayed_application", "not_sure"] },
+    { "id": "eligible_for_ssn", "type": "boolean", "required_when": { "itin_action": ["new_itin", "renew_itin"] } },
+    { "id": "itin_tax_return_route", "type": "select", "required_when": { "itin_action": ["new_itin", "renew_itin"] }, "options": ["attach_federal_return", "claim_documented_exception", "not_sure"] },
+    { "id": "itin_submission_method", "type": "select", "required_when": { "itin_action": ["new_itin", "renew_itin"] }, "options": ["mail_to_irs", "irs_tac", "vita_with_itin_service", "certifying_acceptance_agent", "acceptance_agent", "not_sure"] },
+    { "id": "itin_identity_foreign_status_documents_ready", "type": "boolean", "required_when": { "itin_action": ["new_itin", "renew_itin"] } }
+  ],
+  "rule_nodes": ["okf/processes/usa/tax/itin.md"],
+  "result_schema": "schemas/government-service-router-result.schema.json"
+}
