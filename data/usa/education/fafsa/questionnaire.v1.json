@@ -1,0 +1,169 @@
+{
+  "id": "usa-fafsa-federal-student-aid-router-v1",
+  "version": 1,
+  "verified": "2026-08-31",
+  "stale_after": "2026-09-15",
+  "questions": [
+    {
+      "id": "fafsa_action",
+      "type": "select",
+      "required": true,
+      "options": [
+        "start_or_resume",
+        "determine_dependency",
+        "identify_contributors",
+        "complete_contributor",
+        "unusual_circumstances",
+        "parent_refusal_unsub_only",
+        "make_correction",
+        "verification",
+        "add_remove_school",
+        "special_financial_circumstances",
+        "deadline_check",
+        "check_status_submission_summary",
+        "not_sure"
+      ]
+    },
+    {
+      "id": "fafsa_award_year",
+      "type": "select",
+      "required": true,
+      "options": ["2026_27", "2027_28", "not_sure"]
+    },
+    {
+      "id": "fafsa_2027_28_beta_status",
+      "type": "select",
+      "required_when": { "fafsa_award_year": "2027_28" },
+      "options": ["approved_or_participating", "requested_waiting", "not_participating", "not_sure"]
+    },
+    {
+      "id": "student_has_studentaid_account",
+      "type": "boolean",
+      "required_when": {
+        "fafsa_action": ["start_or_resume", "determine_dependency", "identify_contributors", "unusual_circumstances", "parent_refusal_unsub_only", "make_correction", "add_remove_school", "check_status_submission_summary"]
+      }
+    },
+    {
+      "id": "fafsa_dependency_status",
+      "type": "select",
+      "required_when": {
+        "fafsa_action": ["start_or_resume", "determine_dependency", "identify_contributors", "complete_contributor", "unusual_circumstances", "parent_refusal_unsub_only"]
+      },
+      "options": ["dependent", "independent", "provisionally_independent", "not_determined"]
+    },
+    {
+      "id": "fafsa_unusual_circumstances_prevent_parent_contact",
+      "type": "boolean",
+      "required_when": { "fafsa_action": "unusual_circumstances" }
+    },
+    {
+      "id": "fafsa_parent_refuses_information",
+      "type": "boolean",
+      "required_when": { "fafsa_action": "parent_refusal_unsub_only" }
+    },
+    {
+      "id": "fafsa_parent_situation",
+      "type": "select",
+      "required_when": { "fafsa_action": "identify_contributors" },
+      "options": [
+        "parents_married_or_unmarried_living_together",
+        "parents_divorced_or_separated_not_living_together",
+        "single_never_married_widowed_parent",
+        "selected_parent_remarried",
+        "not_sure"
+      ]
+    },
+    {
+      "id": "fafsa_parent_contributor_resolved_with_official_logic",
+      "type": "boolean",
+      "required_when": { "fafsa_dependency_status": "dependent" }
+    },
+    {
+      "id": "fafsa_required_contributor_count",
+      "type": "number",
+      "min": 0,
+      "required_when": {
+        "fafsa_action": ["start_or_resume", "identify_contributors", "complete_contributor"]
+      }
+    },
+    {
+      "id": "fafsa_all_required_contributors_have_accounts",
+      "type": "boolean",
+      "required_when": { "fafsa_action": ["start_or_resume", "complete_contributor"] }
+    },
+    {
+      "id": "fafsa_contributor_without_ssn",
+      "type": "boolean",
+      "required_when": { "fafsa_action": ["identify_contributors", "complete_contributor"] }
+    },
+    {
+      "id": "fafsa_all_required_contributor_sections_complete",
+      "type": "boolean",
+      "required_when": { "fafsa_action": ["start_or_resume", "complete_contributor"] }
+    },
+    {
+      "id": "fafsa_all_required_consent_approval_complete",
+      "type": "boolean",
+      "required_when": { "fafsa_action": ["start_or_resume", "complete_contributor"] }
+    },
+    {
+      "id": "fafsa_form_submitted",
+      "type": "boolean",
+      "required_when": {
+        "fafsa_action": ["make_correction", "verification", "add_remove_school", "special_financial_circumstances", "check_status_submission_summary"]
+      }
+    },
+    {
+      "id": "fafsa_submission_processed",
+      "type": "boolean",
+      "required_when": {
+        "fafsa_action": ["make_correction", "verification", "add_remove_school", "check_status_submission_summary"]
+      }
+    },
+    {
+      "id": "fafsa_correction_type",
+      "type": "select",
+      "required_when": { "fafsa_action": "make_correction" },
+      "options": [
+        "online_typo_signature_consent_contact_school",
+        "amended_tax_return_or_financial_change",
+        "contributor_own_section",
+        "not_sure"
+      ]
+    },
+    {
+      "id": "fafsa_selected_for_verification",
+      "type": "boolean",
+      "required_when": { "fafsa_action": "verification" }
+    },
+    {
+      "id": "fafsa_school_verification_request_received",
+      "type": "boolean",
+      "required_when": { "fafsa_selected_for_verification": true }
+    },
+    {
+      "id": "fafsa_special_financial_change_exists",
+      "type": "boolean",
+      "required_when": { "fafsa_action": "special_financial_circumstances" }
+    },
+    {
+      "id": "fafsa_state_deadline_checked",
+      "type": "boolean",
+      "required_when": { "fafsa_action": ["start_or_resume", "deadline_check"] }
+    },
+    {
+      "id": "fafsa_school_deadline_checked",
+      "type": "boolean",
+      "required_when": { "fafsa_action": ["start_or_resume", "deadline_check"] }
+    },
+    {
+      "id": "fafsa_school_list_change_needed",
+      "type": "boolean",
+      "required_when": { "fafsa_action": "add_remove_school" }
+    }
+  ],
+  "rule_nodes": [
+    "okf/processes/usa/education/fafsa.md"
+  ],
+  "result_schema": "schemas/government-service-router-result.schema.json"
+}
