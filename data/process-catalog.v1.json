@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated": "2026-08-30",
+  "generated": "2026-08-31",
   "processes": [
     {
       "id": "usa-immigration-services",
@@ -154,6 +154,23 @@
       "verified": "2026-08-30",
       "stale_after": "2026-09-29",
       "tags": ["ssa", "ssn", "social-security", "ss-5", "identity"]
+    },
+    {
+      "id": "usa-social-security-benefits",
+      "slug": "usa/social-security/benefits",
+      "country_code": "US",
+      "country_name": "United States",
+      "applicant_country": "United States / Abroad",
+      "service": "Social Security Benefits",
+      "title": "Social Security Retirement, Family & Survivor Benefits",
+      "short_title": "Social Security Benefits",
+      "summary": "Classify own Retirement, spouse/divorced-spouse Family, Survivor, child/dependent-parent, benefit-switch, work/earnings and payments-abroad routes before choosing an application or claiming action.",
+      "status": "live",
+      "module": "usa-social-security-benefits-v1",
+      "questionnaire_id": "usa-social-security-benefits-router-v1",
+      "verified": "2026-08-31",
+      "stale_after": "2026-09-30",
+      "tags": ["ssa", "social-security", "retirement", "spouse", "divorced-spouse", "survivor", "family-benefits", "earnings-test"]
     },
     {
       "id": "usa-itin",

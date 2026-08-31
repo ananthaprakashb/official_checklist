@@ -1,0 +1,187 @@
+{
+  "id": "usa-social-security-benefits-router-v1",
+  "version": 1,
+  "verified": "2026-08-31",
+  "stale_after": "2026-09-30",
+  "questions": [
+    {
+      "id": "ssa_benefit_goal",
+      "type": "select",
+      "required": true,
+      "options": [
+        "retirement_own_record",
+        "spouse_benefit",
+        "divorced_spouse_benefit",
+        "survivor_spouse",
+        "surviving_divorced_spouse",
+        "survivor_child",
+        "survivor_dependent_parent",
+        "child_family_benefit",
+        "compare_or_switch_benefits",
+        "work_while_receiving",
+        "benefits_outside_us",
+        "not_sure"
+      ]
+    },
+    {
+      "id": "ssa_applicant_age",
+      "type": "number",
+      "min": 0,
+      "required_when": {
+        "ssa_benefit_goal": [
+          "retirement_own_record",
+          "spouse_benefit",
+          "divorced_spouse_benefit",
+          "survivor_spouse",
+          "surviving_divorced_spouse",
+          "survivor_dependent_parent"
+        ]
+      }
+    },
+    {
+      "id": "ssa_own_retirement_eligibility",
+      "type": "select",
+      "required_when": { "ssa_benefit_goal": "retirement_own_record" },
+      "options": ["ssa_record_confirms_eligible", "ssa_record_confirms_not_eligible", "not_sure"]
+    },
+    {
+      "id": "ssa_desired_start_within_four_months",
+      "type": "boolean",
+      "required_when": { "ssa_benefit_goal": "retirement_own_record" }
+    },
+    {
+      "id": "ssa_current_marriage_years",
+      "type": "number",
+      "min": 0,
+      "required_when": { "ssa_benefit_goal": "spouse_benefit" }
+    },
+    {
+      "id": "ssa_caring_for_qualifying_child",
+      "type": "boolean",
+      "required_when": { "ssa_benefit_goal": ["spouse_benefit", "survivor_spouse"] }
+    },
+    {
+      "id": "ssa_living_worker_status",
+      "type": "select",
+      "required_when": { "ssa_benefit_goal": "spouse_benefit" },
+      "options": ["receiving_retirement_or_disability", "eligible_but_not_receiving", "not_eligible_or_not_sure"]
+    },
+    {
+      "id": "ssa_applicant_has_own_retirement_benefit",
+      "type": "boolean",
+      "required_when": { "ssa_benefit_goal": ["spouse_benefit", "divorced_spouse_benefit"] }
+    },
+    {
+      "id": "ssa_divorced_marriage_years",
+      "type": "number",
+      "min": 0,
+      "required_when": { "ssa_benefit_goal": "divorced_spouse_benefit" }
+    },
+    {
+      "id": "ssa_currently_married",
+      "type": "boolean",
+      "required_when": { "ssa_benefit_goal": "divorced_spouse_benefit" }
+    },
+    {
+      "id": "ssa_ex_spouse_status",
+      "type": "select",
+      "required_when": { "ssa_benefit_goal": "divorced_spouse_benefit" },
+      "options": ["receiving_retirement_or_disability", "age_62_eligible_not_receiving", "not_eligible_or_not_sure"]
+    },
+    {
+      "id": "ssa_years_since_divorce",
+      "type": "number",
+      "min": 0,
+      "required_when": { "ssa_ex_spouse_status": "age_62_eligible_not_receiving" }
+    },
+    {
+      "id": "ssa_survivor_has_qualifying_disability",
+      "type": "boolean",
+      "required_when": { "ssa_benefit_goal": ["survivor_spouse", "surviving_divorced_spouse"] }
+    },
+    {
+      "id": "ssa_survivor_marriage_months",
+      "type": "number",
+      "min": 0,
+      "required_when": { "ssa_benefit_goal": "survivor_spouse" }
+    },
+    {
+      "id": "ssa_survivor_divorced_marriage_years",
+      "type": "number",
+      "min": 0,
+      "required_when": { "ssa_benefit_goal": "surviving_divorced_spouse" }
+    },
+    {
+      "id": "ssa_survivor_remarriage_timing",
+      "type": "select",
+      "required_when": { "ssa_benefit_goal": ["survivor_spouse", "surviving_divorced_spouse"] },
+      "options": ["not_remarried", "remarried_before_50", "remarried_50_to_59", "remarried_60_or_later", "not_sure"]
+    },
+    {
+      "id": "ssa_child_age",
+      "type": "number",
+      "min": 0,
+      "required_when": { "ssa_benefit_goal": ["survivor_child", "child_family_benefit"] }
+    },
+    {
+      "id": "ssa_child_unmarried",
+      "type": "boolean",
+      "required_when": { "ssa_benefit_goal": ["survivor_child", "child_family_benefit"] }
+    },
+    {
+      "id": "ssa_child_full_time_k12",
+      "type": "boolean",
+      "required_when": { "ssa_benefit_goal": ["survivor_child", "child_family_benefit"] }
+    },
+    {
+      "id": "ssa_child_disability_before_22",
+      "type": "boolean",
+      "required_when": { "ssa_benefit_goal": ["survivor_child", "child_family_benefit"] }
+    },
+    {
+      "id": "ssa_dependent_parent_supported_by_worker",
+      "type": "boolean",
+      "required_when": { "ssa_benefit_goal": "survivor_dependent_parent" }
+    },
+    {
+      "id": "ssa_current_benefit_type",
+      "type": "select",
+      "required_when": { "ssa_benefit_goal": "compare_or_switch_benefits" },
+      "options": ["retirement", "spouse_or_family", "survivor", "disability", "none", "not_sure"]
+    },
+    {
+      "id": "ssa_possible_other_benefit_type",
+      "type": "select",
+      "required_when": { "ssa_benefit_goal": "compare_or_switch_benefits" },
+      "options": ["retirement", "spouse_or_family", "survivor", "disability", "not_sure"]
+    },
+    {
+      "id": "ssa_work_benefit_type",
+      "type": "select",
+      "required_when": { "ssa_benefit_goal": "work_while_receiving" },
+      "options": ["retirement", "spouse_or_family", "survivor", "disability", "not_sure"]
+    },
+    {
+      "id": "ssa_work_fra_status_2026",
+      "type": "select",
+      "required_when": { "ssa_benefit_goal": "work_while_receiving" },
+      "options": ["under_fra_all_2026", "reaches_fra_in_2026", "at_or_over_fra", "not_sure"]
+    },
+    {
+      "id": "ssa_expected_2026_earnings",
+      "type": "number",
+      "min": 0,
+      "required_when": { "ssa_benefit_goal": "work_while_receiving" }
+    },
+    {
+      "id": "ssa_abroad_benefit_type",
+      "type": "select",
+      "required_when": { "ssa_benefit_goal": "benefits_outside_us" },
+      "options": ["retirement", "spouse_or_family", "survivor", "disability", "ssi", "not_sure"]
+    }
+  ],
+  "rule_nodes": [
+    "okf/processes/usa/social-security/retirement-family-survivor.md"
+  ],
+  "result_schema": "schemas/government-service-router-result.schema.json"
+}

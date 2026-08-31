@@ -14,6 +14,7 @@ import { createI140Module } from "./i140Module";
 import { createI485Module } from "./i485Module";
 import { createNvcModule } from "./nvcModule";
 import { createPermModule } from "./permModule";
+import { createSsaBenefitsModule } from "./ssaBenefitsModule";
 import type { ProcessCatalogEntry, ProcessModule, ProcessPresentation } from "./types";
 
 const entries = catalogJson.processes as ProcessCatalogEntry[];
@@ -207,6 +208,8 @@ const nvcEntry = entries.find((entry) => entry.id === "usa-nvc-employment-detail
 if (!nvcEntry) throw new Error("Process catalog is missing usa-nvc-employment-detailed");
 const californiaDmvEntry = entries.find((entry) => entry.id === "usa-california-dmv-dl-id");
 if (!californiaDmvEntry) throw new Error("Process catalog is missing usa-california-dmv-dl-id");
+const ssaBenefitsEntry = entries.find((entry) => entry.id === "usa-social-security-benefits");
+if (!ssaBenefitsEntry) throw new Error("Process catalog is missing usa-social-security-benefits");
 const highFrictionEntries = HIGH_FRICTION_PROCESS_IDS.map((id) => {
   const entry = entries.find((candidate) => candidate.id === id);
   if (!entry) throw new Error(`Process catalog is missing ${id}`);
@@ -214,6 +217,7 @@ const highFrictionEntries = HIGH_FRICTION_PROCESS_IDS.map((id) => {
 });
 
 const modules = new Map<string, ProcessModule>([
+  [ssaBenefitsEntry.id, createSsaBenefitsModule(ssaBenefitsEntry)],
   [californiaDmvEntry.id, createCaliforniaDmvModule(californiaDmvEntry)],
   ...highFrictionEntries.map((entry) => [entry.id, createHighFrictionModule(entry)] as [string, ProcessModule]),
   [nvcEntry.id, createNvcModule(nvcEntry)],
