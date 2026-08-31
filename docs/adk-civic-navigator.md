@@ -45,12 +45,12 @@ Create a local `.env` file:
 
 ```text
 GEMINI_API_KEY=your_key_here
-CIVIC_PREFLIGHT_MODEL=gemini-flash-latest
+CIVIC_PREFLIGHT_MODEL=gemini-3.5-flash-lite
 ```
 
-`CIVIC_PREFLIGHT_MODEL` is optional.
+`CIVIC_PREFLIGHT_MODEL` is optional. `gemini-3.5-flash-lite` is the default navigator model.
 
-## Run
+## Run locally
 
 Interactive CLI:
 
@@ -65,6 +65,18 @@ npm run adk:web
 ```
 
 The ADK web UI is for development/debugging, not the production user interface.
+
+## Deploy to Google Cloud Run
+
+The hosted Civic Preflight agent uses Google Cloud Run. Cloud Run runs the ADK API server and the same deterministic process engine used by the browser application.
+
+See [`cloud-run-adk.md`](cloud-run-adk.md) for Secret Manager setup and deployment instructions.
+
+```bash
+npm run adk:deploy:cloud-run
+```
+
+The deployment command uses Google's ADK Cloud Run deployment path and maps a Secret Manager secret into `GEMINI_API_KEY`; it does not copy the local `.env` API key into deployment arguments.
 
 ## Tools
 
@@ -97,14 +109,15 @@ The ADK layer does not duplicate government rules.
 
 ## Validation
 
-Tool adapters can be tested without a Gemini API key:
+Tool adapters and Cloud Run deployment configuration can be tested without a Gemini API key or Google Cloud access:
 
 ```bash
 npm run test:adk
+npm run test:cloud-run
 ```
 
-The test is included in the normal `npm run validate` merge gate.
+Both tests are included in the normal `npm run validate` merge gate.
 
 ## Next phase
 
-After the navigator flow is working end-to-end, add an `create_action_plan` tool that converts a verified Official Checklist result into personal Task Board items without changing the verified official requirements.
+After the Cloud Run agent is deployed, connect the Official Checklist React UI to the Cloud Run ADK API and then add a `create_action_plan` tool that converts a verified result into personal Task Board items without changing the official requirements.
