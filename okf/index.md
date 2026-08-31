@@ -9,9 +9,16 @@ Canonical entrypoint for the machine-readable official-process graph.
 - [U.S. immigration and visa service classification](decisions/usa-immigration-service-classification.md)
 - [U.S. Immigration & Visa Services classifier](processes/usa/immigration/services.md)
 
-### Permanent residence
+### Employment-based permanent residence
 
-- [Employment-based Green Card](processes/usa/immigration/employment-green-card.md)
+- [Employment-based category router](decisions/usa-employment-green-card-category.md)
+- [Employment-based Green Card process](processes/usa/immigration/employment-green-card.md)
+- [PERM stage requirements](requirements/usa-employment-green-card-perm.md)
+- [Immigrant petition requirements](requirements/usa-employment-green-card-petition.md)
+- [Adjustment / consular requirements](requirements/usa-employment-green-card-adjustment-consular.md)
+
+### Other permanent residence and visa processes
+
 - [Family-based Green Card](processes/usa/immigration/family-green-card.md)
 - [Visa application router — DS-160 vs DS-260](processes/usa/immigration/visa-applications.md)
 
@@ -23,10 +30,21 @@ Canonical entrypoint for the machine-readable official-process graph.
 
 ### Authoritative source nodes
 
+Employment-based permanent residence:
+
 - [DOL — Permanent Labor Certification (PERM)](sources/dol-perm-aug-2026.md)
 - [USCIS — Form I-140](sources/uscis-i140-aug-2026.md)
 - [USCIS — Form I-485](sources/uscis-i485-aug-2026.md)
+- [USCIS — Visa Availability and Priority Dates](sources/uscis-visa-availability-priority-dates-aug-2026.md)
+- [Department of State — August 2026 Visa Bulletin](sources/dos-visa-bulletin-aug-2026.md)
 - [Department of State — September 2026 Visa Bulletin](sources/dos-visa-bulletin-sep-2026.md)
+- [USCIS — Form I-485 Supplement J](sources/uscis-i485-supplement-j-aug-2026.md)
+- [USCIS — Form I-693 with I-485](sources/uscis-i693-i485-aug-2026.md)
+- [USCIS — EB-4 / Form I-360](sources/uscis-eb4-aug-2026.md)
+- [USCIS — EB-5](sources/uscis-eb5-aug-2026.md)
+
+Other immigration/visa sources:
+
 - [USCIS — Form I-130](sources/uscis-i130-aug-2026.md)
 - [Department of State — DS-160](sources/dos-ds160-aug-2026.md)
 - [Department of State — NVC / DS-260](sources/dos-nvc-ds260-aug-2026.md)
@@ -129,13 +147,14 @@ Official service-provider sources:
 
 ## Machine-readable runtime scope
 
-The interactive application now exposes three verified runtime modules:
+The interactive application now exposes four verified runtime modules:
 
 1. **U.S. Immigration & Visa Services** — cross-agency service/stage classifier covering green-card, visa, H-1B/H-4, EAD/travel-document, permanent-resident/citizenship, address and I-94 routes.
-2. **Indian Passport Services in the U.S.** — service-family classifier across passport/travel-document and related services.
-3. **Indian Passport Re-issue in the U.S.** — detailed questionnaire/evaluator with jurisdiction, reason, Tatkaal, fee and document preflight.
+2. **Employment-Based Green Card** — detailed category/PERM/petition/priority-date/Visa-Bulletin/I-485-or-NVC preflight with separate filing and Final Action gates.
+3. **Indian Passport Services in the U.S.** — service-family classifier across passport/travel-document and related services.
+4. **Indian Passport Re-issue in the U.S.** — detailed questionnaire/evaluator with jurisdiction, reason, Tatkaal, fee and document preflight.
 
-The U.S. immigration classifier intentionally returns `NEEDS_AUTHORITATIVE_CONFIRMATION` for filing gates that depend on current visa availability, applicant-specific eligibility or discretionary/legal facts. A `READY` classification means the correct agency/stage has been identified; it is not a prediction of approval.
+The employment-green-card module intentionally returns `NEEDS_AUTHORITATIVE_CONFIRMATION` when the filing month is outside its bundled bulletin data, USCIS monthly chart selection is not verified, adjustment eligibility has a material fact-specific issue, or EB-4/EB-5 requires a dedicated category-specific evidence module. A `READY` result means the encoded preflight gates are satisfied; it is not a prediction of USCIS/DOL/Department of State approval.
 
 Additional process envelopes become live only after authoritative source coverage, classification logic, a versioned questionnaire/evaluator, regression tests and catalog exposure are all present.
 

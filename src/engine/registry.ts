@@ -7,6 +7,7 @@ import { evaluatePassportServices, type PassportServiceRouterResult } from "../c
 import { evaluateUsImmigrationServices, type UsImmigrationServiceRouterResult } from "../core/evaluateUsImmigrationServices";
 import type { PassportAnswers, ProcessResult, Questionnaire } from "../types";
 import { labelOption, QUESTION_LABELS } from "../uiText";
+import { createEmploymentGreenCardModule } from "./employmentGreenCardModule";
 import type { ProcessCatalogEntry, ProcessModule, ProcessPresentation } from "./types";
 
 const entries = catalogJson.processes as ProcessCatalogEntry[];
@@ -188,8 +189,11 @@ const passportServicesEntry = entries.find((entry) => entry.id === "india-us-pas
 if (!passportServicesEntry) throw new Error("Process catalog is missing india-us-passport-services");
 const usImmigrationEntry = entries.find((entry) => entry.id === "usa-immigration-services");
 if (!usImmigrationEntry) throw new Error("Process catalog is missing usa-immigration-services");
+const employmentGreenCardEntry = entries.find((entry) => entry.id === "usa-employment-green-card");
+if (!employmentGreenCardEntry) throw new Error("Process catalog is missing usa-employment-green-card");
 
 const modules = new Map<string, ProcessModule>([
+  [employmentGreenCardEntry.id, createEmploymentGreenCardModule(employmentGreenCardEntry)],
   [
     usImmigrationEntry.id,
     {

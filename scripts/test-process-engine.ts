@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { evaluateProcess, getProcessBySlug, getProcessModule, listProcesses } from "../src/engine/registry";
 
 const processes = listProcesses();
-assert.ok(processes.length >= 5, "catalog should contain U.S. immigration, passport workflows and planned expansion entries");
+assert.ok(processes.length >= 6, "catalog should contain detailed employment green card, U.S. immigration, passport workflows and planned expansion entries");
 assert.equal(new Set(processes.map((entry) => entry.id)).size, processes.length, "process ids must be unique");
 assert.equal(new Set(processes.map((entry) => entry.slug)).size, processes.length, "process slugs must be unique");
 
@@ -14,6 +14,132 @@ for (const entry of processes) {
     assert.ok(getProcessModule(entry.id), `${entry.id}: live process is not registered`);
   }
 }
+
+const employmentGreenCard = getProcessBySlug("usa/immigration/employment-green-card");
+assert.equal(employmentGreenCard?.id, "usa-employment-green-card");
+assert.ok(getProcessModule("usa-employment-green-card"));
+
+const categoryMismatch = evaluateProcess("usa-employment-green-card", {
+  employment_category: "eb2_advanced_degree_exceptional_ability",
+  employment_gc_stage: "planning",
+  beneficiary_location: "inside_us",
+  labor_certification_route: "not_required",
+  immigrant_petition_status: "not_filed",
+  priority_date_known: false,
+  chargeability_country: "india",
+  bulletin_month: "september_2026",
+  intended_final_processing: "not_sure",
+  include_derivatives: false
+});
+assert.equal(categoryMismatch.status, "NOT_READY");
+assert.ok(categoryMismatch.blockers.some((item) => item.includes("labor-certification route")));
+
+const indiaEb2SeptemberFiling = evaluateProcess("usa-employment-green-card", {
+  employment_category: "eb2_advanced_degree_exceptional_ability",
+  employment_gc_stage: "adjustment_of_status",
+  beneficiary_location: "inside_us",
+  labor_certification_route: "dol_perm",
+  perm_status: "certified",
+  perm_certification_within_180_days: true,
+  immigrant_petition_status: "approved",
+  priority_date_known: true,
+  priority_date: "2015-01-01",
+  chargeability_country: "india",
+  bulletin_month: "september_2026",
+  intended_final_processing: "adjustment_in_us",
+  physically_present_in_us: true,
+  uscis_chart_selection: "dates_for_filing",
+  employment_basis_still_valid: true,
+  medical_i693_ready: true,
+  complex_adjustment_issue: false,
+  i485_status: "not_filed",
+  include_derivatives: true,
+  request_ead_with_i485: true,
+  request_advance_parole_with_i485: true
+});
+assert.equal(indiaEb2SeptemberFiling.status, "READY");
+assert.ok(indiaEb2SeptemberFiling.summary.some((item) => item.label === "Dates for Filing" && item.value.includes("2015-01-15")));
+assert.ok(indiaEb2SeptemberFiling.summary.some((item) => item.label === "Final Action" && item.value.includes("Not eligible")));
+assert.ok(indiaEb2SeptemberFiling.warnings.some((item) => item.includes("Final Action Date")));
+
+const indiaEb2SeptemberTooLate = evaluateProcess("usa-employment-green-card", {
+  employment_category: "eb2_advanced_degree_exceptional_ability",
+  employment_gc_stage: "adjustment_of_status",
+  beneficiary_location: "inside_us",
+  labor_certification_route: "dol_perm",
+  perm_status: "certified",
+  perm_certification_within_180_days: true,
+  immigrant_petition_status: "approved",
+  priority_date_known: true,
+  priority_date: "2015-02-01",
+  chargeability_country: "india",
+  bulletin_month: "september_2026",
+  intended_final_processing: "adjustment_in_us",
+  physically_present_in_us: true,
+  uscis_chart_selection: "dates_for_filing",
+  employment_basis_still_valid: true,
+  medical_i693_ready: true,
+  complex_adjustment_issue: false,
+  i485_status: "not_filed",
+  include_derivatives: false,
+  request_ead_with_i485: false,
+  request_advance_parole_with_i485: false
+});
+assert.equal(indiaEb2SeptemberTooLate.status, "NOT_READY");
+assert.ok(indiaEb2SeptemberTooLate.blockers.some((item) => item.includes("2015-01-15")));
+
+const adjustmentOutsideUs = evaluateProcess("usa-employment-green-card", {
+  employment_category: "eb1a_extraordinary_ability",
+  employment_gc_stage: "adjustment_of_status",
+  beneficiary_location: "outside_us",
+  labor_certification_route: "not_required",
+  immigrant_petition_status: "approved",
+  priority_date_known: true,
+  priority_date: "2026-01-01",
+  chargeability_country: "all_other",
+  bulletin_month: "september_2026",
+  intended_final_processing: "adjustment_in_us",
+  physically_present_in_us: false,
+  uscis_chart_selection: "final_action",
+  employment_basis_still_valid: true,
+  medical_i693_ready: true,
+  complex_adjustment_issue: false,
+  i485_status: "not_filed",
+  include_derivatives: false,
+  request_ead_with_i485: false,
+  request_advance_parole_with_i485: false
+});
+assert.equal(adjustmentOutsideUs.status, "NOT_READY");
+assert.ok(adjustmentOutsideUs.blockers.some((item) => item.includes("physically present")));
+
+const eb1aWrongPerm = evaluateProcess("usa-employment-green-card", {
+  employment_category: "eb1a_extraordinary_ability",
+  employment_gc_stage: "planning",
+  beneficiary_location: "inside_us",
+  labor_certification_route: "dol_perm",
+  immigrant_petition_status: "not_filed",
+  priority_date_known: false,
+  chargeability_country: "all_other",
+  bulletin_month: "september_2026",
+  intended_final_processing: "not_sure",
+  include_derivatives: false
+});
+assert.equal(eb1aWrongPerm.status, "NOT_READY");
+
+const eb4Route = evaluateProcess("usa-employment-green-card", {
+  employment_category: "eb4_special_immigrant",
+  employment_gc_stage: "immigrant_petition",
+  beneficiary_location: "inside_us",
+  labor_certification_route: "not_required",
+  immigrant_petition_status: "not_filed",
+  priority_date_known: false,
+  chargeability_country: "all_other",
+  bulletin_month: "september_2026",
+  intended_final_processing: "not_sure",
+  include_derivatives: false
+});
+assert.equal(eb4Route.status, "NEEDS_AUTHORITATIVE_CONFIRMATION");
+assert.ok(eb4Route.summary.some((item) => item.label === "Petition" && item.value.includes("I-360")));
 
 const immigrationRouter = getProcessBySlug("usa/immigration");
 assert.equal(immigrationRouter?.id, "usa-immigration-services");
