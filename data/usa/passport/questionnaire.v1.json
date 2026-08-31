@@ -1,0 +1,14 @@
+{
+  "id": "usa-passport-service-router-v1",
+  "version": 1,
+  "verified": "2026-08-30",
+  "stale_after": "2026-09-29",
+  "questions": [
+    { "id": "usa_passport_need", "type": "select", "required": true, "options": ["first_adult_passport", "child_under_16", "renew_passport", "lost_or_stolen", "damaged_passport", "name_change_or_correction", "limited_validity_replacement", "urgent_travel", "not_sure"] },
+    { "id": "renewal_eligibility_confirmed", "type": "boolean", "required_when": { "usa_passport_need": "renew_passport" } },
+    { "id": "child_parent_consent_issue", "type": "boolean", "required_when": { "usa_passport_need": "child_under_16" } },
+    { "id": "urgent_travel_window", "type": "select", "required_when": { "usa_passport_need": "urgent_travel" }, "options": ["travel_within_14_days", "foreign_visa_within_28_days", "travel_15_days_or_more", "not_sure"] }
+  ],
+  "rule_nodes": ["okf/processes/usa/passport/services.md"],
+  "result_schema": "schemas/government-service-router-result.schema.json"
+}
