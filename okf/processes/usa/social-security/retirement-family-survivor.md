@@ -7,12 +7,12 @@ verified: 2026-08-31
 stale_after: 2026-09-30
 status: verified
 sources:
-  - ../../sources/ssa-retirement-aug-2026.md
-  - ../../sources/ssa-family-benefits-aug-2026.md
-  - ../../sources/ssa-survivor-benefits-aug-2026.md
-  - ../../sources/ssa-retirement-claiming-rules-aug-2026.md
-  - ../../sources/ssa-earnings-test-2026.md
-  - ../../sources/ssa-international-payments-aug-2026.md
+  - ../../../sources/ssa-retirement-aug-2026.md
+  - ../../../sources/ssa-family-benefits-aug-2026.md
+  - ../../../sources/ssa-survivor-benefits-aug-2026.md
+  - ../../../sources/ssa-retirement-claiming-rules-aug-2026.md
+  - ../../../sources/ssa-earnings-test-2026.md
+  - ../../../sources/ssa-international-payments-aug-2026.md
 ---
 
 # Social Security Retirement, Family and Survivor Benefits
