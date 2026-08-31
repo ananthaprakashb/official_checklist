@@ -1,4 +1,11 @@
 {
   "version": 1,
-  "sources": {}
+  "sources": {
+    "source-dol-perm-aug-2026": {
+      "status": "healthy",
+      "accepted_fingerprint": "03ba4c55e8a1be52db1b26af074015eac4285c578a5a73b026b787b65fea3f00",
+      "observed_fingerprint": "03ba4c55e8a1be52db1b26af074015eac4285c578a5a73b026b787b65fea3f00",
+      "http_status": 200
+    }
+  }
 }

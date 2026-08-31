@@ -56,11 +56,18 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          summary=$(jq -r '.issues[] | "- **\(.kind)**: \(.detail)" + (if .url then " — " + .url else "" end)' reports/source-freshness.json)
-          body=$(printf 'Automated official-source monitoring requires review.\n\n%s\n\nThe bot does **not** rewrite OKF rules or Visa Bulletin cutoff tables. Review the changed/new/unavailable source, update the relevant source node and rule data, then explicitly accept the new fingerprint if appropriate.\n\nRun: `%s`\n' "$summary" "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID")
+          if [ -s reports/source-freshness.json ]; then
+            summary=$(jq -r '.issues[]? | "- **\(.kind)**: \(.detail)" + (if .url then " — " + .url else "" end)' reports/source-freshness.json)
+          else
+            summary="- **monitor_internal_error**: Source monitor exited without producing reports/source-freshness.json. Inspect the workflow log."
+          fi
+          if [ -z "$summary" ]; then
+            summary="- **monitor_internal_error**: Source monitor requested review but produced no issue details. Inspect the workflow log."
+          fi
+          body=$(printf 'Automated official-source monitoring requires review.\n\n%s\n\nThe bot does **not** rewrite OKF rules or Visa Bulletin cutoff tables. For fingerprint sources, review the official source before accepting a new fingerprint. For metadata-only sources and Visa Bulletin calendar reminders, review the official page and explicitly update `checked_at` / `verified` / `stale_after` and any affected rules.\n\nRun: `%s`\n' "$summary" "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID")
           existing=$(gh issue list --state open --search '"Official source review required" in:title' --json number --jq '.[0].number // empty')
           if [ -n "$existing" ]; then
-            gh issue comment "$existing" --body "$body"
+            gh issue edit "$existing" --body "$body"
           else
             gh issue create --title "Official source review required" --body "$body"
           fi

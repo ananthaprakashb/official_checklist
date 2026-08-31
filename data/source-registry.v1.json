@@ -1,11 +1,12 @@
 {
   "version": 1,
-  "generated": "2026-08-30",
+  "generated": "2026-08-31",
   "policy": {
-    "description": "Critical high-change authoritative sources monitored by content fingerprint. Static source freshness remains governed by OKF stale_after metadata and live-process stale_after metadata.",
+    "description": "Critical authoritative sources use content fingerprints only where GitHub-hosted runners can retrieve and validate source content reliably. Bot-protected sources remain metadata-enforced and require scheduled human review.",
     "change_action": "review_required_no_rule_autorewrite",
     "availability_action": "review_required",
-    "discovery": "next_month_dos_visa_bulletin"
+    "discovery": "visa_bulletin_calendar_review",
+    "visa_bulletin_review_day_utc": 10
   },
   "sources": [
     {
@@ -15,7 +16,8 @@
       "official_url": "https://travel.state.gov/content/travel/en/legal/visa-law0/visa-bulletin/2026/visa-bulletin-for-september-2026.html",
       "source_level": 1,
       "stale_after": "2026-09-13",
-      "monitor": "content_fingerprint",
+      "monitor": "metadata_only",
+      "monitor_note": "travel.state.gov returns HTTP 403 to GitHub-hosted runners, including the official PDF. Do not treat bot protection as source unavailability.",
       "process_ids": ["usa-immigration-services", "usa-employment-green-card", "usa-i140-detailed", "usa-i485-detailed", "usa-nvc-employment-detailed"]
     },
     {
@@ -35,7 +37,8 @@
       "official_url": "https://travel.state.gov/content/travel/en/us-visas/immigrate/national-visa-center.html",
       "source_level": 1,
       "stale_after": "2026-09-13",
-      "monitor": "content_fingerprint",
+      "monitor": "metadata_only",
+      "monitor_note": "travel.state.gov returns HTTP 403 to GitHub-hosted runners. NVC freshness is enforced through reviewed metadata rather than unreliable polling.",
       "process_ids": ["usa-immigration-services", "usa-employment-green-card", "usa-nvc-employment-detailed"]
     },
     {
@@ -46,6 +49,8 @@
       "source_level": 1,
       "stale_after": "2026-09-13",
       "monitor": "content_fingerprint",
+      "expected_markers": ["Permanent Labor Certification", "Prevailing Wage Determination", "Recruitment"],
+      "min_normalized_chars": 500,
       "process_ids": ["usa-immigration-services", "usa-employment-green-card", "usa-perm-detailed"]
     },
     {
