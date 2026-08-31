@@ -1,0 +1,229 @@
+{
+  "id": "usa-perm-detailed-preflight-v1",
+  "version": 1,
+  "verified": "2026-08-30",
+  "stale_after": "2026-09-13",
+  "questions": [
+    {
+      "id": "perm_stage",
+      "type": "select",
+      "required": true,
+      "options": ["planning", "prevailing_wage", "recruitment", "eta9089_ready", "eta9089_filed", "audit", "supervised_recruitment", "certified", "denied", "reconsideration_or_balca"]
+    },
+    {
+      "id": "perm_occupation_route",
+      "type": "select",
+      "required": true,
+      "options": ["professional", "nonprofessional", "college_teacher_special_handling", "professional_athlete", "schedule_a", "not_sure"]
+    },
+    {
+      "id": "pwd_status",
+      "type": "select",
+      "required": true,
+      "options": ["not_requested", "pending", "issued", "expired_or_unknown", "not_sure"]
+    },
+    {
+      "id": "pwd_validity_known",
+      "type": "boolean",
+      "required": true
+    },
+    {
+      "id": "pwd_valid_from",
+      "type": "string",
+      "required_when": { "pwd_validity_known": true }
+    },
+    {
+      "id": "pwd_valid_to",
+      "type": "string",
+      "required_when": { "pwd_validity_known": true }
+    },
+    {
+      "id": "recruitment_started",
+      "type": "boolean",
+      "required": true
+    },
+    {
+      "id": "first_recruitment_date",
+      "type": "string",
+      "required_when": { "recruitment_started": true }
+    },
+    {
+      "id": "swa_job_order_start_date",
+      "type": "string",
+      "required_when": { "recruitment_started": true }
+    },
+    {
+      "id": "swa_job_order_end_date",
+      "type": "string",
+      "required_when": { "recruitment_started": true }
+    },
+    {
+      "id": "newspaper_recruitment_route",
+      "type": "select",
+      "required_when": { "recruitment_started": true },
+      "options": ["two_sunday_ads", "rural_no_sunday_edition", "professional_journal_substitution", "not_sure"]
+    },
+    {
+      "id": "newspaper_ad_1_date",
+      "type": "string",
+      "required_when": { "recruitment_started": true }
+    },
+    {
+      "id": "newspaper_ad_2_date",
+      "type": "string"
+    },
+    {
+      "id": "professional_journal_ad_date",
+      "type": "string",
+      "required_when": { "newspaper_recruitment_route": "professional_journal_substitution" }
+    },
+    {
+      "id": "journal_substitution_job_qualifies",
+      "type": "boolean",
+      "required_when": { "newspaper_recruitment_route": "professional_journal_substitution" }
+    },
+    {
+      "id": "professional_additional_steps_count",
+      "type": "number",
+      "min": 0,
+      "required_when": { "perm_occupation_route": "professional" }
+    },
+    {
+      "id": "professional_additional_steps_timing_valid",
+      "type": "select",
+      "required_when": { "perm_occupation_route": "professional" },
+      "options": ["yes", "no", "not_sure"]
+    },
+    {
+      "id": "bargaining_representative_exists",
+      "type": "boolean",
+      "required": true
+    },
+    {
+      "id": "union_notice_provided",
+      "type": "boolean",
+      "required_when": { "bargaining_representative_exists": true }
+    },
+    {
+      "id": "notice_posted_10_business_days",
+      "type": "boolean",
+      "required_when": { "bargaining_representative_exists": false }
+    },
+    {
+      "id": "notice_post_start_date",
+      "type": "string",
+      "required_when": { "bargaining_representative_exists": false }
+    },
+    {
+      "id": "notice_post_end_date",
+      "type": "string",
+      "required_when": { "bargaining_representative_exists": false }
+    },
+    {
+      "id": "in_house_media_required",
+      "type": "boolean",
+      "required_when": { "bargaining_representative_exists": false }
+    },
+    {
+      "id": "in_house_media_completed",
+      "type": "boolean",
+      "required_when": { "in_house_media_required": true }
+    },
+    {
+      "id": "qualifying_layoffs_within_6_months",
+      "type": "boolean",
+      "required": true
+    },
+    {
+      "id": "laid_off_workers_notified_considered",
+      "type": "boolean",
+      "required_when": { "qualifying_layoffs_within_6_months": true }
+    },
+    {
+      "id": "job_and_recruitment_terms_consistent",
+      "type": "select",
+      "required": true,
+      "options": ["yes", "no", "not_sure"]
+    },
+    {
+      "id": "recruitment_report_ready",
+      "type": "select",
+      "required": true,
+      "options": ["yes", "no", "not_sure"]
+    },
+    {
+      "id": "eta9089_filing_date",
+      "type": "string"
+    },
+    {
+      "id": "five_year_record_file_ready",
+      "type": "select",
+      "required": true,
+      "options": ["yes", "no", "not_sure"]
+    },
+    {
+      "id": "audit_response_status",
+      "type": "select",
+      "required_when": { "perm_stage": "audit" },
+      "options": ["audit_received", "preparing", "submitted_within_30_days", "extension_granted", "late", "not_sure"]
+    },
+    {
+      "id": "audit_extension_deadline_met",
+      "type": "select",
+      "required_when": { "audit_response_status": "extension_granted" },
+      "options": ["yes", "no", "not_sure"]
+    },
+    {
+      "id": "supervised_ad_approved_before_publication",
+      "type": "select",
+      "required_when": { "perm_stage": "supervised_recruitment" },
+      "options": ["yes", "no", "not_sure"]
+    },
+    {
+      "id": "supervised_deadline_status",
+      "type": "select",
+      "required_when": { "perm_stage": "supervised_recruitment" },
+      "options": ["on_time", "extension_granted", "late", "not_sure"]
+    },
+    {
+      "id": "certification_date",
+      "type": "string",
+      "required_when": { "perm_stage": "certified" }
+    },
+    {
+      "id": "i140_filed_with_certification",
+      "type": "boolean",
+      "required_when": { "perm_stage": "certified" }
+    },
+    {
+      "id": "i140_filing_date",
+      "type": "string",
+      "required_when": { "i140_filed_with_certification": true }
+    },
+    {
+      "id": "certification_still_within_180_days",
+      "type": "select",
+      "required_when": { "i140_filed_with_certification": false },
+      "options": ["yes", "no", "not_sure"]
+    },
+    {
+      "id": "denial_review_requested_within_30_days",
+      "type": "select",
+      "required_when": { "perm_stage": "denied" },
+      "options": ["yes", "no", "not_sure"]
+    },
+    {
+      "id": "review_request_was_timely",
+      "type": "select",
+      "required_when": { "perm_stage": "reconsideration_or_balca" },
+      "options": ["yes", "no", "not_sure"]
+    }
+  ],
+  "rule_nodes": [
+    "okf/decisions/usa-perm-stage-classification.md",
+    "okf/requirements/usa-perm-recruitment-timeline.md",
+    "okf/processes/usa/immigration/employment-green-card/perm.md",
+    "okf/validation/usa-perm-preflight.md"
+  ],
+  "result_schema": "schemas/us-perm-preflight-result.schema.json"
+}
