@@ -11,8 +11,9 @@
     "validate:okf": "tsx scripts/validate-okf.ts",
     "validate:data": "tsx scripts/validate-questionnaires.ts",
     "test:evaluator": "tsx scripts/test-evaluator.ts",
+    "test:i140": "tsx scripts/test-i140.ts",
     "test:engine": "tsx scripts/test-process-engine.ts",
-    "validate": "npm run validate:okf && npm run validate:data && npm run test:evaluator && npm run test:engine && npm run typecheck",
+    "validate": "npm run validate:okf && npm run validate:data && npm run test:evaluator && npm run test:i140 && npm run test:engine && npm run typecheck",
     "test": "npm run validate",
     "deploy:cloudflare": "npm run build && npx wrangler deploy"
   },

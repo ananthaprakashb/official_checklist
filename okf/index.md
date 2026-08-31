@@ -24,6 +24,14 @@ Detailed standard PERM route:
 - [PERM recruitment and filing timeline](requirements/usa-perm-recruitment-timeline.md)
 - [PERM preflight validation](validation/usa-perm-preflight.md)
 
+Detailed Form I-140 route:
+
+- [I-140 classification and petitioner router](decisions/usa-i140-classification.md)
+- [Detailed Form I-140 process](processes/usa/immigration/employment-green-card/i140.md)
+- [I-140 category evidence requirements](requirements/usa-i140-category-evidence.md)
+- [I-140 priority-date and premium-processing requirements](requirements/usa-i140-priority-premium.md)
+- [I-140 preflight validation](validation/usa-i140-preflight.md)
+
 ### Other permanent residence and visa processes
 
 - [Family-based Green Card](processes/usa/immigration/family-green-card.md)
@@ -47,7 +55,14 @@ Employment-based permanent residence:
 - [eCFR — supervised recruitment, 20 CFR 656.21](sources/ecfr-perm-supervised-recruitment-aug-2026.md)
 - [eCFR — PERM determination/review](sources/ecfr-perm-determination-review-aug-2026.md)
 - [eCFR — PERM certification validity, 20 CFR 656.30](sources/ecfr-perm-certification-validity-aug-2026.md)
-- [USCIS — Form I-140](sources/uscis-i140-aug-2026.md)
+- [USCIS — Form I-140 overview](sources/uscis-i140-aug-2026.md)
+- [USCIS — Form I-140 instructions](sources/uscis-i140-instructions-aug-2026.md)
+- [USCIS — I-140 ability to pay](sources/uscis-i140-ability-to-pay-aug-2026.md)
+- [USCIS — I-140 premium processing / I-907](sources/uscis-i907-i140-premium-aug-2026.md)
+- [USCIS — employment priority-date retention](sources/uscis-i140-priority-date-retention-aug-2026.md)
+- [USCIS — Schedule A occupations](sources/uscis-schedule-a-aug-2026.md)
+- [USCIS — RFE / NOID policy](sources/uscis-rfe-noid-aug-2026.md)
+- [USCIS — I-290B appeal / motion](sources/uscis-i290b-i140-review-aug-2026.md)
 - [USCIS — Form I-485](sources/uscis-i485-aug-2026.md)
 - [USCIS — Visa Availability and Priority Dates](sources/uscis-visa-availability-priority-dates-aug-2026.md)
 - [Department of State — August 2026 Visa Bulletin](sources/dos-visa-bulletin-aug-2026.md)
@@ -161,15 +176,16 @@ Official service-provider sources:
 
 ## Machine-readable runtime scope
 
-The interactive application now exposes five verified runtime modules:
+The interactive application now exposes six verified runtime modules:
 
 1. **U.S. Immigration & Visa Services** — cross-agency service/stage classifier covering green-card, visa, H-1B/H-4, EAD/travel-document, permanent-resident/citizenship, address and I-94 routes.
 2. **Employment-Based Green Card** — detailed category/PERM/petition/priority-date/Visa-Bulletin/I-485-or-NVC preflight with separate filing and Final Action gates.
 3. **PERM Labor Certification Preflight** — detailed employer-side PWD, recruitment/Notice-of-Filing timeline, ETA-9089, audit/supervised-recruitment, determination/review and 180-day I-140 handoff checks.
-4. **Indian Passport Services in the U.S.** — service-family classifier across passport/travel-document and related services.
-5. **Indian Passport Re-issue in the U.S.** — detailed questionnaire/evaluator with jurisdiction, reason, Tatkaal, fee and document preflight.
+4. **Form I-140 Immigrant Petition Preflight** — detailed classification/petitioner/labor-route/evidence/ability-to-pay/priority-date/premium-processing and USCIS-notice routing.
+5. **Indian Passport Services in the U.S.** — service-family classifier across passport/travel-document and related services.
+6. **Indian Passport Re-issue in the U.S.** — detailed questionnaire/evaluator with jurisdiction, reason, Tatkaal, fee and document preflight.
 
-The employment-green-card module intentionally returns `NEEDS_AUTHORITATIVE_CONFIRMATION` when the filing month is outside its bundled bulletin data, USCIS monthly chart selection is not verified, adjustment eligibility has a material fact-specific issue, or EB-4/EB-5 requires a dedicated category-specific evidence module. The detailed PERM module similarly stops for special-handling/Schedule-A/athlete routes, unknown controlling dates, and Certifying-Officer-specific orders instead of applying the standard 20 CFR 656.17 calendar blindly. A `READY` result means the encoded preflight gates are satisfied; it is not a prediction of USCIS/DOL/Department of State approval.
+The employment-green-card module intentionally returns `NEEDS_AUTHORITATIVE_CONFIRMATION` when the filing month is outside its bundled bulletin data, USCIS monthly chart selection is not verified, adjustment eligibility has a material fact-specific issue, or EB-4/EB-5 requires a dedicated category-specific evidence module. The detailed PERM module similarly stops for special-handling/Schedule-A/athlete routes, unknown controlling dates, and Certifying-Officer-specific orders instead of applying the standard 20 CFR 656.17 calendar blindly. The I-140 module keeps fact-intensive EB-1A/NIW merits, uncertain priority-date retention, and RFE/NOID/denial strategy in authoritative-confirmation status rather than predicting adjudication. A `READY` result means the encoded preflight gates are satisfied; it is not a prediction of USCIS/DOL/Department of State approval.
 
 Additional process envelopes become live only after authoritative source coverage, classification logic, a versioned questionnaire/evaluator, regression tests and catalog exposure are all present.
 

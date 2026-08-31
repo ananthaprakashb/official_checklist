@@ -1,0 +1,133 @@
+{
+  "id": "usa-i140-detailed-preflight-v1",
+  "version": 1,
+  "verified": "2026-08-30",
+  "stale_after": "2026-09-13",
+  "questions": [
+    {
+      "id": "i140_category",
+      "type": "select",
+      "required": true,
+      "options": ["eb1a", "eb1b", "eb1c", "eb2_regular", "eb2_niw", "eb3_skilled", "eb3_professional", "eb3_other", "schedule_a", "eb4_or_eb5", "not_sure"]
+    },
+    {
+      "id": "schedule_a_group",
+      "type": "select",
+      "required_when": { "i140_category": "schedule_a" },
+      "options": ["group_i_registered_nurse", "group_i_physical_therapist", "group_ii_sciences_or_arts", "group_ii_performing_arts", "not_sure"]
+    },
+    {
+      "id": "schedule_a_preference",
+      "type": "select",
+      "required_when": { "i140_category": "schedule_a" },
+      "options": ["eb2", "eb3_skilled", "eb3_professional", "not_sure"]
+    },
+    {
+      "id": "i140_stage",
+      "type": "select",
+      "required": true,
+      "options": ["planning", "ready_to_file", "filed_pending", "rfe", "noid", "approved", "denied", "revoked_or_withdrawn"]
+    },
+    {
+      "id": "petitioner_route",
+      "type": "select",
+      "required": true,
+      "options": ["employer", "self_petition", "not_sure"]
+    },
+    {
+      "id": "labor_route",
+      "type": "select",
+      "required": true,
+      "options": ["perm_certified", "schedule_a", "not_required", "not_sure"]
+    },
+    {
+      "id": "perm_certification_valid_for_new_filing",
+      "type": "select",
+      "required_when": { "labor_route": "perm_certified" },
+      "options": ["yes", "no", "not_sure"]
+    },
+    {
+      "id": "current_i140_edition_confirmed",
+      "type": "select",
+      "required": true,
+      "options": ["yes", "no", "not_sure"]
+    },
+    {
+      "id": "category_evidence_ready",
+      "type": "select",
+      "required": true,
+      "options": ["yes", "no", "not_sure"]
+    },
+    {
+      "id": "job_offer_status",
+      "type": "select",
+      "required": true,
+      "options": ["ready", "missing", "not_applicable", "not_sure"]
+    },
+    {
+      "id": "ability_to_pay_status",
+      "type": "select",
+      "required": true,
+      "options": ["evidence_ready", "not_ready", "not_applicable", "not_sure"]
+    },
+    {
+      "id": "beneficiary_met_labor_requirements_by_priority_date",
+      "type": "select",
+      "required": true,
+      "options": ["yes", "no", "not_applicable", "not_sure"]
+    },
+    {
+      "id": "prior_approved_eb123_petition",
+      "type": "boolean",
+      "required": true
+    },
+    {
+      "id": "priority_date_retention_issue",
+      "type": "select",
+      "required_when": { "prior_approved_eb123_petition": true },
+      "options": ["none_known", "fraud_or_willful_misrepresentation", "labor_cert_revoked_or_invalidated", "material_error", "other_or_not_sure"]
+    },
+    {
+      "id": "request_premium_processing",
+      "type": "boolean",
+      "required": true
+    },
+    {
+      "id": "intended_final_processing",
+      "type": "select",
+      "required": true,
+      "options": ["adjustment_in_us", "consular_abroad", "not_sure"]
+    },
+    {
+      "id": "rfe_response_status",
+      "type": "select",
+      "required_when": { "i140_stage": "rfe" },
+      "options": ["preparing_before_notice_deadline", "complete_and_submitted_on_time", "deadline_missed", "not_sure"]
+    },
+    {
+      "id": "noid_response_status",
+      "type": "select",
+      "required_when": { "i140_stage": "noid" },
+      "options": ["preparing_before_notice_deadline", "complete_and_submitted_on_time", "deadline_missed", "not_sure"]
+    },
+    {
+      "id": "denial_notice_reviewed",
+      "type": "boolean",
+      "required_when": { "i140_stage": "denied" }
+    },
+    {
+      "id": "denial_next_action",
+      "type": "select",
+      "required_when": { "i140_stage": "denied" },
+      "options": ["appeal", "motion_reopen", "motion_reconsider", "new_petition", "not_sure"]
+    }
+  ],
+  "rule_nodes": [
+    "okf/decisions/usa-i140-classification.md",
+    "okf/requirements/usa-i140-category-evidence.md",
+    "okf/requirements/usa-i140-priority-premium.md",
+    "okf/processes/usa/immigration/employment-green-card/i140.md",
+    "okf/validation/usa-i140-preflight.md"
+  ],
+  "result_schema": "schemas/us-i140-preflight-result.schema.json"
+}
