@@ -1,5 +1,21 @@
 # OKF Change Log
 
+## 2026-08-30 — v0.8 detailed PERM labor-certification preflight
+
+- Activated a dedicated `/usa/immigration/employment-green-card/perm` workflow for the standard employer-side 20 CFR 656.17 PERM route.
+- Added authoritative PWD, recruitment, Notice of Filing, audit, supervised-recruitment, determination/review and certification-validity source nodes from DOL and the current eCFR.
+- Added stage classification for planning, prevailing wage, recruitment, ETA-9089 readiness/filing, audit, supervised recruitment, certification, denial and reconsideration/BALCA review.
+- Added route guards so college/university teacher special handling, professional-athlete and Schedule A cases do not inherit the standard professional/nonprofessional recruitment calendar.
+- Added objective PWD-validity checks requiring recruitment to begin or ETA-9089 to be filed during the recorded PWD validity period.
+- Added date-calculated recruitment checks for the 30-day SWA job order, Sunday/professional-journal advertising and the 30-to-180-day prefiling window.
+- Added professional-occupation controls for three additional recruitment methods and their special 30/180-day timing restriction.
+- Added Notice-of-Filing controls for bargaining-representative notice or 10-consecutive-business-day posting, applicable in-house media and the 30-to-180-day filing window.
+- Added six-month layoff review, recruitment-report readiness and five-year PERM supporting-record retention controls.
+- Added audit handling for the 30-day response period and the single discretionary extension, plus supervised-recruitment approval/deadline controls driven by the Certifying Officer's instructions.
+- Added denial/reconsideration/BALCA routing with the 30-day administrative-review deadline and pending-review duplicate-filing guardrail.
+- Added certified-PERM → I-140 handoff validation for the 180-calendar-day certification-validity period and preserved the ETA-9089 filing date as the priority-date basis.
+- Added regression tests for a short SWA job order, recruitment aging beyond 180 days, late Notice of Filing, missed audit deadline, unauthorized supervised-recruitment publication and late I-140 handoff.
+
 ## 2026-08-30 — v0.7 detailed employment-based Green Card preflight
 
 - Activated a dedicated `/usa/immigration/employment-green-card` workflow rather than stopping at the generic U.S. immigration classifier.

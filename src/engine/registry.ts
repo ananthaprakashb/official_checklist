@@ -8,6 +8,7 @@ import { evaluateUsImmigrationServices, type UsImmigrationServiceRouterResult } 
 import type { PassportAnswers, ProcessResult, Questionnaire } from "../types";
 import { labelOption, QUESTION_LABELS } from "../uiText";
 import { createEmploymentGreenCardModule } from "./employmentGreenCardModule";
+import { createPermModule } from "./permModule";
 import type { ProcessCatalogEntry, ProcessModule, ProcessPresentation } from "./types";
 
 const entries = catalogJson.processes as ProcessCatalogEntry[];
@@ -191,8 +192,11 @@ const usImmigrationEntry = entries.find((entry) => entry.id === "usa-immigration
 if (!usImmigrationEntry) throw new Error("Process catalog is missing usa-immigration-services");
 const employmentGreenCardEntry = entries.find((entry) => entry.id === "usa-employment-green-card");
 if (!employmentGreenCardEntry) throw new Error("Process catalog is missing usa-employment-green-card");
+const permEntry = entries.find((entry) => entry.id === "usa-perm-detailed");
+if (!permEntry) throw new Error("Process catalog is missing usa-perm-detailed");
 
 const modules = new Map<string, ProcessModule>([
+  [permEntry.id, createPermModule(permEntry)],
   [employmentGreenCardEntry.id, createEmploymentGreenCardModule(employmentGreenCardEntry)],
   [
     usImmigrationEntry.id,

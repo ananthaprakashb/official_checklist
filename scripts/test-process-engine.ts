@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { evaluateProcess, getProcessBySlug, getProcessModule, listProcesses } from "../src/engine/registry";
 
 const processes = listProcesses();
-assert.ok(processes.length >= 6, "catalog should contain detailed employment green card, U.S. immigration, passport workflows and planned expansion entries");
+assert.ok(processes.length >= 7, "catalog should contain detailed PERM/employment green card, U.S. immigration, passport workflows and planned expansion entries");
 assert.equal(new Set(processes.map((entry) => entry.id)).size, processes.length, "process ids must be unique");
 assert.equal(new Set(processes.map((entry) => entry.slug)).size, processes.length, "process slugs must be unique");
 
@@ -14,6 +14,119 @@ for (const entry of processes) {
     assert.ok(getProcessModule(entry.id), `${entry.id}: live process is not registered`);
   }
 }
+
+const permProcess = getProcessBySlug("usa/immigration/employment-green-card/perm");
+assert.equal(permProcess?.id, "usa-perm-detailed");
+assert.ok(getProcessModule("usa-perm-detailed"));
+
+const validPermReady = {
+  perm_stage: "eta9089_ready",
+  perm_occupation_route: "professional",
+  pwd_status: "issued",
+  pwd_validity_known: true,
+  pwd_valid_from: "2026-02-01",
+  pwd_valid_to: "2026-08-31",
+  recruitment_started: true,
+  first_recruitment_date: "2026-03-01",
+  swa_job_order_start_date: "2026-03-01",
+  swa_job_order_end_date: "2026-03-30",
+  newspaper_recruitment_route: "two_sunday_ads",
+  newspaper_ad_1_date: "2026-04-05",
+  newspaper_ad_2_date: "2026-04-12",
+  professional_additional_steps_count: 3,
+  professional_additional_steps_timing_valid: "yes",
+  bargaining_representative_exists: false,
+  notice_posted_10_business_days: true,
+  notice_post_start_date: "2026-05-04",
+  notice_post_end_date: "2026-05-15",
+  in_house_media_required: true,
+  in_house_media_completed: true,
+  qualifying_layoffs_within_6_months: false,
+  job_and_recruitment_terms_consistent: "yes",
+  recruitment_report_ready: "yes",
+  eta9089_filing_date: "2026-08-20",
+  five_year_record_file_ready: "yes"
+};
+
+const validPerm = evaluateProcess("usa-perm-detailed", validPermReady);
+assert.equal(validPerm.status, "READY");
+assert.ok(validPerm.summary.some((item) => item.label === "PWD timing" && item.value.includes("Recruitment began")));
+assert.ok(validPerm.summary.some((item) => item.label === "Recruitment timing" && item.value.includes("30–180")));
+
+const shortJobOrder = evaluateProcess("usa-perm-detailed", {
+  ...validPermReady,
+  swa_job_order_end_date: "2026-03-29"
+});
+assert.equal(shortJobOrder.status, "NOT_READY");
+assert.ok(shortJobOrder.blockers.some((item) => item.includes("shorter than the required 30-day")));
+
+const oldRecruitment = evaluateProcess("usa-perm-detailed", {
+  ...validPermReady,
+  first_recruitment_date: "2026-02-01",
+  swa_job_order_start_date: "2026-02-01",
+  swa_job_order_end_date: "2026-03-02"
+});
+assert.equal(oldRecruitment.status, "NOT_READY");
+assert.ok(oldRecruitment.blockers.some((item) => item.includes("outside the 30-to-180-day")));
+
+const lateNotice = evaluateProcess("usa-perm-detailed", {
+  ...validPermReady,
+  notice_post_start_date: "2026-07-20",
+  notice_post_end_date: "2026-08-01"
+});
+assert.equal(lateNotice.status, "NOT_READY");
+assert.ok(lateNotice.blockers.some((item) => item.includes("Notice of Filing")));
+
+const lateAudit = evaluateProcess("usa-perm-detailed", {
+  ...validPermReady,
+  perm_stage: "audit",
+  audit_response_status: "late"
+});
+assert.equal(lateAudit.status, "NOT_READY");
+assert.ok(lateAudit.blockers.some((item) => item.includes("audit response")));
+
+const badSupervisedRecruitment = evaluateProcess("usa-perm-detailed", {
+  ...validPermReady,
+  perm_stage: "supervised_recruitment",
+  supervised_ad_approved_before_publication: "no",
+  supervised_deadline_status: "on_time"
+});
+assert.equal(badSupervisedRecruitment.status, "NOT_READY");
+assert.ok(badSupervisedRecruitment.blockers.some((item) => item.includes("without prior Certifying Officer approval")));
+
+const certifiedBase = {
+  perm_stage: "certified",
+  perm_occupation_route: "professional",
+  pwd_status: "issued",
+  pwd_validity_known: true,
+  pwd_valid_from: "2026-01-01",
+  pwd_valid_to: "2026-05-31",
+  recruitment_started: true,
+  first_recruitment_date: "2026-01-01",
+  swa_job_order_start_date: "2026-01-01",
+  swa_job_order_end_date: "2026-01-30",
+  newspaper_recruitment_route: "two_sunday_ads",
+  newspaper_ad_1_date: "2026-02-01",
+  newspaper_ad_2_date: "2026-02-08",
+  professional_additional_steps_count: 3,
+  professional_additional_steps_timing_valid: "yes",
+  bargaining_representative_exists: false,
+  notice_posted_10_business_days: true,
+  notice_post_start_date: "2026-02-16",
+  notice_post_end_date: "2026-02-27",
+  in_house_media_required: false,
+  qualifying_layoffs_within_6_months: false,
+  job_and_recruitment_terms_consistent: "yes",
+  recruitment_report_ready: "yes",
+  eta9089_filing_date: "2026-05-01",
+  five_year_record_file_ready: "yes",
+  certification_date: "2026-05-15",
+  i140_filed_with_certification: true,
+  i140_filing_date: "2026-11-20"
+};
+const expiredI140Handoff = evaluateProcess("usa-perm-detailed", certifiedBase);
+assert.equal(expiredI140Handoff.status, "NOT_READY");
+assert.ok(expiredI140Handoff.blockers.some((item) => item.includes("more than 180 calendar days")));
 
 const employmentGreenCard = getProcessBySlug("usa/immigration/employment-green-card");
 assert.equal(employmentGreenCard?.id, "usa-employment-green-card");

@@ -37,6 +37,23 @@
       "tags": ["immigration", "green-card", "employment", "perm", "i-140", "i-485", "visa-bulletin", "nvc"]
     },
     {
+      "id": "usa-perm-detailed",
+      "slug": "usa/immigration/employment-green-card/perm",
+      "country_code": "US",
+      "country_name": "United States",
+      "applicant_country": "United States",
+      "service": "PERM Labor Certification",
+      "title": "PERM Labor Certification Preflight",
+      "short_title": "PERM",
+      "summary": "Validate the employer-side PERM sequence and timing: prevailing wage, 30–180-day recruitment calendar, Notice of Filing, ETA-9089, audits/supervised recruitment, certification or denial/review, and the 180-day I-140 handoff.",
+      "status": "live",
+      "module": "usa-perm-detailed-v1",
+      "questionnaire_id": "usa-perm-detailed-preflight-v1",
+      "verified": "2026-08-30",
+      "stale_after": "2026-09-13",
+      "tags": ["immigration", "green-card", "employment", "perm", "pwd", "eta-9089", "recruitment", "audit", "balca", "i-140"]
+    },
+    {
       "id": "india-us-passport-services",
       "slug": "india/passport/us",
       "country_code": "IN",
