@@ -17,6 +17,13 @@ Canonical entrypoint for the machine-readable official-process graph.
 - [Immigrant petition requirements](requirements/usa-employment-green-card-petition.md)
 - [Adjustment / consular requirements](requirements/usa-employment-green-card-adjustment-consular.md)
 
+Detailed standard PERM route:
+
+- [PERM stage classifier](decisions/usa-perm-stage-classification.md)
+- [Detailed PERM labor certification process](processes/usa/immigration/employment-green-card/perm.md)
+- [PERM recruitment and filing timeline](requirements/usa-perm-recruitment-timeline.md)
+- [PERM preflight validation](validation/usa-perm-preflight.md)
+
 ### Other permanent residence and visa processes
 
 - [Family-based Green Card](processes/usa/immigration/family-green-card.md)
@@ -33,6 +40,13 @@ Canonical entrypoint for the machine-readable official-process graph.
 Employment-based permanent residence:
 
 - [DOL — Permanent Labor Certification (PERM)](sources/dol-perm-aug-2026.md)
+- [DOL — PERM Prevailing Wage Determination](sources/dol-perm-prevailing-wage-aug-2026.md)
+- [eCFR — PERM recruitment, 20 CFR 656.17](sources/ecfr-perm-recruitment-aug-2026.md)
+- [DOL — PERM Notice of Filing](sources/dol-perm-notice-filing-aug-2026.md)
+- [eCFR — PERM audit procedures, 20 CFR 656.20](sources/ecfr-perm-audit-aug-2026.md)
+- [eCFR — supervised recruitment, 20 CFR 656.21](sources/ecfr-perm-supervised-recruitment-aug-2026.md)
+- [eCFR — PERM determination/review](sources/ecfr-perm-determination-review-aug-2026.md)
+- [eCFR — PERM certification validity, 20 CFR 656.30](sources/ecfr-perm-certification-validity-aug-2026.md)
 - [USCIS — Form I-140](sources/uscis-i140-aug-2026.md)
 - [USCIS — Form I-485](sources/uscis-i485-aug-2026.md)
 - [USCIS — Visa Availability and Priority Dates](sources/uscis-visa-availability-priority-dates-aug-2026.md)
@@ -147,14 +161,15 @@ Official service-provider sources:
 
 ## Machine-readable runtime scope
 
-The interactive application now exposes four verified runtime modules:
+The interactive application now exposes five verified runtime modules:
 
 1. **U.S. Immigration & Visa Services** — cross-agency service/stage classifier covering green-card, visa, H-1B/H-4, EAD/travel-document, permanent-resident/citizenship, address and I-94 routes.
 2. **Employment-Based Green Card** — detailed category/PERM/petition/priority-date/Visa-Bulletin/I-485-or-NVC preflight with separate filing and Final Action gates.
-3. **Indian Passport Services in the U.S.** — service-family classifier across passport/travel-document and related services.
-4. **Indian Passport Re-issue in the U.S.** — detailed questionnaire/evaluator with jurisdiction, reason, Tatkaal, fee and document preflight.
+3. **PERM Labor Certification Preflight** — detailed employer-side PWD, recruitment/Notice-of-Filing timeline, ETA-9089, audit/supervised-recruitment, determination/review and 180-day I-140 handoff checks.
+4. **Indian Passport Services in the U.S.** — service-family classifier across passport/travel-document and related services.
+5. **Indian Passport Re-issue in the U.S.** — detailed questionnaire/evaluator with jurisdiction, reason, Tatkaal, fee and document preflight.
 
-The employment-green-card module intentionally returns `NEEDS_AUTHORITATIVE_CONFIRMATION` when the filing month is outside its bundled bulletin data, USCIS monthly chart selection is not verified, adjustment eligibility has a material fact-specific issue, or EB-4/EB-5 requires a dedicated category-specific evidence module. A `READY` result means the encoded preflight gates are satisfied; it is not a prediction of USCIS/DOL/Department of State approval.
+The employment-green-card module intentionally returns `NEEDS_AUTHORITATIVE_CONFIRMATION` when the filing month is outside its bundled bulletin data, USCIS monthly chart selection is not verified, adjustment eligibility has a material fact-specific issue, or EB-4/EB-5 requires a dedicated category-specific evidence module. The detailed PERM module similarly stops for special-handling/Schedule-A/athlete routes, unknown controlling dates, and Certifying-Officer-specific orders instead of applying the standard 20 CFR 656.17 calendar blindly. A `READY` result means the encoded preflight gates are satisfied; it is not a prediction of USCIS/DOL/Department of State approval.
 
 Additional process envelopes become live only after authoritative source coverage, classification logic, a versioned questionnaire/evaluator, regression tests and catalog exposure are all present.
 
