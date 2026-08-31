@@ -5,6 +5,7 @@ import { dirname, resolve } from "node:path";
 const registryPath = resolve("data/source-registry.v1.json");
 const healthPath = resolve("data/source-health.v1.json");
 const reportPath = resolve("reports/source-freshness.json");
+const offline = process.argv.includes("--offline");
 
 type RegistrySource = {
   id: string;
@@ -12,9 +13,17 @@ type RegistrySource = {
   official_url: string;
   stale_after: string;
   monitor: "content_fingerprint" | "metadata_only";
+  expected_markers?: string[];
+  min_normalized_chars?: number;
   process_ids: string[];
 };
-type Registry = { version: number; sources: RegistrySource[] };
+type Registry = {
+  version: number;
+  policy?: {
+    visa_bulletin_review_day_utc?: number;
+  };
+  sources: RegistrySource[];
+};
 type HealthRecord = {
   status: "healthy" | "changed" | "unavailable";
   accepted_fingerprint?: string;
@@ -26,8 +35,15 @@ type Health = { version: number; sources: Record<string, HealthRecord> };
 type ReviewIssue = { source_id?: string; kind: string; detail: string; url?: string };
 type Observation = { source_id: string; status: string; http_status?: number };
 
+function extractSemanticRegion(html: string): string {
+  const main = html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i);
+  if (main?.[1]) return main[1];
+  const article = html.match(/<article\b[^>]*>([\s\S]*?)<\/article>/i);
+  return article?.[1] ?? html;
+}
+
 function normalizeHtml(html: string): string {
-  return html
+  return extractSemanticRegion(html)
     .replace(/<!--[\s\S]*?-->/g, " ")
     .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ")
     .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, " ")
@@ -36,12 +52,14 @@ function normalizeHtml(html: string): string {
     .replace(/<[^>]+>/g, " ")
     .replace(/&nbsp;|&#160;/gi, " ")
     .replace(/&amp;/gi, "&")
+    .replace(/&quot;|&#34;/gi, '"')
+    .replace(/&#39;|&apos;/gi, "'")
     .replace(/\s+/g, " ")
     .trim();
 }
 
-function fingerprint(body: string): string {
-  return createHash("sha256").update(normalizeHtml(body)).digest("hex");
+function fingerprintNormalized(normalized: string): string {
+  return createHash("sha256").update(normalized).digest("hex");
 }
 
 function dateExpired(dateText: string, now: Date): boolean {
@@ -49,12 +67,20 @@ function dateExpired(dateText: string, now: Date): boolean {
   return Number.isFinite(end.getTime()) && now.getTime() > end.getTime();
 }
 
-async function fetchText(url: string): Promise<{ ok: boolean; status: number; body: string }> {
+function retryable(status: number): boolean {
+  return status === 0 || status === 408 || status === 425 || status === 429 || status >= 500;
+}
+
+function delay(ms: number) {
+  return new Promise((resolvePromise) => setTimeout(resolvePromise, ms));
+}
+
+async function fetchOnce(url: string): Promise<{ ok: boolean; status: number; body: string }> {
   try {
     const response = await fetch(url, {
       redirect: "follow",
       headers: {
-        "user-agent": "official-checklist-source-monitor/1.0 (+https://github.com/ananthaprakashb/official_checklist)",
+        "user-agent": "official-checklist-source-monitor/1.1 (+https://github.com/ananthaprakashb/official_checklist)",
         accept: "text/html,application/xhtml+xml,text/plain;q=0.9,*/*;q=0.5"
       },
       signal: AbortSignal.timeout(25000)
@@ -63,6 +89,33 @@ async function fetchText(url: string): Promise<{ ok: boolean; status: number; bo
   } catch {
     return { ok: false, status: 0, body: "" };
   }
+}
+
+async function fetchText(url: string, attempts = 3): Promise<{ ok: boolean; status: number; body: string; attempts: number }> {
+  let latest = { ok: false, status: 0, body: "" };
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    latest = await fetchOnce(url);
+    if (latest.ok || !retryable(latest.status) || attempt === attempts) return { ...latest, attempts: attempt };
+    await delay(350 * attempt);
+  }
+  return { ...latest, attempts };
+}
+
+function validateFetchedContent(source: RegistrySource, body: string): { valid: boolean; normalized: string; detail?: string } {
+  const normalized = normalizeHtml(body);
+  const minChars = source.min_normalized_chars ?? 200;
+  if (normalized.length < minChars) {
+    return { valid: false, normalized, detail: `normalized content was only ${normalized.length} characters; expected at least ${minChars}` };
+  }
+  const lower = normalized.toLowerCase();
+  const missing = (source.expected_markers ?? []).filter((marker) => !lower.includes(marker.toLowerCase()));
+  if (missing.length > 0) {
+    return { valid: false, normalized, detail: `expected marker(s) missing: ${missing.join(", ")}` };
+  }
+  if (/just a moment|captcha|access denied|request unsuccessful/i.test(normalized.slice(0, 1500))) {
+    return { valid: false, normalized, detail: "response resembles an access-control or challenge page" };
+  }
+  return { valid: true, normalized };
 }
 
 function nextMonthBulletinUrl(now: Date): { url: string; label: string } {
@@ -84,6 +137,17 @@ function writeReport(report: unknown) {
 async function main() {
   const registry = JSON.parse(readFileSync(registryPath, "utf8")) as Registry;
   const health = JSON.parse(readFileSync(healthPath, "utf8")) as Health;
+
+  if (offline) {
+    const fingerprintSources = registry.sources.filter((source) => source.monitor === "content_fingerprint");
+    for (const source of fingerprintSources) {
+      if (!source.expected_markers?.length) throw new Error(`${source.id}: content_fingerprint requires expected_markers`);
+      if (!source.min_normalized_chars || source.min_normalized_chars < 100) throw new Error(`${source.id}: content_fingerprint requires min_normalized_chars >= 100`);
+    }
+    console.log(`Source monitor offline execution OK: ${registry.sources.length} source(s), ${fingerprintSources.length} fingerprint source(s).`);
+    return;
+  }
+
   const today = new Date();
   const isoDay = today.toISOString().slice(0, 10);
   const reviewIssues: ReviewIssue[] = [];
@@ -93,7 +157,14 @@ async function main() {
     if (dateExpired(source.stale_after, today)) {
       reviewIssues.push({ source_id: source.id, kind: "stale_metadata", detail: `${source.authority} review date expired after ${source.stale_after}.`, url: source.official_url });
     }
-    if (source.monitor !== "content_fingerprint") continue;
+
+    if (source.monitor === "metadata_only") {
+      // A source previously fingerprinted may be moved to metadata-only after a
+      // production transport limitation is confirmed. Never let the old network
+      // state keep poisoning runtime results after that policy change.
+      delete health.sources[source.id];
+      continue;
+    }
 
     const fetched = await fetchText(source.official_url);
     const previous = health.sources[source.id];
@@ -105,12 +176,26 @@ async function main() {
         last_changed: previous?.last_changed,
         http_status: fetched.status
       };
-      reviewIssues.push({ source_id: source.id, kind: "source_unavailable", detail: `${source.authority} returned HTTP ${fetched.status || "network error"}.`, url: source.official_url });
+      reviewIssues.push({ source_id: source.id, kind: "source_unavailable", detail: `${source.authority} returned HTTP ${fetched.status || "network error"} after ${fetched.attempts} attempt(s).`, url: source.official_url });
       observations.push({ source_id: source.id, status: "unavailable", http_status: fetched.status });
       continue;
     }
 
-    const observed = fingerprint(fetched.body);
+    const content = validateFetchedContent(source, fetched.body);
+    if (!content.valid) {
+      health.sources[source.id] = {
+        status: "unavailable",
+        accepted_fingerprint: previous?.accepted_fingerprint,
+        observed_fingerprint: previous?.observed_fingerprint,
+        last_changed: previous?.last_changed,
+        http_status: fetched.status
+      };
+      reviewIssues.push({ source_id: source.id, kind: "invalid_source_response", detail: `${source.authority} returned HTTP 200 but failed content validation: ${content.detail}.`, url: source.official_url });
+      observations.push({ source_id: source.id, status: "invalid_response", http_status: fetched.status });
+      continue;
+    }
+
+    const observed = fingerprintNormalized(content.normalized);
     if (!previous?.accepted_fingerprint) {
       health.sources[source.id] = { status: "healthy", accepted_fingerprint: observed, observed_fingerprint: observed, http_status: fetched.status };
       observations.push({ source_id: source.id, status: "baseline_created", http_status: fetched.status });
@@ -134,12 +219,14 @@ async function main() {
   }
 
   const discovery = nextMonthBulletinUrl(today);
-  if (!registry.sources.some((source) => source.official_url === discovery.url)) {
-    const fetched = await fetchText(discovery.url);
-    const expectedHeading = `visa bulletin for ${discovery.label}`.toLowerCase();
-    if (fetched.ok && normalizeHtml(fetched.body).toLowerCase().includes(expectedHeading)) {
-      reviewIssues.push({ kind: "new_visa_bulletin", detail: `${discovery.label} Visa Bulletin is published and is not yet encoded in the source registry/cutoff tables.`, url: discovery.url });
-    }
+  const nextBulletinEncoded = registry.sources.some((source) => source.official_url === discovery.url);
+  const reviewDay = registry.policy?.visa_bulletin_review_day_utc ?? 10;
+  if (!nextBulletinEncoded && today.getUTCDate() >= reviewDay) {
+    reviewIssues.push({
+      kind: "visa_bulletin_manual_review_due",
+      detail: `${discovery.label} Visa Bulletin is not yet encoded. GitHub-hosted runners are blocked by travel.state.gov, so manually check the official page and update the source node/cutoff tables if a new bulletin is published. This is a calendar review reminder, not a publication claim.`,
+      url: discovery.url
+    });
   }
 
   const orderedHealth: Health = {
@@ -155,7 +242,12 @@ async function main() {
     review_required: reviewIssues.length > 0,
     issues: reviewIssues,
     observations,
-    next_bulletin_checked: discovery
+    visa_bulletin_review: {
+      next_expected_route: discovery,
+      encoded: nextBulletinEncoded,
+      manual_review_day_utc: reviewDay,
+      transport_note: "travel.state.gov blocks GitHub-hosted Actions runners; publication is reviewed manually against the official State Department source"
+    }
   });
 
   console.log(`Source freshness check: ${observations.length} fingerprint source(s), ${reviewIssues.length} review issue(s).`);
