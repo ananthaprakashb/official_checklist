@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { clearHiddenAnswers, isAnswered, visibleQuestions } from "./core/questionnaire";
 import { applySourceFreshness } from "./core/sourceFreshness";
+import { landingOfficialLinks, resultOfficialLinks } from "./engine/processOfficialLinks";
 import { getProcessBySlug, getProcessModule, listProcesses } from "./engine/registry";
 import { currentRoute, navigate, restoreRedirectedRoute, routeHref } from "./engine/router";
-import type { ProcessCatalogEntry, ProcessModule } from "./engine/types";
+import type { ProcessCatalogEntry, ProcessModule, ProcessOfficialLink } from "./engine/types";
 import type { PassportAnswers, Question } from "./types";
 import "./styles.css";
 
@@ -45,6 +46,27 @@ function ProcessAnchor({ entry, children, className }: { entry: ProcessCatalogEn
     >
       {children}
     </a>
+  );
+}
+
+function OfficialLinksPanel({ links, title, copy, compact = false }: { links: ProcessOfficialLink[]; title: string; copy: string; compact?: boolean }) {
+  if (!links.length) return null;
+  return (
+    <section className={`official-links-panel ${compact ? "compact" : ""}`}>
+      <div className="official-links-heading">
+        <div><p className="eyebrow">OFFICIAL LINKS</p><h2>{title}</h2></div>
+        <span>{links.length} link{links.length === 1 ? "" : "s"}</span>
+      </div>
+      <p className="official-links-copy">{copy}</p>
+      <div className="official-link-grid">
+        {links.map((link) => (
+          <a className="official-link-card" href={link.url} key={`${link.label}-${link.url}`} target="_blank" rel="noreferrer">
+            <span>{link.label}</span>
+            <strong>Open official site ↗</strong>
+          </a>
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -135,6 +157,8 @@ function ProcessRunner({ process }: { process: ProcessModule }) {
   const questions = useMemo(() => visibleQuestions(process.questionnaire.questions, answers), [process, answers]);
   const current = questions[Math.min(index, Math.max(0, questions.length - 1))];
   const presentation = useMemo(() => applySourceFreshness(process.entry, process.present(process.evaluate(answers))), [process, answers]);
+  const startingLinks = useMemo(() => landingOfficialLinks(process), [process]);
+  const relevantLinks = useMemo(() => resultOfficialLinks(process, answers, presentation), [process, answers, presentation]);
 
   function updateAnswer(value: unknown) {
     if (!current) return;
@@ -170,6 +194,12 @@ function ProcessRunner({ process }: { process: ProcessModule }) {
           <button className="primary" onClick={() => setStarted(true)} type="button">Start preflight</button>
           {Object.keys(answers).length > 0 && <button className="link-button" onClick={reset} type="button">Clear saved answers</button>}
         </section>
+        <OfficialLinksPanel
+          links={startingLinks}
+          title="Official starting points"
+          copy="Already know your next step? Open the government or contracted-service portal directly. If you are not sure which link applies, run the preflight first."
+          compact
+        />
         <section className="notice"><strong>Independent guidance.</strong> Official sources control whenever guidance changes or conflicts. Answers stay in this browser for this prototype.</section>
       </main>
     );
@@ -186,7 +216,11 @@ function ProcessRunner({ process }: { process: ProcessModule }) {
         <section className="result-section"><h2>Required checklist</h2><ol className="checklist">{presentation.requiredItems.map((item) => <li key={item}>{item}</li>)}</ol></section>
         {presentation.conditionalItems.length > 0 && <section className="result-section"><h2>Conditional documents</h2><ul className="checklist">{presentation.conditionalItems.map((item) => <li key={item}>{item}</li>)}</ul></section>}
         <section className="next-step card"><p className="eyebrow">NEXT STEP</p><h2>{presentation.nextStep}</h2></section>
-        <section className="source-panel"><h2>Official-source layer</h2><p>This process module is tied to verified authoritative source nodes. Recheck source freshness before final submission.</p><div className="source-links">{process.sourceLinks.map((link) => <a href={link.url} key={link.url} target="_blank" rel="noreferrer">{link.label} ↗</a>)}</div></section>
+        <OfficialLinksPanel
+          links={relevantLinks}
+          title="Continue on official sites"
+          copy={`These links are filtered to the route above. Source/rule freshness was last verified ${presentation.sourcesVerified}; recheck the official instructions before payment, appointment or submission.`}
+        />
         <div className="action-row no-print"><button className="primary" onClick={() => window.print()} type="button">Print / Save PDF</button><button className="secondary" onClick={copyJson} type="button">{copied ? "Copied" : "Copy result JSON"}</button></div>
         <p className="footer-note">Independent guidance only. Official sources remain authoritative.</p>
       </main>
