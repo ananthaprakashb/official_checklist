@@ -1,6 +1,20 @@
 import assert from "node:assert/strict";
+import { existsSync } from "node:fs";
+import catalogJson from "../data/process-catalog.v1.json";
+import registryJson from "../data/source-registry.v1.json";
 import { applySourceFreshness, evaluateSourceFreshness, type SourceHealthSnapshot, type SourceRegistrySnapshot } from "../src/core/sourceFreshness";
 import type { ProcessCatalogEntry, ProcessPresentation } from "../src/engine/types";
+
+const realRegistry = registryJson as typeof registryJson;
+const processIds = new Set(catalogJson.processes.map((process) => process.id));
+assert.equal(new Set(realRegistry.sources.map((source) => source.id)).size, realRegistry.sources.length, "source-registry ids must be unique");
+for (const source of realRegistry.sources) {
+  assert.ok(source.official_url.startsWith("https://"), `${source.id}: official_url must use https`);
+  assert.ok(existsSync(source.okf_path), `${source.id}: missing OKF source node ${source.okf_path}`);
+  assert.ok(source.monitor === "content_fingerprint" || source.monitor === "metadata_only", `${source.id}: invalid monitor mode`);
+  for (const processId of source.process_ids) assert.ok(processIds.has(processId), `${source.id}: unknown process id ${processId}`);
+}
+assert.ok(realRegistry.sources.some((source) => source.id.includes("visa-bulletin") && source.monitor === "content_fingerprint"), "current DOS Visa Bulletin must be fingerprint monitored");
 
 const entry: ProcessCatalogEntry = {
   id: "test-process",
@@ -54,4 +68,4 @@ assert.equal(applySourceFreshness(staleProcess, presentation, new Date("2026-09-
 const alreadyBlocked = { ...presentation, status: "NOT_READY" as const };
 assert.equal(applySourceFreshness(entry, alreadyBlocked, new Date("2026-09-01T12:00:00Z"), registry, changed).status, "NOT_READY");
 
-console.log("PASS Source Freshness Tests: healthy, changed, unavailable, stale-process and NOT_READY precedence.");
+console.log(`PASS Source Freshness Tests: ${realRegistry.sources.length} registered critical sources plus healthy/changed/unavailable/stale runtime guards.`);
