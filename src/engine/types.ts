@@ -34,6 +34,11 @@ export type ProcessPresentation = {
   rawResult: unknown;
 };
 
+export type ProcessOfficialLink = {
+  label: string;
+  url: string;
+};
+
 export type ProcessModule = {
   entry: ProcessCatalogEntry;
   questionnaire: Questionnaire;
@@ -42,7 +47,8 @@ export type ProcessModule = {
   questionLabels: Record<string, string>;
   questionHints?: Record<string, string>;
   labelOption: (value: string) => string;
-  sourceLinks: Array<{ label: string; url: string }>;
+  sourceLinks: ProcessOfficialLink[];
+  resolveSourceLinks?: (answers: PassportAnswers, presentation: ProcessPresentation) => ProcessOfficialLink[];
   evaluate: (answers: PassportAnswers) => unknown;
   present: (result: unknown) => ProcessPresentation;
 };
