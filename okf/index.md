@@ -32,6 +32,15 @@ Detailed Form I-140 route:
 - [I-140 priority-date and premium-processing requirements](requirements/usa-i140-priority-premium.md)
 - [I-140 preflight validation](validation/usa-i140-preflight.md)
 
+Detailed employment-based Form I-485 route:
+
+- [I-485 employment basis and filing-chart classifier](decisions/usa-i485-employment-classification.md)
+- [Detailed employment-based Form I-485 process](processes/usa/immigration/employment-green-card/i485.md)
+- [I-485 admission/status-history and INA 245(k) requirements](requirements/usa-i485-status-245k.md)
+- [I-485 filing package](requirements/usa-i485-filing-package.md)
+- [Supplement J / INA 204(j) portability](requirements/usa-i485-portability.md)
+- [I-485 preflight validation](validation/usa-i485-preflight.md)
+
 ### Other permanent residence and visa processes
 
 - [Family-based Green Card](processes/usa/immigration/family-green-card.md)
@@ -64,11 +73,15 @@ Employment-based permanent residence:
 - [USCIS — RFE / NOID policy](sources/uscis-rfe-noid-aug-2026.md)
 - [USCIS — I-290B appeal / motion](sources/uscis-i290b-i140-review-aug-2026.md)
 - [USCIS — Form I-485](sources/uscis-i485-aug-2026.md)
+- [USCIS — Form I-485 instructions](sources/uscis-i485-instructions-aug-2026.md)
 - [USCIS — Visa Availability and Priority Dates](sources/uscis-visa-availability-priority-dates-aug-2026.md)
 - [Department of State — August 2026 Visa Bulletin](sources/dos-visa-bulletin-aug-2026.md)
 - [Department of State — September 2026 Visa Bulletin](sources/dos-visa-bulletin-sep-2026.md)
+- [USCIS — employment adjustment / INA 245(k)](sources/uscis-employment-adjustment-245k-aug-2026.md)
 - [USCIS — Form I-485 Supplement J](sources/uscis-i485-supplement-j-aug-2026.md)
 - [USCIS — Form I-693 with I-485](sources/uscis-i693-i485-aug-2026.md)
+- [USCIS — I-765 category (c)(9) for pending adjustment](sources/uscis-i765-c9-pending-i485-aug-2026.md)
+- [USCIS — I-131 Advance Parole for pending adjustment](sources/uscis-i131-advance-parole-i485-aug-2026.md)
 - [USCIS — EB-4 / Form I-360](sources/uscis-eb4-aug-2026.md)
 - [USCIS — EB-5](sources/uscis-eb5-aug-2026.md)
 
@@ -176,16 +189,17 @@ Official service-provider sources:
 
 ## Machine-readable runtime scope
 
-The interactive application now exposes six verified runtime modules:
+The interactive application now exposes seven verified runtime modules:
 
 1. **U.S. Immigration & Visa Services** — cross-agency service/stage classifier covering green-card, visa, H-1B/H-4, EAD/travel-document, permanent-resident/citizenship, address and I-94 routes.
 2. **Employment-Based Green Card** — detailed category/PERM/petition/priority-date/Visa-Bulletin/I-485-or-NVC preflight with separate filing and Final Action gates.
 3. **PERM Labor Certification Preflight** — detailed employer-side PWD, recruitment/Notice-of-Filing timeline, ETA-9089, audit/supervised-recruitment, determination/review and 180-day I-140 handoff checks.
 4. **Form I-140 Immigrant Petition Preflight** — detailed classification/petitioner/labor-route/evidence/ability-to-pay/priority-date/premium-processing and USCIS-notice routing.
-5. **Indian Passport Services in the U.S.** — service-family classifier across passport/travel-document and related services.
-6. **Indian Passport Re-issue in the U.S.** — detailed questionnaire/evaluator with jurisdiction, reason, Tatkaal, fee and document preflight.
+5. **Employment-Based Form I-485 Preflight** — detailed monthly filing-chart/priority-date, INA 245/245(k), I-693, Supplement J, derivatives, I-765/I-131, pending-case notices, 180-day portability and Final Action checks.
+6. **Indian Passport Services in the U.S.** — service-family classifier across passport/travel-document and related services.
+7. **Indian Passport Re-issue in the U.S.** — detailed questionnaire/evaluator with jurisdiction, reason, Tatkaal, fee and document preflight.
 
-The employment-green-card module intentionally returns `NEEDS_AUTHORITATIVE_CONFIRMATION` when the filing month is outside its bundled bulletin data, USCIS monthly chart selection is not verified, adjustment eligibility has a material fact-specific issue, or EB-4/EB-5 requires a dedicated category-specific evidence module. The detailed PERM module similarly stops for special-handling/Schedule-A/athlete routes, unknown controlling dates, and Certifying-Officer-specific orders instead of applying the standard 20 CFR 656.17 calendar blindly. The I-140 module keeps fact-intensive EB-1A/NIW merits, uncertain priority-date retention, and RFE/NOID/denial strategy in authoritative-confirmation status rather than predicting adjudication. A `READY` result means the encoded preflight gates are satisfied; it is not a prediction of USCIS/DOL/Department of State approval.
+The employment-green-card module intentionally returns `NEEDS_AUTHORITATIVE_CONFIRMATION` when the filing month is outside its bundled bulletin data, USCIS monthly chart selection is not verified, adjustment eligibility has a material fact-specific issue, or EB-4/EB-5 requires a dedicated category-specific evidence module. The detailed PERM module similarly stops for special-handling/Schedule-A/athlete routes, unknown controlling dates, and Certifying-Officer-specific orders instead of applying the standard 20 CFR 656.17 calendar blindly. The I-140 module keeps fact-intensive EB-1A/NIW merits, uncertain priority-date retention, and RFE/NOID/denial strategy in authoritative-confirmation status rather than predicting adjudication. The I-485 module keeps unverified monthly USCIS chart selection, INA 245(k) or other adjustment-bar uncertainty, transfer-of-basis requests, derivative issues and notice-specific adjudication matters in authoritative-confirmation status while hard-blocking objective filing/portability/travel mismatches. A `READY` result means the encoded preflight gates are satisfied; it is not a prediction of USCIS/DOL/Department of State approval.
 
 Additional process envelopes become live only after authoritative source coverage, classification logic, a versioned questionnaire/evaluator, regression tests and catalog exposure are all present.
 
