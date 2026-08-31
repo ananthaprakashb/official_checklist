@@ -12,9 +12,20 @@ for (const source of realRegistry.sources) {
   assert.ok(source.official_url.startsWith("https://"), `${source.id}: official_url must use https`);
   assert.ok(existsSync(source.okf_path), `${source.id}: missing OKF source node ${source.okf_path}`);
   assert.ok(source.monitor === "content_fingerprint" || source.monitor === "metadata_only", `${source.id}: invalid monitor mode`);
+  if (source.monitor === "content_fingerprint") {
+    assert.ok("expected_markers" in source && Array.isArray(source.expected_markers) && source.expected_markers.length > 0, `${source.id}: fingerprint sources require expected markers`);
+    assert.ok("min_normalized_chars" in source && typeof source.min_normalized_chars === "number" && source.min_normalized_chars >= 100, `${source.id}: fingerprint sources require minimum validated content size`);
+  }
   for (const processId of source.process_ids) assert.ok(processIds.has(processId), `${source.id}: unknown process id ${processId}`);
 }
-assert.ok(realRegistry.sources.some((source) => source.id.includes("visa-bulletin") && source.monitor === "content_fingerprint"), "current DOS Visa Bulletin must be fingerprint monitored");
+const visaBulletin = realRegistry.sources.find((source) => source.id === "source-dos-visa-bulletin-sep-2026");
+assert.equal(visaBulletin?.monitor, "metadata_only", "DOS Visa Bulletin must not be direct-polled from GitHub Actions while travel.state.gov blocks runners");
+const nvc = realRegistry.sources.find((source) => source.id === "source-dos-nvc-ds260-aug-2026");
+assert.equal(nvc?.monitor, "metadata_only", "DOS NVC must use metadata freshness while travel.state.gov blocks GitHub Actions");
+const dol = realRegistry.sources.find((source) => source.id === "source-dol-perm-aug-2026");
+assert.equal(dol?.monitor, "content_fingerprint", "DOL PERM should retain real content fingerprint monitoring");
+assert.equal(realRegistry.policy.discovery, "visa_bulletin_calendar_review");
+assert.ok(realRegistry.policy.visa_bulletin_review_day_utc >= 1 && realRegistry.policy.visa_bulletin_review_day_utc <= 28);
 
 const entry: ProcessCatalogEntry = {
   id: "test-process",
@@ -68,4 +79,4 @@ assert.equal(applySourceFreshness(staleProcess, presentation, new Date("2026-09-
 const alreadyBlocked = { ...presentation, status: "NOT_READY" as const };
 assert.equal(applySourceFreshness(entry, alreadyBlocked, new Date("2026-09-01T12:00:00Z"), registry, changed).status, "NOT_READY");
 
-console.log(`PASS Source Freshness Tests: ${realRegistry.sources.length} registered critical sources plus healthy/changed/unavailable/stale runtime guards.`);
+console.log(`PASS Source Freshness Tests: ${realRegistry.sources.length} registered critical sources with production-safe monitor modes plus runtime guards.`);
