@@ -11,6 +11,29 @@ The Cloud Run service contains the ADK API server plus the existing deterministi
 - a Google Cloud project with billing enabled
 - a Gemini API key stored in Google Secret Manager
 
+### Windows: verify `gcloud` before deployment
+
+The TypeScript ADK Cloud Run deploy command invokes `gcloud` internally. On Windows, Google Cloud CLI must therefore be installed and visible in the same terminal where `npm run adk:deploy:cloud-run` is executed.
+
+After installing Google Cloud CLI, close the existing PowerShell/Command Prompt and open a new terminal so the updated PATH is loaded. Verify:
+
+```bat
+where gcloud
+gcloud --version
+```
+
+If either command fails, do not retry the ADK deployment yet. Fix the Google Cloud CLI installation/PATH first.
+
+Then initialize/authenticate:
+
+```bash
+gcloud init
+gcloud auth login
+gcloud config set project YOUR_PROJECT_ID
+```
+
+The deployment wrapper performs this `gcloud` availability check before starting ADK deployment so a missing CLI fails immediately with an actionable message.
+
 Authenticate and select the project:
 
 ```bash
@@ -27,6 +50,8 @@ gcloud services enable \
   artifactregistry.googleapis.com \
   secretmanager.googleapis.com
 ```
+
+On Windows Command Prompt or PowerShell, run the service names on one line if the shell does not support the backslash continuation syntax.
 
 ## Store the Gemini key in Secret Manager
 
