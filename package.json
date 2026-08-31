@@ -1,8 +1,11 @@
 {
   "name": "official-checklist",
-  "version": "0.4.0",
+  "version": "0.6.0",
   "private": true,
   "description": "Machine-verifiable OKF checklists and interactive preflight for official government and consular processes.",
+  "engines": {
+    "node": ">=24.13.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -25,16 +28,23 @@
     "test:i485": "tsx scripts/test-i485.ts",
     "test:nvc": "tsx scripts/test-nvc.ts",
     "test:engine": "tsx scripts/test-process-engine.ts",
-    "validate": "npm run validate:okf && npm run validate:data && npm run test:sources && npm run test:source-monitor-exec && npm run test:official-links && npm run test:question-conditions && npm run test:high-friction && npm run test:california-dmv && npm run test:ssa-benefits && npm run test:fafsa && npm run test:evaluator && npm run test:i140 && npm run test:i485 && npm run test:nvc && npm run test:engine && npm run typecheck",
+    "test:adk": "tsx scripts/test-adk-tools.ts",
+    "test:cloud-run": "tsx scripts/test-cloud-run-config.ts",
+    "adk:run": "adk run agent.ts",
+    "adk:web": "adk web",
+    "adk:deploy:cloud-run": "tsx scripts/deploy-adk-cloud-run.ts",
+    "validate": "npm run validate:okf && npm run validate:data && npm run test:sources && npm run test:source-monitor-exec && npm run test:official-links && npm run test:question-conditions && npm run test:high-friction && npm run test:california-dmv && npm run test:ssa-benefits && npm run test:fafsa && npm run test:evaluator && npm run test:i140 && npm run test:i485 && npm run test:nvc && npm run test:engine && npm run test:adk && npm run test:cloud-run && npm run typecheck",
     "test": "npm run validate",
     "deploy:cloudflare": "npm run build && npx wrangler deploy"
   },
   "dependencies": {
+    "@google/adk": "^2.0.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },
   "devDependencies": {
-    "@types/node": "^22.10.0",
+    "@google/adk-devtools": "^2.0.0",
+    "@types/node": "^24.3.0",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
     "@vitejs/plugin-react": "^4.7.0",
