@@ -8,6 +8,7 @@ import { evaluateUsImmigrationServices, type UsImmigrationServiceRouterResult } 
 import type { PassportAnswers, ProcessResult, Questionnaire } from "../types";
 import { labelOption, QUESTION_LABELS } from "../uiText";
 import { createEmploymentGreenCardModule } from "./employmentGreenCardModule";
+import { createHighFrictionModule, HIGH_FRICTION_PROCESS_IDS } from "./highFrictionModules";
 import { createI140Module } from "./i140Module";
 import { createI485Module } from "./i485Module";
 import { createNvcModule } from "./nvcModule";
@@ -203,8 +204,14 @@ const i485Entry = entries.find((entry) => entry.id === "usa-i485-detailed");
 if (!i485Entry) throw new Error("Process catalog is missing usa-i485-detailed");
 const nvcEntry = entries.find((entry) => entry.id === "usa-nvc-employment-detailed");
 if (!nvcEntry) throw new Error("Process catalog is missing usa-nvc-employment-detailed");
+const highFrictionEntries = HIGH_FRICTION_PROCESS_IDS.map((id) => {
+  const entry = entries.find((candidate) => candidate.id === id);
+  if (!entry) throw new Error(`Process catalog is missing ${id}`);
+  return entry;
+});
 
 const modules = new Map<string, ProcessModule>([
+  ...highFrictionEntries.map((entry) => [entry.id, createHighFrictionModule(entry)] as [string, ProcessModule]),
   [nvcEntry.id, createNvcModule(nvcEntry)],
   [i485Entry.id, createI485Module(i485Entry)],
   [i140Entry.id, createI140Module(i140Entry)],
