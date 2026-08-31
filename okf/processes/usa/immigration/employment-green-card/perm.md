@@ -1,7 +1,7 @@
 ---
 type: process
 id: process-usa-perm-detailed
- title: U.S. PERM Detailed Preflight
+title: U.S. PERM Detailed Preflight
 generated: 2026-08-30
 verified: 2026-08-30
 stale_after: 2026-09-13
