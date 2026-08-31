@@ -15,6 +15,7 @@
     {"id":"bulletin_month","type":"select","required":true,"options":["august_2026","september_2026","later_or_not_sure"]},
     {"id":"uscis_chart_selection","type":"select","required":true,"options":["final_action","dates_for_filing","not_checked"]},
     {"id":"status_history_245k","type":"select","required":true,"options":["none_known","possible_180_or_less_since_last_lawful_admission","over_180_since_last_lawful_admission","other_or_not_sure"]},
+    {"id":"last_entry_for_245k_was_lawful_admission","type":"select","required_when":{"status_history_245k":"possible_180_or_less_since_last_lawful_admission"},"options":["yes","no","not_sure"]},
     {"id":"complex_adjustment_issue","type":"boolean","required":true},
     {"id":"current_i485_edition_confirmed","type":"select","required":true,"options":["yes","no","not_sure"]},
     {"id":"i693_status","type":"select","required":true,"options":["ready_current_complete","not_ready","not_required_confirmed","not_sure"]},
