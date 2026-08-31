@@ -8,6 +8,11 @@ export type CloudRunDeployConfig = {
   withUi: boolean;
 };
 
+export type NpxInvocation = {
+  command: string;
+  args: string[];
+};
+
 const TRUTHY = new Set(["1", "true", "yes", "y", "on"]);
 
 function required(env: NodeJS.ProcessEnv, name: string): string {
@@ -60,4 +65,19 @@ export function buildAdkCloudRunArgs(config: CloudRunDeployConfig): string[] {
   );
 
   return args;
+}
+
+export function buildNpxInvocation(
+  args: string[],
+  platform: NodeJS.Platform = process.platform,
+  comspec: string | undefined = process.env.ComSpec
+): NpxInvocation {
+  if (platform === "win32") {
+    return {
+      command: comspec?.trim() || "cmd.exe",
+      args: ["/d", "/s", "/c", "npx.cmd", ...args]
+    };
+  }
+
+  return { command: "npx", args };
 }
