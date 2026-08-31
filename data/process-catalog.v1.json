@@ -54,6 +54,23 @@
       "tags": ["immigration", "green-card", "employment", "perm", "pwd", "eta-9089", "recruitment", "audit", "balca", "i-140"]
     },
     {
+      "id": "usa-i140-detailed",
+      "slug": "usa/immigration/employment-green-card/i140",
+      "country_code": "US",
+      "country_name": "United States",
+      "applicant_country": "United States / Abroad",
+      "service": "Immigrant Petition",
+      "title": "Form I-140 Immigrant Petition Preflight",
+      "short_title": "I-140",
+      "summary": "Validate I-140 classification, petitioner and labor route, category evidence, ability to pay, priority-date retention, premium processing, RFE/NOID handling and the I-485/NVC handoff.",
+      "status": "live",
+      "module": "usa-i140-detailed-v1",
+      "questionnaire_id": "usa-i140-detailed-preflight-v1",
+      "verified": "2026-08-30",
+      "stale_after": "2026-09-13",
+      "tags": ["immigration", "green-card", "employment", "i-140", "eb1", "eb2", "eb3", "niw", "schedule-a", "premium-processing"]
+    },
+    {
       "id": "india-us-passport-services",
       "slug": "india/passport/us",
       "country_code": "IN",
