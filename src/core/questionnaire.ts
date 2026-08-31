@@ -14,7 +14,9 @@ export function isQuestionVisible(question: Question, answers: PassportAnswers):
       const actual = answers[sourceKey];
       return typeof actual === "number" && actual >= Number(expected);
     }
-    return answers[key] === expected;
+    const actual = answers[key];
+    if (Array.isArray(expected)) return expected.includes(actual as string | number | boolean);
+    return actual === expected;
   });
 }
 

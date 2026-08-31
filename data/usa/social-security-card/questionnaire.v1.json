@@ -1,0 +1,14 @@
+{
+  "id": "usa-social-security-card-router-v1",
+  "version": 1,
+  "verified": "2026-08-30",
+  "stale_after": "2026-09-29",
+  "questions": [
+    { "id": "ssn_action", "type": "select", "required": true, "options": ["first_number", "replace_card", "name_change", "record_correction", "citizenship_or_immigration_update", "child_card", "stolen_number_identity_theft", "not_sure"] },
+    { "id": "ssn_citizenship_status", "type": "select", "required_when": { "ssn_action": ["first_number", "name_change", "record_correction", "citizenship_or_immigration_update", "child_card"] }, "options": ["us_born_citizen", "foreign_born_us_citizen", "noncitizen", "not_sure"] },
+    { "id": "ssn_original_or_certified_documents_ready", "type": "boolean", "required_when": { "ssn_action": ["first_number", "name_change", "record_correction", "citizenship_or_immigration_update", "child_card"] } },
+    { "id": "ssn_nonwork_driver_license_only", "type": "boolean", "required_when": { "ssn_action": "first_number" } }
+  ],
+  "rule_nodes": ["okf/processes/usa/social-security/card.md"],
+  "result_schema": "schemas/government-service-router-result.schema.json"
+}

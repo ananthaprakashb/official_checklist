@@ -20,6 +20,23 @@
       "tags": ["immigration", "green-card", "visa", "uscis", "state-department", "cbp"]
     },
     {
+      "id": "usa-family-green-card",
+      "slug": "usa/immigration/family-green-card",
+      "country_code": "US",
+      "country_name": "United States",
+      "applicant_country": "United States / Abroad",
+      "service": "Permanent Residence",
+      "title": "Family-Based Green Card",
+      "short_title": "Family Green Card",
+      "summary": "Classify the petitioner/relationship into immediate-relative or family-preference categories, then route Form I-130 to adjustment of status or NVC/consular processing without treating petition approval as permanent residence.",
+      "status": "live",
+      "module": "usa-family-green-card-v1",
+      "questionnaire_id": "usa-family-green-card-router-v1",
+      "verified": "2026-08-30",
+      "stale_after": "2026-09-13",
+      "tags": ["immigration", "green-card", "family", "i-130", "i-485", "nvc", "visa-bulletin"]
+    },
+    {
       "id": "usa-employment-green-card",
       "slug": "usa/immigration/employment-green-card",
       "country_code": "US",
@@ -105,6 +122,74 @@
       "tags": ["immigration", "green-card", "employment", "nvc", "ds-260", "ceac", "immigrant-visa", "consular-processing", "visa-bulletin", "221g"]
     },
     {
+      "id": "usa-passport",
+      "slug": "usa/passport",
+      "country_code": "US",
+      "country_name": "United States",
+      "applicant_country": "United States",
+      "service": "Passport",
+      "title": "U.S. Passport Services",
+      "short_title": "U.S. Passport",
+      "summary": "Classify first-time adult, child, renewal, lost/stolen, damaged, correction, limited-validity and urgent-travel passport routes before choosing a form, appointment, or fee.",
+      "status": "live",
+      "module": "usa-passport-services-v1",
+      "questionnaire_id": "usa-passport-service-router-v1",
+      "verified": "2026-08-30",
+      "stale_after": "2026-09-29",
+      "tags": ["passport", "usa", "ds-11", "ds-82", "urgent-travel", "lost-stolen"]
+    },
+    {
+      "id": "usa-social-security-card",
+      "slug": "usa/social-security/card",
+      "country_code": "US",
+      "country_name": "United States",
+      "applicant_country": "United States",
+      "service": "Social Security",
+      "title": "Social Security Number & Card",
+      "short_title": "SSN & Card",
+      "summary": "Route first-time SSN, replacement card, legal-name change, record correction, citizenship/immigration update, child card and stolen-number cases to the correct SSA path and evidence set.",
+      "status": "live",
+      "module": "usa-social-security-card-v1",
+      "questionnaire_id": "usa-social-security-card-router-v1",
+      "verified": "2026-08-30",
+      "stale_after": "2026-09-29",
+      "tags": ["ssa", "ssn", "social-security", "ss-5", "identity"]
+    },
+    {
+      "id": "usa-itin",
+      "slug": "usa/tax/itin",
+      "country_code": "US",
+      "country_name": "United States",
+      "applicant_country": "United States / Abroad",
+      "service": "Tax Identification",
+      "title": "IRS Individual Taxpayer Identification Number (ITIN)",
+      "short_title": "ITIN",
+      "summary": "Resolve SSN eligibility, new vs renewal Form W-7, tax-return vs documented-exception route, identity/foreign-status evidence, and mail/TAC/VITA/acceptance-agent submission options.",
+      "status": "live",
+      "module": "usa-itin-v1",
+      "questionnaire_id": "usa-itin-router-v1",
+      "verified": "2026-08-30",
+      "stale_after": "2026-09-29",
+      "tags": ["irs", "itin", "w-7", "tax", "identity", "acceptance-agent"]
+    },
+    {
+      "id": "usa-medicare-enrollment",
+      "slug": "usa/medicare/enrollment",
+      "country_code": "US",
+      "country_name": "United States",
+      "applicant_country": "United States / Abroad",
+      "service": "Medicare",
+      "title": "Medicare Enrollment & Part B Timing",
+      "short_title": "Medicare Enrollment",
+      "summary": "Classify Initial, job-coverage Special, exceptional Special, and General Enrollment paths; route Part B/CMS-40B/CMS-L564/CMS-10797 needs and avoid COBRA/retiree-coverage timing mistakes.",
+      "status": "live",
+      "module": "usa-medicare-enrollment-v1",
+      "questionnaire_id": "usa-medicare-enrollment-router-v1",
+      "verified": "2026-08-30",
+      "stale_after": "2026-09-29",
+      "tags": ["medicare", "part-a", "part-b", "enrollment", "cms-40b", "cms-l564", "ssa"]
+    },
+    {
       "id": "india-us-passport-services",
       "slug": "india/passport/us",
       "country_code": "IN",
@@ -150,19 +235,6 @@
       "summary": "Planned OKF workflow for OCI registration, re-issue and miscellaneous OCI services.",
       "status": "coming_soon",
       "tags": ["oci", "consular"]
-    },
-    {
-      "id": "usa-passport",
-      "slug": "usa/passport",
-      "country_code": "US",
-      "country_name": "United States",
-      "applicant_country": "United States",
-      "service": "Passport",
-      "title": "U.S. Passport Services",
-      "short_title": "U.S. Passport",
-      "summary": "Planned workflow for first passport, renewal, minor passport, replacement and urgent passport routing.",
-      "status": "coming_soon",
-      "tags": ["passport", "usa"]
     }
   ]
 }

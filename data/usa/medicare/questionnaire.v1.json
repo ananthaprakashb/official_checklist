@@ -1,0 +1,16 @@
+{
+  "id": "usa-medicare-enrollment-router-v1",
+  "version": 1,
+  "verified": "2026-08-30",
+  "stale_after": "2026-09-29",
+  "questions": [
+    { "id": "medicare_action", "type": "select", "required": true, "options": ["initial_part_a_b", "add_part_b_after_part_a", "job_coverage_special_enrollment", "exceptional_conditions_sep", "general_enrollment", "medicare_advantage_or_part_d_change", "not_sure"] },
+    { "id": "medicare_initial_timing", "type": "select", "required_when": { "medicare_action": "initial_part_a_b" }, "options": ["three_months_before_65", "month_turning_65", "three_months_after_65", "outside_initial_window", "not_age_based_or_not_sure"] },
+    { "id": "medicare_has_part_a", "type": "boolean", "required_when": { "medicare_action": ["add_part_b_after_part_a", "job_coverage_special_enrollment", "general_enrollment"] } },
+    { "id": "medicare_current_employment_group_coverage", "type": "boolean", "required_when": { "medicare_action": "job_coverage_special_enrollment" } },
+    { "id": "medicare_months_since_job_or_group_coverage_ended", "type": "number", "min": 0, "required_when": { "medicare_action": "job_coverage_special_enrollment" } },
+    { "id": "medicare_cobra_or_retiree_only", "type": "boolean", "required_when": { "medicare_action": "job_coverage_special_enrollment" } }
+  ],
+  "rule_nodes": ["okf/processes/usa/medicare/enrollment.md"],
+  "result_schema": "schemas/government-service-router-result.schema.json"
+}

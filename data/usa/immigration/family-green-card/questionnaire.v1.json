@@ -1,0 +1,16 @@
+{
+  "id": "usa-family-green-card-router-v1",
+  "version": 1,
+  "verified": "2026-08-30",
+  "stale_after": "2026-09-13",
+  "questions": [
+    { "id": "family_petitioner_status", "type": "select", "required": true, "options": ["us_citizen", "lawful_permanent_resident", "not_sure"] },
+    { "id": "family_relationship", "type": "select", "required": true, "options": ["spouse", "unmarried_child_under_21", "parent", "unmarried_adult_son_or_daughter", "married_son_or_daughter", "sibling", "other_or_not_sure"] },
+    { "id": "family_petitioner_age_21_or_over", "type": "boolean", "required_when": { "family_relationship": ["parent", "sibling"] } },
+    { "id": "family_beneficiary_location", "type": "select", "required": true, "options": ["inside_us", "outside_us", "not_sure"] },
+    { "id": "family_case_stage", "type": "select", "required": true, "options": ["planning", "i130_preparation", "i130_pending", "i130_approved_waiting_visa", "adjustment_i485", "nvc_consular", "not_sure"] },
+    { "id": "family_inside_us_inspected_admitted_or_paroled", "type": "boolean", "required_when": { "family_beneficiary_location": "inside_us" } }
+  ],
+  "rule_nodes": ["okf/processes/usa/immigration/family-green-card-detailed.md"],
+  "result_schema": "schemas/government-service-router-result.schema.json"
+}

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "government-service-router-result.schema.json",
+  "title": "Government Service Router Result",
+  "type": "object",
+  "required": ["status", "service_family", "title", "required_items", "conditional_items", "blockers", "warnings", "next_step", "sources_verified"],
+  "properties": {
+    "status": { "enum": ["READY", "NOT_READY", "NEEDS_AUTHORITATIVE_CONFIRMATION"] },
+    "service_family": { "type": "string" },
+    "title": { "type": "string" },
+    "required_items": { "type": "array", "items": { "type": "string" } },
+    "conditional_items": { "type": "array", "items": { "type": "string" } },
+    "blockers": { "type": "array", "items": { "type": "string" } },
+    "warnings": { "type": "array", "items": { "type": "string" } },
+    "next_step": { "type": "string" },
+    "sources_verified": { "type": "string" }
+  },
+  "additionalProperties": true
+}

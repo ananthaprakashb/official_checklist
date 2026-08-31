@@ -35,11 +35,13 @@ export type ProcessResult = {
   sources_verified: string;
 };
 
+export type QuestionConditionValue = string | number | boolean | Array<string | number | boolean>;
+
 export type Question = {
   id: string;
   type: "select" | "multiselect" | "boolean" | "number" | "string";
   required?: boolean;
-  required_when?: Record<string, string | number | boolean>;
+  required_when?: Record<string, QuestionConditionValue>;
   options?: string[];
   min?: number;
 };
