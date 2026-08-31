@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { spawnSync } from "node:child_process";
-import { buildAdkCloudRunArgs, getCloudRunDeployConfig } from "../src/adk/cloudRun";
+import { buildAdkCloudRunArgs, buildNpxInvocation, getCloudRunDeployConfig } from "../src/adk/cloudRun";
 
 function loadDotEnv(path: string): void {
   if (!existsSync(path)) return;
@@ -25,7 +25,7 @@ loadDotEnv(resolve(process.cwd(), ".env"));
 try {
   const config = getCloudRunDeployConfig();
   const args = buildAdkCloudRunArgs(config);
-  const executable = process.platform === "win32" ? "npx.cmd" : "npx";
+  const invocation = buildNpxInvocation(args);
 
   console.log("Deploying Civic Preflight ADK agent to Google Cloud Run");
   console.log(`Project: ${config.project}`);
@@ -36,7 +36,7 @@ try {
   console.log(`Public access: ${config.publicAccess ? "enabled" : "disabled"}`);
   console.log(`ADK web UI: ${config.withUi ? "enabled" : "disabled"}`);
 
-  const result = spawnSync(executable, args, {
+  const result = spawnSync(invocation.command, invocation.args, {
     cwd: process.cwd(),
     env: process.env,
     stdio: "inherit"
