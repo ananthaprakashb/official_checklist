@@ -65,27 +65,33 @@ npm install
 npm run adk:deploy:cloud-run
 ```
 
-The deployment wrapper invokes the official TypeScript ADK deployment flow:
+For the TypeScript ADK CLI, deployment runs from the current project directory. The ADK command receives only ADK-supported flags:
 
 ```text
-adk deploy cloud_run
+npx adk deploy cloud_run
   --project=<project>
   --region=<region>
   --service_name=civic-preflight-agent
-  --
-  --allow-unauthenticated (or --no-allow-unauthenticated)
-  --set-secrets=GEMINI_API_KEY=<secret>:latest
-  --set-env-vars=CIVIC_PREFLIGHT_MODEL=<model>
 ```
 
-No local API key value is passed by the script. Only the Secret Manager secret name is sent to the Cloud Run deployment command.
+The wrapper then uses `gcloud` separately to:
+
+1. attach the Secret Manager value as `GEMINI_API_KEY`;
+2. set `CIVIC_PREFLIGHT_MODEL`;
+3. grant `roles/run.invoker` to `allUsers` when public access is requested; and
+4. resolve and print the deployed Cloud Run URL.
+
+This separation is intentional. Passing `--allow-unauthenticated`, `--set-secrets`, or `--set-env-vars` through the TypeScript ADK command can be interpreted as source-path input by the current TypeScript deployment implementation.
+
+No local API key value is passed by the script. Only the Secret Manager secret name is sent to Google Cloud.
 
 ## Expected result
 
-A successful deployment returns a Cloud Run service URL similar to:
+A successful deployment ends with output similar to:
 
 ```text
-https://civic-preflight-agent-<generated-id>.<region>.run.app
+Civic Preflight ADK deployment completed.
+Cloud Run URL: https://civic-preflight-agent-<generated-id>.<region>.run.app
 ```
 
 This URL becomes the backend endpoint for the next integration phase, where the Official Checklist React UI will send natural-language user requests to the ADK agent and render verified results returned by the deterministic process engine.
