@@ -21,7 +21,8 @@ export type EmploymentGreenCardResult = {
 };
 
 type BulletinGroup = "eb1" | "eb2" | "eb3" | "other_workers" | "eb4" | "eb5_unreserved" | "eb5_set_aside";
-type Chargeability = "india" | "china_mainland" | "mexico" | "philippines" | "all_other";
+type BulletinChargeability = "india" | "china_mainland" | "mexico" | "philippines" | "all_other";
+type Chargeability = BulletinChargeability | "not_sure";
 type LaborRoute = "dol_perm" | "schedule_a" | "not_required";
 type Cutoff = "C" | "U" | string;
 
@@ -52,7 +53,7 @@ const CATEGORY_RULES: Record<string, CategoryRule> = {
   eb5_infrastructure_set_aside: { bulletinGroup: "eb5_set_aside", petitionForm: "I-526 or I-526E", expectedLaborRoute: "not_required", jobOfferBased: false, detailedI140Flow: false }
 };
 
-const BULLETINS: Record<string, Record<"dates_for_filing" | "final_action", Record<BulletinGroup, Record<Chargeability, Cutoff>>>> = {
+const BULLETINS: Record<string, Record<"dates_for_filing" | "final_action", Record<BulletinGroup, Record<BulletinChargeability, Cutoff>>>> = {
   august_2026: {
     final_action: {
       eb1: { all_other: "C", china_mainland: "2023-07-01", india: "2022-10-15", mexico: "C", philippines: "C" },
@@ -134,37 +135,26 @@ export function evaluateEmploymentGreenCard(answers: PassportAnswers): Employmen
   const priorityDate = answers.priority_date_known === true && typeof answers.priority_date === "string" ? answers.priority_date.trim() : null;
   const rule = categoryRule(category, scheduleAPreference);
 
-  let status: ResultStatus = "READY";
   const blockers: string[] = [];
   const warnings: string[] = [];
   const requiredItems: string[] = [];
   const conditionalItems: string[] = [];
+  let needsConfirmation = false;
 
-  const block = (message: string) => {
-    blockers.push(message);
-    status = "NOT_READY";
-  };
+  const block = (message: string) => blockers.push(message);
   const confirm = (message: string) => {
     warnings.push(message);
-    if (status === "READY") status = "NEEDS_AUTHORITATIVE_CONFIRMATION";
+    needsConfirmation = true;
   };
 
-  if (!rule || category === "not_sure") {
-    confirm("Resolve the exact employment-based preference/classification before choosing PERM, an immigrant petition, or a Visa Bulletin row.");
-  }
-
-  if (category === "schedule_a" && !rule?.bulletinGroup) {
-    confirm("Schedule A must still be mapped to the correct EB-2 or EB-3 preference before visa-number availability can be evaluated.");
-  }
+  if (!rule || category === "not_sure") confirm("Resolve the exact employment-based preference/classification before choosing PERM, an immigrant petition, or a Visa Bulletin row.");
+  if (category === "schedule_a" && !rule?.bulletinGroup) confirm("Schedule A must still be mapped to the correct EB-2 or EB-3 preference before visa-number availability can be evaluated.");
 
   const petitionForm = rule?.petitionForm ?? "Confirm category-specific petition";
   const expectedLaborRoute = rule?.expectedLaborRoute ?? "not_required";
 
-  if (selectedLaborRoute === "not_sure") {
-    confirm("Confirm whether the selected category uses DOL PERM, Schedule A, or no labor certification before proceeding.");
-  } else if (rule && selectedLaborRoute !== expectedLaborRoute) {
-    block(`The selected labor-certification route '${selectedLaborRoute}' does not match the selected category. This category expects '${expectedLaborRoute}'.`);
-  }
+  if (selectedLaborRoute === "not_sure") confirm("Confirm whether the selected category uses DOL PERM, Schedule A, or no labor certification before proceeding.");
+  else if (rule && selectedLaborRoute !== expectedLaborRoute) block(`The selected labor-certification route '${selectedLaborRoute}' does not match the selected category. This category expects '${expectedLaborRoute}'.`);
 
   requiredItems.push(`Use ${petitionForm} for the selected immigrant category; do not substitute a different employment-based petition form.`);
 
@@ -172,20 +162,11 @@ export function evaluateEmploymentGreenCard(answers: PassportAnswers): Employmen
     requiredItems.push("Employer obtains a prevailing wage determination, completes the required recruitment/Notice of Filing, and files ETA Form 9089 through the DOL PERM process.");
     requiredItems.push("Use the DOL PERM filing date as the employment-based priority date when labor certification is required.");
 
-    if (["immigrant_petition", "waiting_for_visa_number", "adjustment_of_status", "consular_processing", "pending_adjustment"].includes(stage)) {
-      if (permStatus !== "certified") {
-        block("This category requires PERM, but the labor certification is not recorded as certified. Do not move into the I-140/downstream filing path yet.");
-      }
-    }
-
+    if (["immigrant_petition", "waiting_for_visa_number", "adjustment_of_status", "consular_processing", "pending_adjustment"].includes(stage) && permStatus !== "certified") block("This category requires PERM, but the labor certification is not recorded as certified. Do not move into the I-140/downstream filing path yet.");
     if (permStatus === "denied") block("The PERM application is denied. The denial/review/refiling path must be resolved before a downstream immigrant petition relies on it.");
     if (permStatus === "expired") block("The PERM certification is recorded as expired. A certified ETA 9089 generally must be submitted with Form I-140 within its 180-day validity period.");
-    if (permStatus === "certified" && answers.perm_certification_within_180_days === false && !["pending", "approved"].includes(petitionStatus)) {
-      block("The certified PERM is outside the 180-day validity period and the immigrant petition is not already recorded as filed. Do not use the expired certification for a new I-140 filing.");
-    }
-    if (permStatus === "certified" && answers.perm_certification_within_180_days !== true && !["pending", "approved"].includes(petitionStatus)) {
-      confirm("Confirm the certified PERM is still within its 180-day validity period before filing Form I-140.");
-    }
+    if (permStatus === "certified" && answers.perm_certification_within_180_days === false && !["pending", "approved"].includes(petitionStatus)) block("The certified PERM is outside the 180-day validity period and the immigrant petition is not already recorded as filed. Do not use the expired certification for a new I-140 filing.");
+    if (permStatus === "certified" && answers.perm_certification_within_180_days !== true && !["pending", "approved"].includes(petitionStatus)) confirm("Confirm the certified PERM is still within its 180-day validity period before filing Form I-140.");
   } else if (expectedLaborRoute === "schedule_a") {
     requiredItems.push("Use the Schedule A labor-certification procedure with USCIS rather than routing the case through ordinary DOL PERM processing.");
   } else {
@@ -194,22 +175,14 @@ export function evaluateEmploymentGreenCard(answers: PassportAnswers): Employmen
 
   if (rule?.detailedI140Flow) {
     if (petitionStatus === "denied") block("The I-140 is denied. The actual USCIS decision notice controls any motion, appeal, refiling, or alternate-basis strategy.");
-    if (["waiting_for_visa_number", "consular_processing"].includes(stage) && petitionStatus !== "approved") {
-      block("This stage assumes an approved employment-based immigrant petition before proceeding to the normal visa-wait/NVC path.");
-    }
+    if (["waiting_for_visa_number", "consular_processing"].includes(stage) && petitionStatus !== "approved") block("This stage assumes an approved employment-based immigrant petition before proceeding to the normal visa-wait/NVC path.");
     if (stage === "immigrant_petition" && petitionStatus === "not_sure") confirm("Confirm whether Form I-140 has not been filed, is pending, approved, or denied before deciding the next step.");
   } else if (rule) {
     confirm(`${category} is correctly classified as employment-based, but its petition is ${petitionForm}, not the detailed I-140 workflow. Use the category-specific module/source before treating the case as filing-ready.`);
   }
 
-  if (answers.priority_date_known === true && priorityDate && !validIsoDate(priorityDate)) {
-    block("Priority date must be entered as YYYY-MM-DD and must be a valid calendar date.");
-  }
-
-  if (["waiting_for_visa_number", "adjustment_of_status", "consular_processing", "pending_adjustment"].includes(stage) && answers.priority_date_known !== true) {
-    confirm("A priority date is required to evaluate a numerically limited employment-based Visa Bulletin row.");
-  }
-
+  if (answers.priority_date_known === true && priorityDate && !validIsoDate(priorityDate)) block("Priority date must be entered as YYYY-MM-DD and must be a valid calendar date.");
+  if (["waiting_for_visa_number", "adjustment_of_status", "consular_processing", "pending_adjustment"].includes(stage) && answers.priority_date_known !== true) confirm("A priority date is required to evaluate a numerically limited employment-based Visa Bulletin row.");
   if (chargeability === "not_sure") confirm("Confirm the applicant's country of chargeability before using a Visa Bulletin cutoff.");
 
   const bulletin = BULLETINS[bulletinMonth];
@@ -232,41 +205,24 @@ export function evaluateEmploymentGreenCard(answers: PassportAnswers): Employmen
     requiredItems.push("Use the USCIS-selected employment-based Visa Bulletin chart for the chosen month; the Department of State bulletin alone does not decide which chart USCIS accepts for I-485 filing.");
     requiredItems.push("Prepare the current Form I-485 evidence package and the required Form I-693 medical examination under current USCIS filing instructions.");
 
-    if (answers.physically_present_in_us === false || asString(answers.beneficiary_location) === "outside_us") {
-      block("The beneficiary is not physically present in the United States for the selected adjustment-of-status route. Use immigrant-visa/consular processing unless an authoritative exception applies.");
-    }
-    if (answers.employment_basis_still_valid === false) {
-      block("The employment/self-petition basis is no longer confirmed as valid. Resolve the underlying job offer, qualifying work intent, or alternate basis before relying on this adjustment path.");
-    }
-    if (answers.complex_adjustment_issue === true) {
-      confirm("A status-history, unauthorized-employment, admissibility, removal, J-1, or similar issue was flagged. Employment-based adjustment eligibility requires applicant-specific legal review before READY.");
-    }
+    if (answers.physically_present_in_us === false || asString(answers.beneficiary_location) === "outside_us") block("The beneficiary is not physically present in the United States for the selected adjustment-of-status route. Use immigrant-visa/consular processing unless an authoritative exception applies.");
+    if (answers.employment_basis_still_valid === false) block("The employment/self-petition basis is no longer confirmed as valid. Resolve the underlying job offer, qualifying work intent, or alternate basis before relying on this adjustment path.");
+    if (answers.complex_adjustment_issue === true) confirm("A status-history, unauthorized-employment, admissibility, removal, J-1, or similar issue was flagged. Employment-based adjustment eligibility requires applicant-specific legal review before READY.");
 
     const chart = asString(answers.uscis_chart_selection, "not_checked");
-    if (chart === "not_checked") {
-      confirm("The current USCIS monthly chart selection has not been verified. Do not treat the case as I-485 filing-ready yet.");
-    } else if (priorityDate && rule?.bulletinGroup && bulletin && chargeability !== "not_sure") {
+    if (chart === "not_checked") confirm("The current USCIS monthly chart selection has not been verified. Do not treat the case as I-485 filing-ready yet.");
+    else if (priorityDate && rule?.bulletinGroup && bulletin && chargeability !== "not_sure") {
       const filingEligible = chart === "dates_for_filing" ? datesForFilingEligible : finalActionEligible;
-      const cutoff = chart === "dates_for_filing" ? datesForFilingCutoff : finalActionCutoff;
-      if (filingEligible === false && stage !== "pending_adjustment") {
-        block(`Priority date ${priorityDate} is not earlier than the selected USCIS ${chart === "dates_for_filing" ? "Dates for Filing" : "Final Action"} cutoff (${cutoff}) for this category/chargeability in ${bulletinMonth.replace("_", " ")}.`);
-      }
+      const selectedCutoff = chart === "dates_for_filing" ? datesForFilingCutoff : finalActionCutoff;
+      if (filingEligible === false && stage !== "pending_adjustment") block(`Priority date ${priorityDate} is not earlier than the selected USCIS ${chart === "dates_for_filing" ? "Dates for Filing" : "Final Action"} cutoff (${selectedCutoff}) for this category/chargeability in ${bulletinMonth.replace("_", " ")}.`);
       if (filingEligible === null) confirm("The Visa Bulletin filing gate could not be computed from the supplied priority date/category/chargeability.");
     }
 
-    if (stage !== "pending_adjustment" && answers.i485_status !== "pending" && answers.medical_i693_ready === false) {
-      block("The required I-693 medical package is not ready for the planned new I-485 filing under current USCIS filing instructions.");
-    }
+    if (stage !== "pending_adjustment" && answers.i485_status !== "pending" && answers.medical_i693_ready === false) block("The required I-693 medical package is not ready for the planned new I-485 filing under current USCIS filing instructions.");
+    if (finalActionEligible === false) warnings.push("The Final Action Date is not currently available for this priority date/category. Even if USCIS permits filing under Dates for Filing, approval must wait for final-action visa availability.");
 
-    if (finalActionEligible === false) {
-      warnings.push("The Final Action Date is not currently available for this priority date/category. Even if USCIS permits filing under Dates for Filing, approval must wait for final-action visa availability.");
-    }
-
-    if (rule?.jobOfferBased) {
-      conditionalItems.push("Form I-485 Supplement J may be required to confirm the bona fide job offer or request INA 204(j) portability; verify the current Supplement J instructions for the filing posture.");
-    } else if (["eb1a_extraordinary_ability", "eb2_national_interest_waiver"].includes(category)) {
-      conditionalItems.push("USCIS Supplement J instructions state that EB-1A extraordinary-ability and NIW applicants do not file Supplement J merely to confirm a job offer/portability basis.");
-    }
+    if (rule?.jobOfferBased) conditionalItems.push("Form I-485 Supplement J may be required to confirm the bona fide job offer or request INA 204(j) portability; verify the current Supplement J instructions for the filing posture.");
+    else if (["eb1a_extraordinary_ability", "eb2_national_interest_waiver"].includes(category)) conditionalItems.push("USCIS Supplement J instructions state that EB-1A extraordinary-ability and NIW applicants do not file Supplement J merely to confirm a job offer/portability basis.");
 
     if (answers.request_ead_with_i485 === true) conditionalItems.push("Evaluate Form I-765 under the adjustment-applicant eligibility category and current fee/filing rules; an EAD is a separate benefit from the I-485 itself.");
     if (answers.request_advance_parole_with_i485 === true) conditionalItems.push("Evaluate Form I-131 Advance Parole and the applicant's travel/status consequences before departure; do not assume a pending I-485 alone authorizes travel.");
@@ -275,7 +231,6 @@ export function evaluateEmploymentGreenCard(answers: PassportAnswers): Employmen
   if (intendedProcessing === "consular_abroad") {
     requiredItems.push("Use USCIS petition approval/transfer and the Department of State NVC/CEAC immigrant-visa path rather than Form I-485.");
     requiredItems.push("When NVC instructs the case to proceed, complete the applicable fees, DS-260, civil documents, medical examination, and immigrant-visa interview preparation.");
-
     if (petitionStatus !== "approved") block(`Consular/NVC processing is selected but the underlying ${petitionForm} is not recorded as approved.`);
     if (datesForFilingEligible === false) block(`The priority date is not yet earlier than the ${bulletinMonth.replace("_", " ")} Dates for Filing cutoff (${datesForFilingCutoff}) for this category/chargeability.`);
     if (answers.nvc_case_created === false && petitionStatus === "approved") confirm("The petition is approved but an NVC case is not yet confirmed. Verify USCIS transfer/NVC case creation before starting DS-260 solely from the approval notice.");
@@ -284,28 +239,20 @@ export function evaluateEmploymentGreenCard(answers: PassportAnswers): Employmen
   }
 
   if (intendedProcessing === "not_sure") confirm("Choose adjustment of status in the United States versus immigrant-visa consular processing before building the final-stage checklist.");
-
-  if (stage === "labor_certification" && expectedLaborRoute === "not_required") {
-    block("The selected category does not use ordinary DOL PERM, so a PERM-stage checklist is the wrong branch for this category.");
-  }
+  if (stage === "labor_certification" && expectedLaborRoute === "not_required") block("The selected category does not use ordinary DOL PERM, so a PERM-stage checklist is the wrong branch for this category.");
 
   if (stage === "pending_adjustment") {
     if (answers.i485_status !== "pending") confirm("The stage is marked pending adjustment, but Form I-485 is not recorded as pending. Confirm the actual receipt/decision state.");
     if (answers.job_changed_or_portability_needed === true && rule?.jobOfferBased) {
-      if (answers.i485_pending_180_days === true) {
-        conditionalItems.push("For a job-offer-based EB-1/EB-2/EB-3 case, review INA 204(j) same-or-similar portability and file Supplement J when required.");
-      } else {
-        confirm("A job change/portability issue was flagged before the I-485 is confirmed pending for 180 days. Do not assume INA 204(j) portability applies.");
-      }
+      if (answers.i485_pending_180_days === true) conditionalItems.push("For a job-offer-based EB-1/EB-2/EB-3 case, review INA 204(j) same-or-similar portability and file Supplement J when required.");
+      else confirm("A job change/portability issue was flagged before the I-485 is confirmed pending for 180 days. Do not assume INA 204(j) portability applies.");
     }
   }
 
-  if (answers.include_derivatives === true) {
-    conditionalItems.push("Each derivative spouse/eligible child needs the applicable separate I-485 or DS-260 and supporting civil/identity/medical evidence; independently review age/CSPA and relationship continuity where relevant.");
-  }
+  if (answers.include_derivatives === true) conditionalItems.push("Each derivative spouse/eligible child needs the applicable separate I-485 or DS-260 and supporting civil/identity/medical evidence; independently review age/CSPA and relationship continuity where relevant.");
 
   let nextStep = "Resolve the employment category and current stage before collecting a filing package.";
-  if (status !== "NOT_READY") {
+  if (blockers.length === 0) {
     if (stage === "planning") nextStep = "Confirm the exact preference category and whether PERM, Schedule A, or no labor certification applies; then move to the correct petition stage.";
     else if (stage === "labor_certification") nextStep = expectedLaborRoute === "dol_perm" ? "Complete the DOL PERM stage through certification, then file the I-140 within the certification validity period." : "Move to the category-specific immigrant petition route; do not force this case through ordinary DOL PERM.";
     else if (stage === "immigrant_petition") nextStep = `Complete or monitor ${petitionForm}; after approval (or concurrent filing where legally permitted), evaluate the priority date and correct final-processing route.`;
@@ -314,6 +261,8 @@ export function evaluateEmploymentGreenCard(answers: PassportAnswers): Employmen
     else if (stage === "consular_processing") nextStep = "Proceed only through NVC/CEAC instructions for the approved petition and current visa-number stage, then DS-260/civil documents/medical/interview.";
     else if (stage === "pending_adjustment") nextStep = "Maintain the pending I-485 basis, monitor Final Action availability, respond to USCIS notices, and evaluate Supplement J/portability only when its requirements are met.";
   }
+
+  const status: ResultStatus = blockers.length > 0 ? "NOT_READY" : needsConfirmation ? "NEEDS_AUTHORITATIVE_CONFIRMATION" : "READY";
 
   return {
     status,
