@@ -1,5 +1,13 @@
 import assert from "node:assert/strict";
-import { buildAdkCloudRunArgs, buildNpxInvocation, getCloudRunDeployConfig } from "../src/adk/cloudRun";
+import {
+  buildAdkCloudRunArgs,
+  buildCloudRunDescribeArgs,
+  buildCloudRunPublicAccessArgs,
+  buildCloudRunRuntimeUpdateArgs,
+  buildGcloudInvocation,
+  buildNpxInvocation,
+  getCloudRunDeployConfig
+} from "../src/adk/cloudRun";
 
 assert.throws(
   () => getCloudRunDeployConfig({ GOOGLE_CLOUD_LOCATION: "us-west1" }),
@@ -32,37 +40,54 @@ const config = getCloudRunDeployConfig({
 assert.equal(config.publicAccess, true);
 assert.equal(config.withUi, true);
 
-const args = buildAdkCloudRunArgs(config);
-assert.deepEqual(args.slice(0, 3), ["adk", "deploy", "cloud_run"]);
-assert.ok(args.includes("--project=demo-project"));
-assert.ok(args.includes("--region=us-west1"));
-assert.ok(args.includes("--service_name=civic-preflight-agent"));
-assert.ok(args.includes("--with_ui"));
-assert.ok(args.includes("--allow-unauthenticated"));
-assert.ok(args.includes("--set-secrets=GEMINI_API_KEY=civic-preflight-gemini-key:latest"));
-assert.ok(args.includes("--set-env-vars=CIVIC_PREFLIGHT_MODEL=gemini-3.5-flash-lite"));
+const adkArgs = buildAdkCloudRunArgs(config);
+assert.deepEqual(adkArgs.slice(0, 3), ["adk", "deploy", "cloud_run"]);
+assert.ok(adkArgs.includes("--project=demo-project"));
+assert.ok(adkArgs.includes("--region=us-west1"));
+assert.ok(adkArgs.includes("--service_name=civic-preflight-agent"));
+assert.ok(adkArgs.includes("--with_ui"));
+assert.ok(!adkArgs.includes("--"));
+assert.ok(!adkArgs.some((arg) => arg.includes("allow-unauthenticated")));
+assert.ok(!adkArgs.some((arg) => arg.startsWith("--set-secrets")));
+
+const runtimeArgs = buildCloudRunRuntimeUpdateArgs(config);
+assert.deepEqual(runtimeArgs.slice(0, 4), ["run", "services", "update", "civic-preflight-agent"]);
+assert.ok(runtimeArgs.includes("--set-secrets=GEMINI_API_KEY=civic-preflight-gemini-key:latest"));
+assert.ok(runtimeArgs.includes("--set-env-vars=CIVIC_PREFLIGHT_MODEL=gemini-3.5-flash-lite"));
+assert.ok(runtimeArgs.includes("--quiet"));
+
+const publicArgs = buildCloudRunPublicAccessArgs(config);
+assert.deepEqual(publicArgs.slice(0, 4), ["run", "services", "add-iam-policy-binding", "civic-preflight-agent"]);
+assert.ok(publicArgs.includes("--member=allUsers"));
+assert.ok(publicArgs.includes("--role=roles/run.invoker"));
+
+const describeArgs = buildCloudRunDescribeArgs(config);
+assert.deepEqual(describeArgs.slice(0, 4), ["run", "services", "describe", "civic-preflight-agent"]);
+assert.ok(describeArgs.includes("--format=json"));
 
 const privateConfig = getCloudRunDeployConfig({
   GOOGLE_CLOUD_PROJECT: "demo-project",
   GOOGLE_CLOUD_LOCATION: "us-central1"
 });
-const privateArgs = buildAdkCloudRunArgs(privateConfig);
-assert.ok(privateArgs.includes("--no-allow-unauthenticated"));
-assert.ok(!privateArgs.includes("--with_ui"));
+const privateAdkArgs = buildAdkCloudRunArgs(privateConfig);
+assert.ok(!privateAdkArgs.includes("--with_ui"));
 assert.equal(privateConfig.serviceName, "civic-preflight-agent");
 assert.equal(privateConfig.model, "gemini-3.5-flash-lite");
 
-const windowsInvocation = buildNpxInvocation(["adk", "deploy", "cloud_run"], "win32", "C:\\Windows\\System32\\cmd.exe");
-assert.equal(windowsInvocation.command, "C:\\Windows\\System32\\cmd.exe");
-assert.deepEqual(windowsInvocation.args.slice(0, 5), ["/d", "/s", "/c", "npx.cmd", "adk"]);
-assert.ok(windowsInvocation.args.includes("cloud_run"));
+const windowsNpx = buildNpxInvocation(["adk", "deploy", "cloud_run"], "win32", "C:\\Windows\\System32\\cmd.exe");
+assert.equal(windowsNpx.command, "C:\\Windows\\System32\\cmd.exe");
+assert.deepEqual(windowsNpx.args.slice(0, 5), ["/d", "/s", "/c", "npx.cmd", "adk"]);
 
-const windowsFallbackInvocation = buildNpxInvocation(["adk"], "win32", undefined);
-assert.equal(windowsFallbackInvocation.command, "cmd.exe");
-assert.deepEqual(windowsFallbackInvocation.args, ["/d", "/s", "/c", "npx.cmd", "adk"]);
+const windowsGcloud = buildGcloudInvocation(["run", "services", "describe"], "win32", undefined);
+assert.equal(windowsGcloud.command, "cmd.exe");
+assert.deepEqual(windowsGcloud.args, ["/d", "/s", "/c", "gcloud.cmd", "run", "services", "describe"]);
 
-const unixInvocation = buildNpxInvocation(["adk", "deploy"], "linux");
-assert.equal(unixInvocation.command, "npx");
-assert.deepEqual(unixInvocation.args, ["adk", "deploy"]);
+const unixNpx = buildNpxInvocation(["adk", "deploy"], "linux");
+assert.equal(unixNpx.command, "npx");
+assert.deepEqual(unixNpx.args, ["adk", "deploy"]);
+
+const unixGcloud = buildGcloudInvocation(["run", "services"], "linux");
+assert.equal(unixGcloud.command, "gcloud");
+assert.deepEqual(unixGcloud.args, ["run", "services"]);
 
 console.log("Cloud Run ADK deployment configuration tests passed.");

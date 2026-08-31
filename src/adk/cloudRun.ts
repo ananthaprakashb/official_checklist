@@ -8,7 +8,7 @@ export type CloudRunDeployConfig = {
   withUi: boolean;
 };
 
-export type NpxInvocation = {
+export type CliInvocation = {
   command: string;
   args: string[];
 };
@@ -45,6 +45,10 @@ export function getCloudRunDeployConfig(env: NodeJS.ProcessEnv = process.env): C
   };
 }
 
+/**
+ * TypeScript ADK deploys the agent project from the current working directory.
+ * Keep gcloud-only flags out of this argument list.
+ */
 export function buildAdkCloudRunArgs(config: CloudRunDeployConfig): string[] {
   const args = [
     "adk",
@@ -56,28 +60,74 @@ export function buildAdkCloudRunArgs(config: CloudRunDeployConfig): string[] {
   ];
 
   if (config.withUi) args.push("--with_ui");
-
-  args.push(
-    "--",
-    config.publicAccess ? "--allow-unauthenticated" : "--no-allow-unauthenticated",
-    `--set-secrets=GEMINI_API_KEY=${config.secretName}:latest`,
-    `--set-env-vars=CIVIC_PREFLIGHT_MODEL=${config.model}`
-  );
-
   return args;
+}
+
+export function buildCloudRunRuntimeUpdateArgs(config: CloudRunDeployConfig): string[] {
+  return [
+    "run",
+    "services",
+    "update",
+    config.serviceName,
+    `--project=${config.project}`,
+    `--region=${config.region}`,
+    `--set-secrets=GEMINI_API_KEY=${config.secretName}:latest`,
+    `--set-env-vars=CIVIC_PREFLIGHT_MODEL=${config.model}`,
+    "--quiet"
+  ];
+}
+
+export function buildCloudRunPublicAccessArgs(config: CloudRunDeployConfig): string[] {
+  return [
+    "run",
+    "services",
+    "add-iam-policy-binding",
+    config.serviceName,
+    `--project=${config.project}`,
+    `--region=${config.region}`,
+    "--member=allUsers",
+    "--role=roles/run.invoker",
+    "--quiet"
+  ];
+}
+
+export function buildCloudRunDescribeArgs(config: CloudRunDeployConfig): string[] {
+  return [
+    "run",
+    "services",
+    "describe",
+    config.serviceName,
+    `--project=${config.project}`,
+    `--region=${config.region}`,
+    "--format=json"
+  ];
+}
+
+function buildWindowsCmdInvocation(
+  executable: string,
+  args: string[],
+  comspec: string | undefined = process.env.ComSpec
+): CliInvocation {
+  return {
+    command: comspec?.trim() || "cmd.exe",
+    args: ["/d", "/s", "/c", `${executable}.cmd`, ...args]
+  };
 }
 
 export function buildNpxInvocation(
   args: string[],
   platform: NodeJS.Platform = process.platform,
   comspec: string | undefined = process.env.ComSpec
-): NpxInvocation {
-  if (platform === "win32") {
-    return {
-      command: comspec?.trim() || "cmd.exe",
-      args: ["/d", "/s", "/c", "npx.cmd", ...args]
-    };
-  }
-
+): CliInvocation {
+  if (platform === "win32") return buildWindowsCmdInvocation("npx", args, comspec);
   return { command: "npx", args };
+}
+
+export function buildGcloudInvocation(
+  args: string[],
+  platform: NodeJS.Platform = process.platform,
+  comspec: string | undefined = process.env.ComSpec
+): CliInvocation {
+  if (platform === "win32") return buildWindowsCmdInvocation("gcloud", args, comspec);
+  return { command: "gcloud", args };
 }
