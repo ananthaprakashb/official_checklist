@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://official-checklist.local/schemas/us-nvc-preflight-result.schema.json",
+  "title": "Employment-Based NVC / DS-260 Preflight Result",
+  "type": "object",
+  "required": ["status","basis","stage","preprocessing_cutoff","preprocessing_eligible","final_action_cutoff","final_action_eligible","iv_fee_per_person","iv_fee_total","required_items","conditional_items","blockers","warnings","next_step","sources_verified"],
+  "properties": {
+    "status": {"enum":["READY","NOT_READY","NEEDS_AUTHORITATIVE_CONFIRMATION"]},
+    "basis": {"type":"string"},
+    "stage": {"type":"string"},
+    "preprocessing_cutoff": {"type":["string","null"]},
+    "preprocessing_eligible": {"type":["boolean","null"]},
+    "final_action_cutoff": {"type":["string","null"]},
+    "final_action_eligible": {"type":["boolean","null"]},
+    "iv_fee_per_person": {"type":"number"},
+    "iv_fee_total": {"type":["number","null"]},
+    "required_items": {"type":"array","items":{"type":"string"}},
+    "conditional_items": {"type":"array","items":{"type":"string"}},
+    "blockers": {"type":"array","items":{"type":"string"}},
+    "warnings": {"type":"array","items":{"type":"string"}},
+    "next_step": {"type":"string"},
+    "sources_verified": {"type":"string"}
+  },
+  "additionalProperties": false
+}

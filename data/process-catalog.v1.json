@@ -88,6 +88,23 @@
       "tags": ["immigration", "green-card", "employment", "i-485", "adjustment", "245k", "supplement-j", "portability", "ead", "advance-parole", "visa-bulletin"]
     },
     {
+      "id": "usa-nvc-employment-detailed",
+      "slug": "usa/immigration/employment-green-card/nvc",
+      "country_code": "US",
+      "country_name": "United States",
+      "applicant_country": "Abroad / Consular Processing",
+      "service": "Immigrant Visa Consular Processing",
+      "title": "Employment-Based NVC / DS-260 Preflight",
+      "short_title": "NVC / DS-260",
+      "summary": "Validate the employment-based consular branch after I-140 approval: USCIS-to-NVC transfer, Visa Bulletin pre-processing and Final Action gates, CEAC fees, DS-260, civil/employment evidence, documentarily complete status, interview/medical, 221(g), immigrant visa and U.S. admission.",
+      "status": "live",
+      "module": "usa-nvc-employment-detailed-v1",
+      "questionnaire_id": "usa-nvc-employment-preflight-v1",
+      "verified": "2026-08-30",
+      "stale_after": "2026-09-13",
+      "tags": ["immigration", "green-card", "employment", "nvc", "ds-260", "ceac", "immigrant-visa", "consular-processing", "visa-bulletin", "221g"]
+    },
+    {
       "id": "india-us-passport-services",
       "slug": "india/passport/us",
       "country_code": "IN",
