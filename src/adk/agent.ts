@@ -1,7 +1,7 @@
 import { LlmAgent } from "@google/adk";
 import { civicPreflightTools } from "./tools";
 
-const model = process.env.CIVIC_PREFLIGHT_MODEL || "gemini-flash-latest";
+const model = process.env.CIVIC_PREFLIGHT_MODEL || "gemini-3.5-flash-lite";
 
 export const rootAgent = new LlmAgent({
   name: "civic_preflight_navigator",
