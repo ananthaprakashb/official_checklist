@@ -18,7 +18,8 @@
         "renew_driver_license",
         "replace_driver_license",
         "first_id_card",
-        "renew_or_replace_id_card",
+        "renew_id_card",
+        "replace_id_card",
         "name_change_update",
         "address_change",
         "ab60_driver_license",
@@ -30,17 +31,33 @@
       "type": "select",
       "required_when": {
         "ca_dmv_action": [
+          "real_id_upgrade",
           "first_driver_license_adult",
           "teen_instruction_permit",
           "transfer_out_of_state_license",
           "transfer_foreign_license",
           "renew_driver_license",
           "first_id_card",
-          "renew_or_replace_id_card",
+          "renew_id_card",
+          "replace_id_card",
           "name_change_update"
         ]
       },
       "options": ["real_id", "federal_noncompliant", "not_sure"]
+    },
+    {
+      "id": "ca_can_show_accepted_legal_presence_identity",
+      "type": "boolean",
+      "required_when": {
+        "ca_dmv_action": [
+          "real_id_upgrade",
+          "first_driver_license_adult",
+          "teen_instruction_permit",
+          "transfer_out_of_state_license",
+          "transfer_foreign_license",
+          "first_id_card"
+        ]
+      }
     },
     {
       "id": "ca_real_id_identity_doc_ready",
@@ -103,6 +120,11 @@
       "required_when": { "ca_dmv_action": ["transfer_out_of_state_license", "transfer_foreign_license"] }
     },
     {
+      "id": "ca_renewal_already_real_id",
+      "type": "boolean",
+      "required_when": { "ca_dmv_action": "renew_driver_license", "ca_card_compliance": "real_id" }
+    },
+    {
       "id": "ca_renewal_notice_requires_office",
       "type": "boolean",
       "required_when": { "ca_dmv_action": "renew_driver_license" }
@@ -111,6 +133,17 @@
       "id": "ca_name_changed_with_ssa",
       "type": "boolean",
       "required_when": { "ca_dmv_action": "name_change_update" }
+    },
+    {
+      "id": "ca_ab60_age_group",
+      "type": "select",
+      "required_when": { "ca_dmv_action": "ab60_driver_license" },
+      "options": ["adult_18_plus", "teen_15_5_to_17_5", "under_15_5", "not_sure"]
+    },
+    {
+      "id": "ca_ab60_driver_education_complete",
+      "type": "boolean",
+      "required_when": { "ca_dmv_action": "ab60_driver_license", "ca_ab60_age_group": "teen_15_5_to_17_5" }
     },
     {
       "id": "ca_ab60_identity_residency_docs_ready",
