@@ -1,5 +1,22 @@
 # OKF Change Log
 
+## 2026-08-30 — v0.11 employment-based NVC / DS-260 consular-processing preflight
+
+- Activated a dedicated `/usa/immigration/employment-green-card/nvc` workflow for the consular branch after I-140 approval rather than stopping at the generic I-140 handoff.
+- Added current Department of State source nodes for employment-based immigrant visas, NVC processing/INA 203(g), CEAC fee access, documentarily complete/interview scheduling, interview preparation and INA 221(g)/administrative processing.
+- Added USCIS source nodes for approved-petition transfer to NVC through Form I-824 where applicable and for the USCIS Immigrant Fee/Green Card production handoff.
+- Added I-140-based category routing for EB-1A, EB-1B, EB-1C, regular EB-2, EB-2 NIW, EB-3 Skilled/Professional/Other Worker and Schedule A EB-2/EB-3 while explicitly sending EB-4/EB-5 to category-specific consular modules.
+- Added a USCIS-to-NVC routing gate so an approved I-140 retained/not forwarded by USCIS cannot silently enter CEAC/NVC processing; the exact need for Form I-824 remains petition-history-specific.
+- Added separate Visa Bulletin controls for Dates-for-Filing/NVC pre-processing and Final Action/interview visa-number availability, preserving documentarily complete cases during later retrogression.
+- Added current $345-per-intending-immigrant employment immigrant-visa fee calculation and the conditional $120 Affidavit-of-Support fee path only where the limited employment-based I-864 relative/significant-owner exception applies.
+- Added per-applicant DS-260, civil-document, reciprocity, police-certificate and derivative eligibility checks without treating uploads as self-declared documentarily complete status.
+- Added employer/job-offer continuity for job-offer-based EB categories while keeping EB-1A/NIW on their qualifying work/endeavor-intent path rather than inventing an employer-letter requirement.
+- Added NVC case-preservation handling for the one-year INA 203(g) response/application risk during long visa-number waits.
+- Added post-specific interview-instruction, panel-physician medical, appointment-letter and interview-original checks, with current Final Action availability kept separate from embassy/consulate capacity.
+- Added INA 221(g) and administrative-processing states controlled by the actual consular instructions instead of predicting duration or treating every 221(g) as a permanent denial.
+- Added immigrant-visa detail/expiration checks, planned-entry validation, USCIS Immigrant Fee reminders and final CBP admission/Green Card production handoff.
+- Added a dedicated NVC regression suite to the mandatory validation chain covering routing, DFF/Final Action separation, fees, DS-260/DQ consistency, job basis, derivatives, INA 203(g), 221(g), visa validity and immigrant-fee handling.
+
 ## 2026-08-30 — v0.10 detailed employment-based Form I-485 preflight
 
 - Activated a dedicated `/usa/immigration/employment-green-card/i485` workflow for employment-based adjustment of status rather than stopping at the generic employment-green-card stage gate.
