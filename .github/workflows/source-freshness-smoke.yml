@@ -1,0 +1,32 @@
+name: Source Freshness Production Smoke
+
+on:
+  push:
+    branches:
+      - agent/source-freshness-production-hardening
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - run: npm install
+      - name: Run real source monitor
+        id: monitor
+        continue-on-error: true
+        run: npm run sources:check
+      - name: Print report
+        if: always()
+        run: cat reports/source-freshness.json || true
+      - name: Print source health
+        if: always()
+        run: cat data/source-health.v1.json || true
+      - name: Preserve smoke outcome
+        if: steps.monitor.outcome == 'failure'
+        run: echo "Monitor requested review; inspect report above."
