@@ -2,7 +2,7 @@
 
 Generated: 2026-08-30
 
-Official Checklist should prioritize processes where a wrong branch, missed prerequisite, stale form, jurisdiction error, or agency handoff can cause material delay, duplicate fees, lost appointments, status problems, or rejected submissions.
+Official Checklist should prioritize processes where a wrong branch, missed prerequisite, stale form, jurisdiction error, or agency handoff can cause material delay, duplicate fees, lost appointments, status problems, benefit gaps, penalties, or rejected submissions.
 
 ## Priority model
 
@@ -13,19 +13,18 @@ Each candidate is scored conceptually on:
 - **Cross-agency handoffs** — number of agencies/portals involved.
 - **Freshness risk** — how often forms, fees, dates, eligibility charts or appointment rules change.
 - **Determinism** — whether authoritative sources support a safe machine-readable decision path.
+- **Population reach** — how many households are likely to encounter the process.
 
 ## Wave 1 — U.S. immigration and visas
 
-**Onboard first:**
-
-1. U.S. Immigration & Visa Services classifier — USCIS / DOL / DOS / NVC / CBP.
-2. Employment-based permanent residence — PERM → I-140 → Visa Bulletin/USCIS filing chart → I-485 or NVC/DS-260.
-3. Family-based permanent residence — I-130 → adjustment vs consular processing → financial/civil documents → interview.
-4. Nonimmigrant visa application — DS-160 → category-specific petition/SEVIS facts → fee → interview-waiver/appointment route.
-5. H-1B — cap-subject vs cap-exempt vs change-employer vs extension/amendment → LCA → I-129 → visa/status handoff.
-6. H-4 — visa abroad vs extension/change inside U.S. → I-539 where applicable.
-7. H-4 EAD — category (c)(26), H-4 proof, relationship, approved I-140 or qualifying AC21 basis.
-8. I-485 ancillary benefits — EAD and advance parole, preserving the separate eligibility categories and travel consequences.
+1. ✅ U.S. Immigration & Visa Services classifier — USCIS / DOL / DOS / NVC / CBP.
+2. ✅ Employment-based permanent residence — PERM → I-140 → Visa Bulletin/USCIS filing chart → I-485 or NVC/DS-260.
+3. ✅ Family-based permanent residence classifier — petitioner/relationship → immediate relative vs family preference → I-130 → adjustment vs NVC.
+4. Nonimmigrant visa application — deepen DS-160 → category-specific petition/SEVIS facts → fee → interview-waiver/appointment route.
+5. H-1B — deepen cap-subject vs cap-exempt vs change-employer vs extension/amendment → LCA → I-129 → visa/status handoff.
+6. H-4 — deepen visa abroad vs extension/change inside U.S. → I-539 where applicable.
+7. H-4 EAD — deepen category (c)(26), H-4 proof, relationship, approved I-140 or qualifying AC21 basis.
+8. I-485 ancillary benefits — EAD and advance parole, preserving separate eligibility categories and travel consequences.
 9. Permanent Resident Card — I-90 renewal/replacement/correction versus I-751/I-829 removal of conditions.
 10. Naturalization/citizenship — N-400 versus possible already-acquired/derived citizenship and N-600 documentation route.
 11. USCIS address changes — AR-11/online update, pending-case updates, NVC/DOS handoff and I-865 sponsor duties.
@@ -42,24 +41,39 @@ Each candidate is scored conceptually on:
 - Death registration / transport-of-remains process.
 - Renunciation/citizenship-related services not already covered by passport surrender.
 
-## Wave 3 — high-friction U.S. civic processes
+## Wave 3 — high-friction U.S. household and civic processes
 
-- U.S. Passport: first passport, renewal, child passport, lost/stolen/damaged and urgent travel.
-- Social Security: first SSN, replacement card, name/status update and retirement/disability benefit application routing.
-- REAL ID / driver's license: state-specific identity/residency/status evidence and appointment path.
-- IRS ITIN: new ITIN, renewal, acceptable identity documents and tax-return exceptions.
-- FAFSA / Federal Student Aid: dependency, contributor/parent data, identity and financial-information workflow.
-- Medicare / Social Security retirement enrollment timing and special enrollment periods.
-- State unemployment and paid-family-leave claims where source APIs/rules are sufficiently stable.
-- Vital records: birth/death/marriage certificates with state/county routing.
+### Activated in the current high-friction wave
 
-## Wave 4 — business and property processes
+1. ✅ **U.S. Passport Services** — first adult/child passport, renewal eligibility, lost/stolen/damaged, correction/limited-validity, urgent-travel agency routing.
+2. ✅ **Social Security Number & Card** — first SSN, replacement, name/record correction, citizenship/immigration update, child card and identity-theft routing.
+3. ✅ **IRS ITIN** — SSN eligibility, W-7 new/renewal, tax-return vs documented exception, identity evidence and mail/TAC/VITA/CAA/AA submission route.
+4. ✅ **Medicare Enrollment & Part B Timing** — Initial Enrollment, job-coverage SEP, exceptional SEP, General Enrollment, CMS-40B/CMS-L564/CMS-10797 routing and COBRA/retiree-coverage traps.
+5. ✅ **Family-Based Green Card** — activated above as a live detailed classifier because relationship and visa-number mistakes have especially high consequences.
 
+### Next high-value civic candidates
+
+6. **REAL ID / driver's license** — state-specific identity, lawful-status, SSN/ineligibility, residency, name-chain and appointment requirements. Start with California, then make jurisdiction adapters.
+7. **Social Security retirement / spouse / survivor benefits** — benefit type, claiming age, work history, family relationship, outside-U.S. payment and Medicare handoff.
+8. **Federal Student Aid / FAFSA** — student dependency, contributor identity, parent data, noncitizen/SSN edge cases, consent/signature and school-delivery workflow.
+9. **Unemployment insurance** — state employment/wage jurisdiction, separation reason, weekly certification, identity verification, overpayment/appeal route. Start with California EDD.
+10. **Paid Family Leave / disability leave** — state-specific worker eligibility, medical/family certification, employer leave vs wage-replacement distinction. Start with California SDI/PFL.
+11. **Vital records** — birth/death/marriage certificate ordering, amendment/correction, apostille/authentication and state/county routing.
+12. **TSA PreCheck / Global Entry** — program selection, application, conditional approval/interview, renewal and trusted-traveler number remediation.
+13. **Selective Service / citizenship-related registration proof** — registration/status-information-letter routing and age/status exceptions where applicable.
+14. **FEMA disaster assistance** — declared-disaster eligibility, housing vs other-needs assistance, insurance interaction and appeal route.
+15. **Veterans benefits entry router** — VA health care, disability compensation, GI Bill, survivor/dependent benefits and evidence/claim channel selection.
+
+## Wave 4 — tax, business and property processes
+
+- EIN application and responsible-party routing, including the official IRS application window and foreign-responsible-party cases.
 - Business entity formation and annual compliance by state.
-- EIN application and responsible-party routing.
-- Local business licenses and seller permits.
+- State seller permits / sales-tax registration and local business licenses.
+- IRS identity-protection PIN and tax-identity-theft recovery.
+- Estimated-tax / withholding correction / payment-plan routing.
 - Property purchase/transfer checklist, recording and homestead/property-tax exemptions by jurisdiction.
 - Landlord/tenant move-in, security-deposit and notice compliance by state/locality.
+- Property-tax reassessment/appeal and senior/veteran/homeowner exemption routing.
 
 ## Activation rule
 
@@ -70,6 +84,7 @@ A process becomes `live` only when:
 3. freshness metadata is current;
 4. unresolved legal/factual discretion returns `NEEDS_AUTHORITATIVE_CONFIRMATION`;
 5. questionnaire/evaluator regression tests pass;
-6. the UI exposes the process instead of leaving knowledge only in OKF.
+6. the UI exposes the process instead of leaving knowledge only in OKF;
+7. the process exposes the official government or official-contracted work links needed to continue the real task.
 
 For immigration and other legal-status processes, Official Checklist is routing/preflight guidance and must not present itself as individualized legal advice or predict discretionary adjudication outcomes.
