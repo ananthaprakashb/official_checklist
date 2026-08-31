@@ -1,8 +1,10 @@
 import catalogJson from "../../data/process-catalog.v1.json";
 import passportQuestionnaireJson from "../../data/india/us/passport/reissue/questionnaire.v2.json";
 import passportServicesQuestionnaireJson from "../../data/india/us/passport/services/questionnaire.v1.json";
+import usImmigrationQuestionnaireJson from "../../data/usa/immigration/services/questionnaire.v1.json";
 import { evaluatePassport } from "../core/evaluatePassport";
 import { evaluatePassportServices, type PassportServiceRouterResult } from "../core/evaluatePassportServices";
+import { evaluateUsImmigrationServices, type UsImmigrationServiceRouterResult } from "../core/evaluateUsImmigrationServices";
 import type { PassportAnswers, ProcessResult, Questionnaire } from "../types";
 import { labelOption, QUESTION_LABELS } from "../uiText";
 import type { ProcessCatalogEntry, ProcessModule, ProcessPresentation } from "./types";
@@ -10,6 +12,7 @@ import type { ProcessCatalogEntry, ProcessModule, ProcessPresentation } from "./
 const entries = catalogJson.processes as ProcessCatalogEntry[];
 const questionnaire = passportQuestionnaireJson as Questionnaire;
 const serviceQuestionnaire = passportServicesQuestionnaireJson as Questionnaire;
+const usImmigrationQuestionnaire = usImmigrationQuestionnaireJson as Questionnaire;
 
 const SERVICE_QUESTION_LABELS: Record<string, string> = {
   requested_passport_service: "What Indian passport or passport-related service do you need?",
@@ -37,8 +40,82 @@ const SERVICE_OPTION_LABELS: Record<string, string> = {
   not_sure: "I am not sure which service applies"
 };
 
+const US_IMMIGRATION_QUESTION_LABELS: Record<string, string> = {
+  requested_us_immigration_service: "What U.S. immigration or visa outcome do you need?",
+  employment_green_card_stage: "Which employment-based green card stage are you at?",
+  family_beneficiary_location: "Where will the family-based beneficiary process the permanent-residence case?",
+  aos_currently_inside_us: "Is the applicant physically present in the United States now?",
+  nonimmigrant_visa_category: "Which nonimmigrant visa category best describes the application?",
+  h1b_case_type: "What type of H-1B employer petition is this?",
+  h4_action: "Does the H-4 applicant need status action inside the U.S. or a visa abroad?",
+  h4_ead_basis: "What is the qualifying H-1B principal basis for H-4 EAD?",
+  ead_category_known: "Do you know the exact Form I-765 eligibility category?",
+  travel_document_type: "Which USCIS travel document do you need?",
+  green_card_action: "What needs to happen to the Permanent Resident Card/status?",
+  naturalization_may_already_be_citizen: "Could the applicant already have acquired or derived U.S. citizenship?",
+  change_address_pending_uscis_case: "Is there a pending USCIS case that also needs the new address?",
+  i94_issue: "What is wrong or needed with the I-94?"
+};
+
+const US_IMMIGRATION_OPTION_LABELS: Record<string, string> = {
+  employment_green_card: "Employment-based Green Card",
+  family_green_card: "Family-based Green Card",
+  adjustment_of_status: "Adjustment of Status (I-485)",
+  immigrant_visa_consular_processing: "Immigrant Visa / NVC / DS-260",
+  nonimmigrant_visa_application: "Nonimmigrant Visa / DS-160",
+  h1b_petition: "H-1B employer petition",
+  h4_status: "H-4 status or visa",
+  h4_ead: "H-4 Employment Authorization (EAD)",
+  employment_authorization: "Employment Authorization Document (I-765)",
+  travel_document: "Travel Document / Advance Parole / Reentry Permit",
+  green_card_replace_or_renew: "Renew / replace / correct Green Card",
+  naturalization: "Naturalization / citizenship",
+  change_of_address: "USCIS change of address",
+  i94_record_or_correction: "I-94 record / correction",
+  not_sure: "I am not sure which process applies",
+  perm: "PERM labor certification",
+  i140: "I-140 immigrant petition",
+  i485: "I-485 adjustment of status",
+  consular: "NVC / immigrant visa consular processing",
+  inside_us: "Inside the United States",
+  outside_us: "Outside the United States",
+  visitor_or_business: "Visitor / business visa",
+  student_or_exchange: "Student / exchange visa",
+  petition_based_worker: "Petition-based temporary worker",
+  dependent: "Dependent visa",
+  other_or_not_sure: "Other / not sure",
+  cap_selected: "Cap-subject with selected registration",
+  cap_exempt: "Cap-exempt",
+  change_employer: "Change of employer",
+  extension: "Extension",
+  amendment: "Amendment",
+  extend_or_change_inside_us: "Extend or change H-4 status inside the U.S.",
+  visa_abroad: "Apply for H-4 visa abroad",
+  approved_i140: "H-1B principal has approved I-140",
+  ac21_extension: "H-1B principal has qualifying AC21 extension",
+  neither: "Neither qualifying basis",
+  advance_parole: "Advance Parole",
+  reentry_permit: "Reentry Permit",
+  refugee_travel_document: "Refugee Travel Document",
+  tps_travel_authorization: "TPS Travel Authorization",
+  renew_expiring_10_year_card: "Renew expiring/expired 10-year Green Card",
+  replace_lost_stolen_damaged: "Replace lost, stolen or damaged Green Card",
+  correct_card_error_or_update: "Correct/update qualifying Green Card information",
+  remove_marriage_conditions: "Remove marriage-based two-year conditions",
+  remove_investor_conditions: "Remove investor two-year conditions",
+  retrieve_record: "Retrieve latest I-94",
+  not_found: "I-94 cannot be found",
+  cbp_entry_error: "CBP made an error at entry",
+  uscis_issued_error: "USCIS-issued I-94 has an error",
+  extend_or_change_status: "Need to extend or change status"
+};
+
 function labelServiceOption(value: string): string {
   return SERVICE_OPTION_LABELS[value] ?? labelOption(value);
+}
+
+function labelUsImmigrationOption(value: string): string {
+  return US_IMMIGRATION_OPTION_LABELS[value] ?? labelOption(value);
 }
 
 function presentPassport(raw: unknown): ProcessPresentation {
@@ -85,12 +162,67 @@ function presentPassportServices(raw: unknown): ProcessPresentation {
   };
 }
 
+function presentUsImmigrationServices(raw: unknown): ProcessPresentation {
+  const result = raw as UsImmigrationServiceRouterResult;
+  return {
+    status: result.status,
+    title: result.title,
+    subtitle: `Resolved path: ${labelUsImmigrationOption(result.service_family)} · Sources verified ${result.sources_verified}`,
+    summary: [
+      { label: "Service family", value: labelUsImmigrationOption(result.service_family) },
+      { label: "Routing status", value: result.status === "READY" ? "Correct agency/stage identified" : result.status === "NOT_READY" ? "Selected route conflicts with the facts" : "Current eligibility or authority check required" }
+    ],
+    blockers: result.blockers,
+    warnings: result.warnings,
+    requiredItems: result.required_items,
+    conditionalItems: result.conditional_items,
+    nextStep: result.next_step,
+    sourcesVerified: result.sources_verified,
+    rawResult: result
+  };
+}
+
 const passportEntry = entries.find((entry) => entry.id === "india-us-passport-reissue");
 if (!passportEntry) throw new Error("Process catalog is missing india-us-passport-reissue");
 const passportServicesEntry = entries.find((entry) => entry.id === "india-us-passport-services");
 if (!passportServicesEntry) throw new Error("Process catalog is missing india-us-passport-services");
+const usImmigrationEntry = entries.find((entry) => entry.id === "usa-immigration-services");
+if (!usImmigrationEntry) throw new Error("Process catalog is missing usa-immigration-services");
 
 const modules = new Map<string, ProcessModule>([
+  [
+    usImmigrationEntry.id,
+    {
+      entry: usImmigrationEntry,
+      questionnaire: usImmigrationQuestionnaire,
+      storageKey: `official-checklist:${usImmigrationQuestionnaire.id}:answers`,
+      eyebrow: "UNITED STATES · IMMIGRATION & VISAS · CLASSIFY THE AGENCY AND STAGE FIRST",
+      questionLabels: US_IMMIGRATION_QUESTION_LABELS,
+      questionHints: {
+        requested_us_immigration_service: "Choose the outcome you need, not a form number. The classifier will identify the likely agency and stage before documents or fees.",
+        employment_green_card_stage: "PERM, I-140, I-485 and NVC/DS-260 are sequential or alternative stages, not interchangeable applications.",
+        h4_action: "An H-4 status action inside the U.S. and an H-4 visa application abroad use different government processes.",
+        i94_issue: "The authority that created the I-94 or error determines whether CBP or USCIS can correct it."
+      },
+      labelOption: labelUsImmigrationOption,
+      sourceLinks: [
+        { label: "DOL PERM", url: "https://flag.dol.gov/programs/perm" },
+        { label: "USCIS Form I-140", url: "https://www.uscis.gov/i-140" },
+        { label: "USCIS Form I-485", url: "https://www.uscis.gov/i-485" },
+        { label: "DOS September 2026 Visa Bulletin", url: "https://travel.state.gov/content/travel/en/legal/visa-law0/visa-bulletin/2026/visa-bulletin-for-september-2026.html" },
+        { label: "DOS DS-160", url: "https://travel.state.gov/content/travel/en/us-visas/visa-information-resources/forms/ds-160-online-nonimmigrant-visa-application/ds-160-faqs.html" },
+        { label: "DOS National Visa Center", url: "https://travel.state.gov/content/travel/en/us-visas/immigrate/national-visa-center.html" },
+        { label: "USCIS Form I-129", url: "https://www.uscis.gov/i-129" },
+        { label: "USCIS Form I-765", url: "https://www.uscis.gov/i-765" },
+        { label: "USCIS Form I-90", url: "https://www.uscis.gov/i-90" },
+        { label: "USCIS Form N-400", url: "https://www.uscis.gov/n-400" },
+        { label: "USCIS Change of Address", url: "https://www.uscis.gov/addresschange" },
+        { label: "CBP I-94", url: "https://www.cbp.gov/I94" }
+      ],
+      evaluate: (answers: PassportAnswers) => evaluateUsImmigrationServices(answers),
+      present: presentUsImmigrationServices
+    }
+  ],
   [
     passportServicesEntry.id,
     {

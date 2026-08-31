@@ -1,7 +1,24 @@
 {
   "version": 1,
-  "generated": "2026-08-12",
+  "generated": "2026-08-30",
   "processes": [
+    {
+      "id": "usa-immigration-services",
+      "slug": "usa/immigration",
+      "country_code": "US",
+      "country_name": "United States",
+      "applicant_country": "United States / Abroad",
+      "service": "Immigration & Visas",
+      "title": "U.S. Immigration & Visa Services",
+      "short_title": "Immigration & Visas",
+      "summary": "Classify the correct immigration or visa path before forms and fees: employment/family green card, adjustment vs consular processing, DS-160, H-1B/H-4, EAD, travel documents, permanent-resident services, naturalization, address changes and I-94.",
+      "status": "live",
+      "module": "usa-immigration-services-v1",
+      "questionnaire_id": "usa-immigration-service-router-v1",
+      "verified": "2026-08-30",
+      "stale_after": "2026-09-13",
+      "tags": ["immigration", "green-card", "visa", "uscis", "state-department", "cbp"]
+    },
     {
       "id": "india-us-passport-services",
       "slug": "india/passport/us",

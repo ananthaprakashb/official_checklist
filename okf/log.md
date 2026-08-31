@@ -1,5 +1,17 @@
 # OKF Change Log
 
+## 2026-08-30 — v0.6 U.S. immigration and visa onboarding
+
+- Added a cross-agency U.S. Immigration & Visa Services classifier spanning USCIS, Department of Labor, Department of State/NVC and CBP.
+- Added authoritative source nodes for PERM, I-140, I-485, the September 2026 Visa Bulletin, I-130, DS-160, NVC/DS-260, I-129/H-1B, I-539, I-765, I-131, I-90, N-400, USCIS address changes and CBP I-94.
+- Added process envelopes for employment-based permanent residence, family-based permanent residence, DS-160 vs DS-260 visa routing, H-1B/H-4/H-4 EAD, permanent-resident/citizenship services and I-94 retrieval/correction.
+- Added a live `/usa/immigration` service router that asks for the desired outcome/stage before selecting forms or documents.
+- Added anti-mismatch controls for I-485 vs consular processing, DS-160 vs DS-260, H-4 visa vs I-539, H-4 EAD (c)(26) basis, I-90 vs I-751/I-829, and CBP I-94 correction vs USCIS status-extension/change routes.
+- Generalized questionnaire validation from the India/passport subtree to every versioned questionnaire under `data/`.
+- Added regression coverage for employment-based I-485 visa-availability gating, petition-based worker DS-160, H-4 EAD eligibility, removal-of-conditions routing and CBP Deferred Inspection.
+- Added a multi-wave onboarding roadmap covering India consular services, U.S. civic processes, and state/business/property compliance workflows.
+- Preserved conservative `NEEDS_AUTHORITATIVE_CONFIRMATION` results for legal/eligibility facts or freshness-sensitive filing gates rather than predicting approval.
+
 ## 2026-08-12 — v0.5 Indian passport service-family expansion
 
 - Expanded the India/U.S. OKF from Re-issue-first coverage to the full authoritative passport/travel-document and passport-related service taxonomy.
@@ -10,7 +22,7 @@
 - Added PCC, GEP and Surrender requirement envelopes that preserve dynamic official checklists rather than inventing universal document sets.
 - Added process envelopes for Fresh, SVP renewal, EC, PCC, GEP, Surrender, Diplomatic/Official Passport, Identity Certificate and adverse-action appeals.
 - Generalized submission routing and preflight so non-passport-issuance services cannot accidentally inherit the ordinary Fresh/Re-issue workflow.
-- Preserved the current interactive application as Re-issue-only until each new service receives its own versioned questionnaire/evaluator and regression tests.
+- Activated a passport-service classifier in the web catalog so expanded OKF coverage is visible instead of remaining knowledge-graph-only.
 
 ## 2026-08-10 — v0.4 generalized process engine and publication
 

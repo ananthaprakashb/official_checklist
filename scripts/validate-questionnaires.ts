@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { basename, dirname, relative, resolve } from "node:path";
 
-const root = resolve("data/india/us/passport");
+const root = resolve("data");
 const errors: string[] = [];
 const questionnaireIds = new Set<string>();
 const versionsByDirectory = new Map<string, Set<number>>();

@@ -2,6 +2,43 @@
 
 Canonical entrypoint for the machine-readable official-process graph.
 
+## United States — immigration and visa services
+
+### Master classification
+
+- [U.S. immigration and visa service classification](decisions/usa-immigration-service-classification.md)
+- [U.S. Immigration & Visa Services classifier](processes/usa/immigration/services.md)
+
+### Permanent residence
+
+- [Employment-based Green Card](processes/usa/immigration/employment-green-card.md)
+- [Family-based Green Card](processes/usa/immigration/family-green-card.md)
+- [Visa application router — DS-160 vs DS-260](processes/usa/immigration/visa-applications.md)
+
+### Temporary status, work authorization and travel
+
+- [H-1B / H-4 / H-4 EAD router](processes/usa/immigration/h1b-h4.md)
+- [Permanent Resident and Citizenship services](processes/usa/immigration/resident-services.md)
+- [I-94 retrieval/correction router](processes/usa/immigration/i94.md)
+
+### Authoritative source nodes
+
+- [DOL — Permanent Labor Certification (PERM)](sources/dol-perm-aug-2026.md)
+- [USCIS — Form I-140](sources/uscis-i140-aug-2026.md)
+- [USCIS — Form I-485](sources/uscis-i485-aug-2026.md)
+- [Department of State — September 2026 Visa Bulletin](sources/dos-visa-bulletin-sep-2026.md)
+- [USCIS — Form I-130](sources/uscis-i130-aug-2026.md)
+- [Department of State — DS-160](sources/dos-ds160-aug-2026.md)
+- [Department of State — NVC / DS-260](sources/dos-nvc-ds260-aug-2026.md)
+- [USCIS — Form I-129 / H-1B](sources/uscis-i129-h1b-aug-2026.md)
+- [USCIS — Form I-539](sources/uscis-i539-aug-2026.md)
+- [USCIS — Form I-765](sources/uscis-i765-aug-2026.md)
+- [USCIS — Form I-131](sources/uscis-i131-aug-2026.md)
+- [USCIS — Form I-90](sources/uscis-i90-aug-2026.md)
+- [USCIS — Form N-400](sources/uscis-n400-aug-2026.md)
+- [USCIS — Change of Address](sources/uscis-address-change-aug-2026.md)
+- [CBP — I-94 retrieval/correction](sources/cbp-i94-aug-2026.md)
+
 ## India — applicants in the United States
 
 ### Indian passport / travel-document master classification
@@ -92,10 +129,18 @@ Official service-provider sources:
 
 ## Machine-readable runtime scope
 
-The OKF bundle now models the complete service taxonomy above. The current interactive evaluator remains intentionally limited to the already-verified **Ordinary Passport Re-issue** questionnaire under `data/india/us/passport/reissue/`.
+The interactive application now exposes three verified runtime modules:
 
-Other process envelopes are knowledge-graph coverage until their versioned questionnaire/evaluator modules are separately activated. This prevents a partially researched service from appearing `READY` in the UI.
+1. **U.S. Immigration & Visa Services** — cross-agency service/stage classifier covering green-card, visa, H-1B/H-4, EAD/travel-document, permanent-resident/citizenship, address and I-94 routes.
+2. **Indian Passport Services in the U.S.** — service-family classifier across passport/travel-document and related services.
+3. **Indian Passport Re-issue in the U.S.** — detailed questionnaire/evaluator with jurisdiction, reason, Tatkaal, fee and document preflight.
 
-## Repository history
+The U.S. immigration classifier intentionally returns `NEEDS_AUTHORITATIVE_CONFIRMATION` for filing gates that depend on current visa availability, applicant-specific eligibility or discretionary/legal facts. A `READY` classification means the correct agency/stage has been identified; it is not a prediction of approval.
+
+Additional process envelopes become live only after authoritative source coverage, classification logic, a versioned questionnaire/evaluator, regression tests and catalog exposure are all present.
+
+## Expansion roadmap
+
+The broader process onboarding roadmap is maintained in `docs/process-onboarding-roadmap.md` outside the canonical `/okf` graph.
 
 - [OKF change log](log.md)
