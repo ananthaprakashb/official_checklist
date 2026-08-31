@@ -62,7 +62,7 @@ export function evaluateSourceFreshness(
   return {
     requiresReview: issues.length > 0,
     issues,
-    monitoredSources: affectedSources.length
+    registeredSources: affectedSources.length
   };
 }
 
@@ -82,8 +82,8 @@ export function applySourceFreshness(
     label: "Source health",
     value: freshness.requiresReview
       ? "Review required before relying on READY"
-      : freshness.monitoredSources > 0
-        ? `${freshness.monitoredSources} critical source(s) monitored · freshness current`
+      : freshness.registeredSources > 0
+        ? `${freshness.registeredSources} critical source(s) registered · freshness current`
         : "Process freshness current"
   });
   const warnings = freshness.requiresReview
