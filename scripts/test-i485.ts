@@ -70,8 +70,9 @@ assert.equal(earlyPort.status, "NOT_READY");
 const goodPort = evaluateI485({ ...base, i485_stage: "filed_pending", job_change_or_portability_requested: true, i485_pending_days: 181, new_job_same_or_similar: "yes", portability_supplement_j_ready: "yes" });
 assert.equal(goodPort.status, "READY");
 
-const niwPort = evaluateI485({ ...base, i485_basis: "eb2_niw", job_change_or_portability_requested: true, i485_pending_days: 200, new_job_same_or_similar: "not_applicable", portability_supplement_j_ready: "not_applicable", supplement_j_status: "not_applicable" });
+const niwPort = evaluateI485({ ...base, i485_basis: "eb2_niw", chargeability_country: "all_other", priority_date: "2026-01-01", job_change_or_portability_requested: true, i485_pending_days: 200, new_job_same_or_similar: "not_applicable", portability_supplement_j_ready: "not_applicable", supplement_j_status: "not_applicable" });
 assert.equal(niwPort.status, "NEEDS_AUTHORITATIVE_CONFIRMATION");
+assert.ok(niwPort.warnings.some((item) => item.includes("does not use ordinary INA 204(j) portability")));
 
 const travel = evaluateI485({ ...base, i485_stage: "filed_pending", planned_international_travel_before_i485_decision: true, travel_document_or_exception_confirmed: "no" });
 assert.equal(travel.status, "NOT_READY");
