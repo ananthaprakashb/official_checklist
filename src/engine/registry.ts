@@ -9,6 +9,7 @@ import type { PassportAnswers, ProcessResult, Questionnaire } from "../types";
 import { labelOption, QUESTION_LABELS } from "../uiText";
 import { createEmploymentGreenCardModule } from "./employmentGreenCardModule";
 import { createI140Module } from "./i140Module";
+import { createI485Module } from "./i485Module";
 import { createPermModule } from "./permModule";
 import type { ProcessCatalogEntry, ProcessModule, ProcessPresentation } from "./types";
 
@@ -197,8 +198,11 @@ const permEntry = entries.find((entry) => entry.id === "usa-perm-detailed");
 if (!permEntry) throw new Error("Process catalog is missing usa-perm-detailed");
 const i140Entry = entries.find((entry) => entry.id === "usa-i140-detailed");
 if (!i140Entry) throw new Error("Process catalog is missing usa-i140-detailed");
+const i485Entry = entries.find((entry) => entry.id === "usa-i485-detailed");
+if (!i485Entry) throw new Error("Process catalog is missing usa-i485-detailed");
 
 const modules = new Map<string, ProcessModule>([
+  [i485Entry.id, createI485Module(i485Entry)],
   [i140Entry.id, createI140Module(i140Entry)],
   [permEntry.id, createPermModule(permEntry)],
   [employmentGreenCardEntry.id, createEmploymentGreenCardModule(employmentGreenCardEntry)],

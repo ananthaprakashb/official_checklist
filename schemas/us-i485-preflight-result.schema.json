@@ -1,0 +1,23 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"Employment-Based I-485 Preflight Result",
+  "type":"object",
+  "required":["status","basis","stage","filing_chart","filing_cutoff","filing_eligible","final_action_cutoff","final_action_eligible","required_items","conditional_items","blockers","warnings","next_step","sources_verified"],
+  "properties":{
+    "status":{"enum":["READY","NOT_READY","NEEDS_AUTHORITATIVE_CONFIRMATION"]},
+    "basis":{"type":"string"},
+    "stage":{"type":"string"},
+    "filing_chart":{"type":"string"},
+    "filing_cutoff":{"type":["string","null"]},
+    "filing_eligible":{"type":["boolean","null"]},
+    "final_action_cutoff":{"type":["string","null"]},
+    "final_action_eligible":{"type":["boolean","null"]},
+    "required_items":{"type":"array","items":{"type":"string"}},
+    "conditional_items":{"type":"array","items":{"type":"string"}},
+    "blockers":{"type":"array","items":{"type":"string"}},
+    "warnings":{"type":"array","items":{"type":"string"}},
+    "next_step":{"type":"string"},
+    "sources_verified":{"type":"string"}
+  },
+  "additionalProperties":true
+}

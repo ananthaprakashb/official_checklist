@@ -1,5 +1,22 @@
 # OKF Change Log
 
+## 2026-08-30 — v0.10 detailed employment-based Form I-485 preflight
+
+- Activated a dedicated `/usa/immigration/employment-green-card/i485` workflow for employment-based adjustment of status rather than stopping at the generic employment-green-card stage gate.
+- Added current USCIS source nodes for detailed Form I-485 filing instructions, employment-based INA 245(k), pending-adjustment I-765 category `(c)(9)`, and I-131 Advance Parole handling.
+- Reused the authoritative August/September 2026 Department of State cutoff model while preserving a separate USCIS monthly filing-chart confirmation gate; the engine does not infer Dates for Filing from the more favorable table.
+- Added separate filing eligibility and Final Action availability so a case that may be fileable is not described as approvable before an immigrant visa number is available.
+- Added physical-presence and inspection/admission/parole routing to prevent outside-U.S. applicants from being sent into Form I-485 instead of consular processing.
+- Added INA 245(c)/245(k) status-history controls, including the 180-day threshold and an explicit most-recent-lawful-admission anchor before relying on 245(k).
+- Added conservative authoritative-confirmation handling for uncertain status history, inadmissibility, removal, J-1 212(e), fraud/misrepresentation, criminal, immigration-history, or other individualized adjustment issues.
+- Added current Form I-485 edition/filing-location verification and I-693-at-filing controls, including a confirmation gate for any claimed medical-exam exception.
+- Added job-offer-based Supplement J handling and separate treatment for EB-1A/NIW cases that do not use Supplement J merely to confirm a job offer or request ordinary INA 204(j) portability.
+- Added derivative-beneficiary reminders, pending-I-485 I-765 `(c)(9)` and I-131 Advance Parole routing, and a hard travel blocker when departure is planned without a confirmed issued travel document or recognized exception.
+- Added INA 204(j) portability checks for at least 180 pending days, a same-or-similar permanent job, and the Supplement J portability package.
+- Added transfer-of-underlying-basis as a separate discretionary confirmation path rather than silently treating a basis switch as ordinary portability.
+- Added RFE/NOID, interview, denial, and approval-state checks driven by the actual USCIS notices and current Final Action availability.
+- Added a dedicated I-485 regression suite to the mandatory validation chain covering visa-chart differences, India EB-2 unavailability, location routing, 245(k), I-693, portability, travel, RFE deadlines, and transfer-of-basis handling.
+
 ## 2026-08-30 — v0.9 detailed Form I-140 immigrant-petition preflight
 
 - Activated a dedicated `/usa/immigration/employment-green-card/i140` workflow covering Form I-140 classification through USCIS adjudication and downstream I-485/NVC routing.
