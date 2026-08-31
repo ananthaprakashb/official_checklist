@@ -1,0 +1,17 @@
+{
+  "id": "usa-fafsa-federal-student-aid",
+  "slug": "usa/education/fafsa",
+  "country_code": "US",
+  "country_name": "United States",
+  "applicant_country": "United States / Eligible Students",
+  "service": "Federal Student Aid",
+  "title": "FAFSA & Federal Student Aid Preflight",
+  "short_title": "FAFSA",
+  "summary": "Classify FAFSA award year, dependency/contributor route, consent and submission readiness, unusual circumstances, parent refusal, corrections, verification, school-list/deadline actions and financial-aid-office adjustments before entering or changing aid information.",
+  "status": "live",
+  "module": "usa-fafsa-federal-student-aid-v1",
+  "questionnaire_id": "usa-fafsa-federal-student-aid-router-v1",
+  "verified": "2026-08-31",
+  "stale_after": "2026-09-15",
+  "tags": ["education", "fafsa", "federal-student-aid", "financial-aid", "contributors", "dependency", "verification", "pell-grant"]
+}
