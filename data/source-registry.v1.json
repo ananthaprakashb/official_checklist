@@ -1,0 +1,82 @@
+{
+  "version": 1,
+  "generated": "2026-08-30",
+  "policy": {
+    "description": "Critical high-change authoritative sources monitored by content fingerprint. Static source freshness remains governed by OKF stale_after metadata and live-process stale_after metadata.",
+    "change_action": "review_required_no_rule_autorewrite",
+    "availability_action": "review_required",
+    "discovery": "next_month_dos_visa_bulletin"
+  },
+  "sources": [
+    {
+      "id": "source-dos-visa-bulletin-sep-2026",
+      "okf_path": "okf/sources/dos-visa-bulletin-sep-2026.md",
+      "authority": "U.S. Department of State",
+      "official_url": "https://travel.state.gov/content/travel/en/legal/visa-law0/visa-bulletin/2026/visa-bulletin-for-september-2026.html",
+      "source_level": 1,
+      "stale_after": "2026-09-13",
+      "monitor": "content_fingerprint",
+      "process_ids": ["usa-immigration-services", "usa-employment-green-card", "usa-i140-detailed", "usa-i485-detailed", "usa-nvc-employment-detailed"]
+    },
+    {
+      "id": "source-uscis-visa-availability-priority-dates-aug-2026",
+      "okf_path": "okf/sources/uscis-visa-availability-priority-dates-aug-2026.md",
+      "authority": "U.S. Citizenship and Immigration Services",
+      "official_url": "https://www.uscis.gov/green-card/green-card-processes-and-procedures/visa-availability-priority-dates",
+      "source_level": 1,
+      "stale_after": "2026-09-13",
+      "monitor": "metadata_only",
+      "process_ids": ["usa-employment-green-card", "usa-i140-detailed", "usa-i485-detailed"]
+    },
+    {
+      "id": "source-dos-nvc-ds260-aug-2026",
+      "okf_path": "okf/sources/dos-nvc-ds260-aug-2026.md",
+      "authority": "U.S. Department of State, National Visa Center",
+      "official_url": "https://travel.state.gov/content/travel/en/us-visas/immigrate/national-visa-center.html",
+      "source_level": 1,
+      "stale_after": "2026-09-13",
+      "monitor": "content_fingerprint",
+      "process_ids": ["usa-immigration-services", "usa-employment-green-card", "usa-nvc-employment-detailed"]
+    },
+    {
+      "id": "source-dol-perm-aug-2026",
+      "okf_path": "okf/sources/dol-perm-aug-2026.md",
+      "authority": "U.S. Department of Labor",
+      "official_url": "https://flag.dol.gov/programs/perm",
+      "source_level": 1,
+      "stale_after": "2026-09-13",
+      "monitor": "content_fingerprint",
+      "process_ids": ["usa-immigration-services", "usa-employment-green-card", "usa-perm-detailed"]
+    },
+    {
+      "id": "source-uscis-i140-aug-2026",
+      "okf_path": "okf/sources/uscis-i140-aug-2026.md",
+      "authority": "U.S. Citizenship and Immigration Services",
+      "official_url": "https://www.uscis.gov/i-140",
+      "source_level": 1,
+      "stale_after": "2026-09-13",
+      "monitor": "metadata_only",
+      "process_ids": ["usa-immigration-services", "usa-employment-green-card", "usa-i140-detailed"]
+    },
+    {
+      "id": "source-uscis-i485-aug-2026",
+      "okf_path": "okf/sources/uscis-i485-aug-2026.md",
+      "authority": "U.S. Citizenship and Immigration Services",
+      "official_url": "https://www.uscis.gov/i-485",
+      "source_level": 1,
+      "stale_after": "2026-09-13",
+      "monitor": "metadata_only",
+      "process_ids": ["usa-immigration-services", "usa-employment-green-card", "usa-i485-detailed"]
+    },
+    {
+      "id": "source-vfs-us-passport-aug-2026",
+      "okf_path": "okf/sources/vfs-us-passport-aug-2026.md",
+      "authority": "VFS Global - India Consular Services USA",
+      "official_url": "https://services.vfsglobal.com/usa/en/ind/apply-passport",
+      "source_level": 3,
+      "stale_after": "2026-09-11",
+      "monitor": "metadata_only",
+      "process_ids": ["india-us-passport-services", "india-us-passport-reissue"]
+    }
+  ]
+}

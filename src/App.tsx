@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { clearHiddenAnswers, isAnswered, visibleQuestions } from "./core/questionnaire";
+import { applySourceFreshness } from "./core/sourceFreshness";
 import { getProcessBySlug, getProcessModule, listProcesses } from "./engine/registry";
 import { currentRoute, navigate, restoreRedirectedRoute, routeHref } from "./engine/router";
 import type { ProcessCatalogEntry, ProcessModule } from "./engine/types";
@@ -133,7 +134,7 @@ function ProcessRunner({ process }: { process: ProcessModule }) {
 
   const questions = useMemo(() => visibleQuestions(process.questionnaire.questions, answers), [process, answers]);
   const current = questions[Math.min(index, Math.max(0, questions.length - 1))];
-  const presentation = useMemo(() => process.present(process.evaluate(answers)), [process, answers]);
+  const presentation = useMemo(() => applySourceFreshness(process.entry, process.present(process.evaluate(answers))), [process, answers]);
 
   function updateAnswer(value: unknown) {
     if (!current) return;
