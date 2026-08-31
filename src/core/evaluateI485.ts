@@ -91,7 +91,9 @@ export function evaluateI485(a:PassportAnswers):I485Result{
   const block=(m:string)=>blockers.push(m); const confirm=(m:string)=>{warnings.push(m);confirmNeeded=true;};
 
   if(!rule||basis==="not_sure")confirm("Resolve the exact employment-based adjustment basis and Visa Bulletin row before filing.");
-  if(s(a,"beneficiary_location")!=="inside_us") block("Form I-485 is the U.S. adjustment route. An applicant outside the United States must resolve consular processing instead of using this filing path.");
+  const location=s(a,"beneficiary_location");
+  if(location==="outside_us") block("Form I-485 is the U.S. adjustment route. An applicant outside the United States must resolve consular processing instead of using this filing path.");
+  else if(location==="not_sure") confirm("Confirm that the applicant will be physically present in the United States and using adjustment rather than consular processing.");
   const admission=s(a,"inspected_admitted_or_paroled");
   if(admission==="no")block("The standard INA 245(a) inspection/admission/parole gate is not satisfied as recorded. Do not proceed without evaluating a different statutory adjustment basis, if any.");
   else if(admission==="not_sure")confirm("Confirm the applicant's inspection/admission/parole and adjustment jurisdiction before filing.");
@@ -118,6 +120,9 @@ export function evaluateI485(a:PassportAnswers):I485Result{
 
   const statusHistory=s(a,"status_history_245k");
   if(statusHistory==="possible_180_or_less_since_last_lawful_admission"){
+    const lawfulAdmission=s(a,"last_entry_for_245k_was_lawful_admission");
+    if(lawfulAdmission==="no")block("The potential INA 245(k) calculation is not anchored to a most recent lawful admission as required for that exemption. Evaluate another adjustment basis instead of relying on 245(k).");
+    else if(lawfulAdmission==="not_sure")confirm("Confirm the applicant's most recent lawful admission before relying on INA 245(k).");
     if(rule?.group==="eb1"||rule?.group==="eb2"||rule?.group==="eb3"||rule?.group==="other_workers") confirm("A possible INA 245(k) case is recorded. Verify the category and aggregate covered violations since the most recent lawful admission; do not rely on an approximate day count.");
     else confirm("The selected category's eligibility for INA 245(k) relief must be confirmed; do not assume every employment-based category is covered identically.");
   } else if(statusHistory==="over_180_since_last_lawful_admission") block("The recorded covered status/unauthorized-employment violations exceed the 180-day INA 245(k) threshold. The standard 245(k) route does not cure this record; evaluate other statutory options separately.");
@@ -129,6 +134,7 @@ export function evaluateI485(a:PassportAnswers):I485Result{
   if(newFiling&&edition==="no")block("The current Form I-485 edition/instructions have not been confirmed."); else if(newFiling&&edition!=="yes")confirm("Confirm the current Form I-485 edition, fee and filing location immediately before filing.");
   const medical=s(a,"i693_status");
   if(newFiling&&medical==="not_ready")block("The required Form I-693 medical package is not ready; current USCIS policy can reject an I-485 filed without required I-693 initial evidence.");
+  else if(newFiling&&medical==="not_required_confirmed")confirm("The I-693 is marked not required. Reconfirm that conclusion against the current I-485/I-693 instructions for this applicant before filing.");
   else if(newFiling&&medical==="not_sure")confirm("Confirm whether a current, complete Form I-693 is required and ready with this I-485 filing.");
   required.push("Prepare the current I-485 package with identity/civil records, admission/status evidence, immigrant-basis evidence, and current visa-availability support.");
 
