@@ -13,6 +13,7 @@ sources:
   - ../sources/uscis-employment-adjustment-245k-aug-2026.md
   - ../sources/uscis-i693-i485-aug-2026.md
   - ../sources/uscis-i485-supplement-j-aug-2026.md
+  - ../sources/uscis-rfe-noid-aug-2026.md
 ---
 
 # Employment-Based I-485 Preflight
@@ -25,7 +26,7 @@ Block or require confirmation for:
 - priority date not earlier than the selected chart cutoff;
 - underlying petition posture that cannot support adjustment;
 - missing required I-693 at a planned new filing;
-- unresolved or over-threshold INA 245(k)/status-history issue;
+- unresolved or over-threshold INA 245(k)/status-history issue, including a missing lawful-admission anchor for a 245(k) calculation;
 - missing Supplement J when required by a job-offer-based filing posture;
 - purported 204(j) portability before 180 days or to a non-same/similar job;
 - individualized inadmissibility/adjustment-bar facts;
