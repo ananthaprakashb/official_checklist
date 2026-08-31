@@ -1,0 +1,115 @@
+{
+  "id": "usa-immigration-service-router-v1",
+  "version": 1,
+  "verified": "2026-08-30",
+  "stale_after": "2026-09-13",
+  "questions": [
+    {
+      "id": "requested_us_immigration_service",
+      "type": "select",
+      "required": true,
+      "options": [
+        "employment_green_card",
+        "family_green_card",
+        "adjustment_of_status",
+        "immigrant_visa_consular_processing",
+        "nonimmigrant_visa_application",
+        "h1b_petition",
+        "h4_status",
+        "h4_ead",
+        "employment_authorization",
+        "travel_document",
+        "green_card_replace_or_renew",
+        "naturalization",
+        "change_of_address",
+        "i94_record_or_correction",
+        "not_sure"
+      ]
+    },
+    {
+      "id": "employment_green_card_stage",
+      "type": "select",
+      "required_when": { "requested_us_immigration_service": "employment_green_card" },
+      "options": ["perm", "i140", "i485", "consular", "not_sure"]
+    },
+    {
+      "id": "family_beneficiary_location",
+      "type": "select",
+      "required_when": { "requested_us_immigration_service": "family_green_card" },
+      "options": ["inside_us", "outside_us", "not_sure"]
+    },
+    {
+      "id": "aos_currently_inside_us",
+      "type": "boolean",
+      "required_when": { "requested_us_immigration_service": "adjustment_of_status" }
+    },
+    {
+      "id": "nonimmigrant_visa_category",
+      "type": "select",
+      "required_when": { "requested_us_immigration_service": "nonimmigrant_visa_application" },
+      "options": ["visitor_or_business", "student_or_exchange", "petition_based_worker", "dependent", "other_or_not_sure"]
+    },
+    {
+      "id": "h1b_case_type",
+      "type": "select",
+      "required_when": { "requested_us_immigration_service": "h1b_petition" },
+      "options": ["cap_selected", "cap_exempt", "change_employer", "extension", "amendment", "not_sure"]
+    },
+    {
+      "id": "h4_action",
+      "type": "select",
+      "required_when": { "requested_us_immigration_service": "h4_status" },
+      "options": ["extend_or_change_inside_us", "visa_abroad", "not_sure"]
+    },
+    {
+      "id": "h4_ead_basis",
+      "type": "select",
+      "required_when": { "requested_us_immigration_service": "h4_ead" },
+      "options": ["approved_i140", "ac21_extension", "neither", "not_sure"]
+    },
+    {
+      "id": "ead_category_known",
+      "type": "boolean",
+      "required_when": { "requested_us_immigration_service": "employment_authorization" }
+    },
+    {
+      "id": "travel_document_type",
+      "type": "select",
+      "required_when": { "requested_us_immigration_service": "travel_document" },
+      "options": ["advance_parole", "reentry_permit", "refugee_travel_document", "tps_travel_authorization", "other_or_not_sure"]
+    },
+    {
+      "id": "green_card_action",
+      "type": "select",
+      "required_when": { "requested_us_immigration_service": "green_card_replace_or_renew" },
+      "options": ["renew_expiring_10_year_card", "replace_lost_stolen_damaged", "correct_card_error_or_update", "remove_marriage_conditions", "remove_investor_conditions", "not_sure"]
+    },
+    {
+      "id": "naturalization_may_already_be_citizen",
+      "type": "boolean",
+      "required_when": { "requested_us_immigration_service": "naturalization" }
+    },
+    {
+      "id": "change_address_pending_uscis_case",
+      "type": "boolean",
+      "required_when": { "requested_us_immigration_service": "change_of_address" }
+    },
+    {
+      "id": "i94_issue",
+      "type": "select",
+      "required_when": { "requested_us_immigration_service": "i94_record_or_correction" },
+      "options": ["retrieve_record", "not_found", "cbp_entry_error", "uscis_issued_error", "extend_or_change_status", "not_sure"]
+    }
+  ],
+  "rule_nodes": [
+    "okf/decisions/usa-immigration-service-classification.md",
+    "okf/processes/usa/immigration/services.md",
+    "okf/processes/usa/immigration/employment-green-card.md",
+    "okf/processes/usa/immigration/family-green-card.md",
+    "okf/processes/usa/immigration/visa-applications.md",
+    "okf/processes/usa/immigration/h1b-h4.md",
+    "okf/processes/usa/immigration/resident-services.md",
+    "okf/processes/usa/immigration/i94.md"
+  ],
+  "result_schema": "schemas/us-immigration-service-router-result.schema.json"
+}
