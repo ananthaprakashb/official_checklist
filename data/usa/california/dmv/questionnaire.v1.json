@@ -1,0 +1,158 @@
+{
+  "id": "usa-california-dmv-dl-id-router-v1",
+  "version": 1,
+  "verified": "2026-08-30",
+  "stale_after": "2026-09-29",
+  "questions": [
+    {
+      "id": "ca_dmv_action",
+      "type": "select",
+      "required": true,
+      "options": [
+        "real_id_upgrade",
+        "first_driver_license_adult",
+        "teen_instruction_permit",
+        "teen_provisional_license",
+        "transfer_out_of_state_license",
+        "transfer_foreign_license",
+        "renew_driver_license",
+        "replace_driver_license",
+        "first_id_card",
+        "renew_id_card",
+        "replace_id_card",
+        "name_change_update",
+        "address_change",
+        "ab60_driver_license",
+        "not_sure"
+      ]
+    },
+    {
+      "id": "ca_card_compliance",
+      "type": "select",
+      "required_when": {
+        "ca_dmv_action": [
+          "real_id_upgrade",
+          "first_driver_license_adult",
+          "teen_instruction_permit",
+          "transfer_out_of_state_license",
+          "transfer_foreign_license",
+          "renew_driver_license",
+          "first_id_card",
+          "renew_id_card",
+          "replace_id_card",
+          "name_change_update"
+        ]
+      },
+      "options": ["real_id", "federal_noncompliant", "not_sure"]
+    },
+    {
+      "id": "ca_can_show_accepted_legal_presence_identity",
+      "type": "boolean",
+      "required_when": {
+        "ca_dmv_action": [
+          "real_id_upgrade",
+          "first_driver_license_adult",
+          "teen_instruction_permit",
+          "transfer_out_of_state_license",
+          "transfer_foreign_license",
+          "first_id_card"
+        ]
+      }
+    },
+    {
+      "id": "ca_real_id_identity_doc_ready",
+      "type": "boolean",
+      "required_when": { "ca_card_compliance": "real_id" }
+    },
+    {
+      "id": "ca_real_id_residency_docs_count",
+      "type": "number",
+      "min": 0,
+      "required_when": { "ca_card_compliance": "real_id" }
+    },
+    {
+      "id": "ca_real_id_name_mismatch",
+      "type": "boolean",
+      "required_when": { "ca_card_compliance": "real_id" }
+    },
+    {
+      "id": "ca_real_id_name_trace_docs_ready",
+      "type": "boolean",
+      "required_when": { "ca_real_id_name_mismatch": true }
+    },
+    {
+      "id": "ca_age",
+      "type": "number",
+      "min": 0,
+      "required_when": {
+        "ca_dmv_action": [
+          "first_driver_license_adult",
+          "teen_instruction_permit",
+          "teen_provisional_license",
+          "renew_driver_license",
+          "first_id_card"
+        ]
+      }
+    },
+    {
+      "id": "ca_teen_driver_education_complete",
+      "type": "boolean",
+      "required_when": { "ca_dmv_action": ["teen_instruction_permit", "teen_provisional_license"] }
+    },
+    {
+      "id": "ca_teen_permit_held_six_months",
+      "type": "boolean",
+      "required_when": { "ca_dmv_action": "teen_provisional_license" }
+    },
+    {
+      "id": "ca_teen_professional_training_complete",
+      "type": "boolean",
+      "required_when": { "ca_dmv_action": "teen_provisional_license" }
+    },
+    {
+      "id": "ca_teen_practice_complete",
+      "type": "boolean",
+      "required_when": { "ca_dmv_action": "teen_provisional_license" }
+    },
+    {
+      "id": "ca_existing_license_valid",
+      "type": "boolean",
+      "required_when": { "ca_dmv_action": ["transfer_out_of_state_license", "transfer_foreign_license"] }
+    },
+    {
+      "id": "ca_renewal_already_real_id",
+      "type": "boolean",
+      "required_when": { "ca_dmv_action": "renew_driver_license", "ca_card_compliance": "real_id" }
+    },
+    {
+      "id": "ca_renewal_notice_requires_office",
+      "type": "boolean",
+      "required_when": { "ca_dmv_action": "renew_driver_license" }
+    },
+    {
+      "id": "ca_name_changed_with_ssa",
+      "type": "boolean",
+      "required_when": { "ca_dmv_action": "name_change_update" }
+    },
+    {
+      "id": "ca_ab60_age_group",
+      "type": "select",
+      "required_when": { "ca_dmv_action": "ab60_driver_license" },
+      "options": ["adult_18_plus", "teen_15_5_to_17_5", "under_15_5", "not_sure"]
+    },
+    {
+      "id": "ca_ab60_driver_education_complete",
+      "type": "boolean",
+      "required_when": { "ca_dmv_action": "ab60_driver_license", "ca_ab60_age_group": "teen_15_5_to_17_5" }
+    },
+    {
+      "id": "ca_ab60_identity_residency_docs_ready",
+      "type": "boolean",
+      "required_when": { "ca_dmv_action": "ab60_driver_license" }
+    }
+  ],
+  "rule_nodes": [
+    "okf/processes/usa/california/dmv/dl-id.md"
+  ],
+  "result_schema": "schemas/government-service-router-result.schema.json"
+}

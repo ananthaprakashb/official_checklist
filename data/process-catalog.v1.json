@@ -190,6 +190,23 @@
       "tags": ["medicare", "part-a", "part-b", "enrollment", "cms-40b", "cms-l564", "ssa"]
     },
     {
+      "id": "usa-california-dmv-dl-id",
+      "slug": "usa/california/dmv",
+      "country_code": "US",
+      "country_name": "United States",
+      "applicant_country": "California",
+      "service": "Driver License & Identification",
+      "title": "California DMV Driver License, ID & REAL ID",
+      "short_title": "California DMV / REAL ID",
+      "summary": "Classify REAL ID vs federal-noncompliant vs AB 60, first/transfer/teen license, renewal, replacement, ID-card, legal-name and address-change routes before documents, testing, or DMV appointments.",
+      "status": "live",
+      "module": "usa-california-dmv-dl-id-v1",
+      "questionnaire_id": "usa-california-dmv-dl-id-router-v1",
+      "verified": "2026-08-30",
+      "stale_after": "2026-09-29",
+      "tags": ["california", "dmv", "real-id", "driver-license", "id-card", "ab60", "learner-permit"]
+    },
+    {
       "id": "india-us-passport-services",
       "slug": "india/passport/us",
       "country_code": "IN",
