@@ -8,6 +8,7 @@ const questionnaire = i140QuestionnaireJson as Questionnaire;
 
 const QUESTION_LABELS: Record<string, string> = {
   i140_category: "Which Form I-140 immigrant classification applies?",
+  schedule_a_group: "Which Schedule A group/occupation applies?",
   schedule_a_preference: "Which underlying EB preference applies to the Schedule A case?",
   i140_stage: "What is the current Form I-140 stage?",
   petitioner_route: "Who is filing the petition?",
@@ -39,6 +40,10 @@ const OPTION_LABELS: Record<string, string> = {
   eb3_other: "EB-3 Other Worker (EW3)",
   schedule_a: "Schedule A — direct-to-USCIS labor-certification route",
   eb4_or_eb5: "EB-4 or EB-5 — not Form I-140",
+  group_i_registered_nurse: "Schedule A Group I — Registered Nurse",
+  group_i_physical_therapist: "Schedule A Group I — Physical Therapist",
+  group_ii_sciences_or_arts: "Schedule A Group II — Exceptional Ability in Sciences or Arts",
+  group_ii_performing_arts: "Schedule A Group II — Exceptional Ability in Performing Arts",
   eb2: "EB-2",
   planning: "Planning / classification review",
   ready_to_file: "Ready to file",
@@ -51,7 +56,6 @@ const OPTION_LABELS: Record<string, string> = {
   employer: "Employer petition",
   self_petition: "Self-petition",
   perm_certified: "Certified PERM",
-  schedule_a: "Schedule A",
   not_required: "No labor certification required",
   yes: "Yes",
   no: "No",
@@ -113,6 +117,7 @@ export function createI140Module(entry: ProcessCatalogEntry): ProcessModule {
     questionLabels: QUESTION_LABELS,
     questionHints: {
       i140_category: "Choose the actual immigrant classification. EB-1A, EB-1B, EB-1C, regular EB-2, NIW and EB-3 do not share the same petitioner or evidence rules.",
+      schedule_a_group: "Schedule A currently has Group I shortage occupations and Group II exceptional-ability routes. Confirm the occupation/group before using the direct-to-USCIS labor-certification path.",
       petitioner_route: "EB-1A and NIW may permit self-petitioning. EB-1B, EB-1C, regular EB-2, EB-3 and Schedule A require a qualifying petitioner/employer route.",
       labor_route: "Ordinary certified PERM, Schedule A and no-labor-certification categories are distinct. Do not convert one into another to simplify the filing.",
       ability_to_pay_status: "For classifications requiring a job offer, USCIS expects continuing ability-to-pay evidence from the priority date until permanent residence.",
@@ -126,6 +131,7 @@ export function createI140Module(entry: ProcessCatalogEntry): ProcessModule {
       { label: "USCIS Form I-140", url: "https://www.uscis.gov/i-140" },
       { label: "USCIS I-140 Instructions", url: "https://www.uscis.gov/sites/default/files/document/forms/i-140instr.pdf" },
       { label: "USCIS Ability to Pay Policy", url: "https://www.uscis.gov/sites/default/files/document/policy-manual-updates/20240105-AbilityToPay.pdf" },
+      { label: "USCIS Schedule A Policy", url: "https://www.uscis.gov/sites/default/files/document/policy-manual-updates/20240410-ScheduleA.pdf" },
       { label: "USCIS I-907 Premium Processing", url: "https://www.uscis.gov/sites/default/files/document/forms/i-907instr.pdf" },
       { label: "USCIS Priority-Date / Transfer Guidance", url: "https://www.uscis.gov/policy-manual/volume-7-part-a-chapter-8" },
       { label: "USCIS RFE / NOID Policy", url: "https://www.uscis.gov/sites/default/files/document/policy-manual-updates/20210609-RFEs%26NOIDs.pdf" },
