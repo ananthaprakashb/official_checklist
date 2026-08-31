@@ -10,6 +10,7 @@ sources:
   - ../sources/uscis-i140-instructions-aug-2026.md
   - ../sources/uscis-i140-ability-to-pay-aug-2026.md
   - ../sources/uscis-i907-i140-premium-aug-2026.md
+  - ../sources/uscis-schedule-a-aug-2026.md
 ---
 
 # I-140 Classification Matrix
@@ -26,7 +27,9 @@ Resolve the exact immigrant classification before assembling evidence.
 | `eb3_skilled` | E31 Skilled Worker | employer | certified PERM or qualifying Schedule A | yes | 15 days |
 | `eb3_professional` | E32 Professional | employer | certified PERM or qualifying Schedule A | yes | 15 days |
 | `eb3_other` | EW3 Other Worker | employer | certified PERM | yes | 15 days |
-| `schedule_a` | underlying EB-2 or EB-3 classification | employer | Schedule A direct-to-USCIS route | yes | based on underlying E21/E31/E32/EW3 classification |
+| `schedule_a` | underlying EB-2 or EB-3 classification | employer | Schedule A direct-to-USCIS route | yes | based on underlying E21/E31/E32 classification |
+
+For Schedule A, identify the actual Group I or Group II occupation/evidence route as well as the underlying EB preference before treating the package as ready.
 
 EB-4 and EB-5 are not Form I-140 classifications and must be routed to their own petition families.
 
