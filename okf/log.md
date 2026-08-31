@@ -1,5 +1,17 @@
 # OKF Change Log
 
+## 2026-08-30 — v0.7 detailed employment-based Green Card preflight
+
+- Activated a dedicated `/usa/immigration/employment-green-card` workflow rather than stopping at the generic U.S. immigration classifier.
+- Added employment-category routing across EB-1A/EB-1B/EB-1C, regular EB-2, EB-2 NIW, EB-3 Professional/Skilled/Other Worker, Schedule A, EB-4 and EB-5 unreserved/set-aside families.
+- Added explicit category-to-labor/petition controls so EB-1A/NIW and other non-PERM paths are not forced through ordinary PERM, Schedule A is not treated as ordinary DOL PERM, EB-4 is not mislabeled as I-140, and EB-5 is not mislabeled as I-140.
+- Added PERM-stage controls for prevailing wage/recruitment/ETA 9089 and the certified-labor-certification validity gate before a new I-140 filing.
+- Added August and September 2026 Department of State employment-based Final Action and Dates-for-Filing tables with country-of-chargeability handling and strict priority-date comparison.
+- Added a separate USCIS monthly filing-chart selection gate so the engine never assumes Dates for Filing merely because it is more favorable.
+- Added detailed I-485-vs-NVC final-processing routing, required I-693-at-filing control, Supplement J / INA 204(j) portability handling, optional I-765/I-131 ancillary-benefit routing, derivative-beneficiary reminders and separate Final Action availability.
+- Added `NEEDS_AUTHORITATIVE_CONFIRMATION` handling for future Visa Bulletin months, unverified USCIS chart selection, material adjustment/admissibility/status-history issues, and EB-4/EB-5 category-specific evidence not yet modeled in dedicated modules.
+- Added regression coverage for category/PERM mismatches, India EB-2 September 2026 filing-vs-final-action separation, priority-date cutoff failures, adjustment selected from abroad, EB-1A/PERM mismatch and EB-4 petition routing.
+
 ## 2026-08-30 — v0.6 U.S. immigration and visa onboarding
 
 - Added a cross-agency U.S. Immigration & Visa Services classifier spanning USCIS, Department of Labor, Department of State/NVC and CBP.
