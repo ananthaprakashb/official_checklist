@@ -1,5 +1,21 @@
 # OKF Change Log
 
+## 2026-08-30 — v0.9 detailed Form I-140 immigrant-petition preflight
+
+- Activated a dedicated `/usa/immigration/employment-green-card/i140` workflow covering Form I-140 classification through USCIS adjudication and downstream I-485/NVC routing.
+- Added current USCIS source nodes for I-140 instructions, employer ability to pay, Schedule A, I-907 premium processing, employment-based priority-date retention, RFE/NOID policy and I-290B appeal/motion routing.
+- Added classification-first routing for E11, E12, E13, E21 non-NIW, E21 NIW, E31, E32, EW3 and Schedule A while explicitly rejecting EB-4/EB-5 as Form I-140 families.
+- Added petitioner-route guardrails so employer-only classifications cannot be treated as self-petitions while EB-1A and NIW preserve their permitted self-petition routes.
+- Added PERM/Schedule-A/no-labor-certification alignment, including valid-certified-PERM gating and explicit Schedule A Group I/Group II classification.
+- Added category-evidence envelopes for EB-1A, EB-1B, EB-1C, regular EB-2, NIW, EB-3 Skilled/Professional/Other Worker and Schedule A.
+- Added job-offer and continuing ability-to-pay gates only to classifications that require them rather than contaminating EB-1A/NIW with employer-only requirements.
+- Added priority-date basis and prior-approved EB-1/EB-2/EB-3 retention checks, including hard blocks for known fraud/willful-misrepresentation, labor-certification invalidation and material-error disqualifiers.
+- Added current I-907 premium-processing mapping: 15-day classes versus 45-day E13/NIW classes, without treating premium processing as an evidentiary shortcut.
+- Added RFE/NOID handling driven by the actual USCIS notice and deadline, with missed deadlines as blockers and timely responses remaining fact-specific.
+- Added denial/revocation routing that requires the actual decision notice before choosing appeal, motion or refiling and preserves petitioner/standing distinctions.
+- Added approved-petition handoff to current visa-availability/USCIS-chart evaluation for I-485 or NVC/DS-260 rather than treating I-140 approval as visa availability.
+- Added a dedicated I-140 regression suite to the mandatory validation chain.
+
 ## 2026-08-30 — v0.8 detailed PERM labor-certification preflight
 
 - Activated a dedicated `/usa/immigration/employment-green-card/perm` workflow for the standard employer-side 20 CFR 656.17 PERM route.
