@@ -141,5 +141,6 @@ Additional process envelopes become live only after authoritative source coverag
 
 ## Expansion roadmap
 
-- [Process onboarding roadmap](../docs/process-onboarding-roadmap.md)
+The broader process onboarding roadmap is maintained in `docs/process-onboarding-roadmap.md` outside the canonical `/okf` graph.
+
 - [OKF change log](log.md)
