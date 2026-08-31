@@ -17,6 +17,18 @@ jobs:
         with:
           node-version: 22
       - run: npm install
+      - name: Probe State Department endpoints
+        run: |
+          set +e
+          echo "HTML bulletin default:"
+          curl -L -sS -o /tmp/bulletin-html -w 'HTTP %{http_code} bytes=%{size_download}\n' 'https://travel.state.gov/content/travel/en/legal/visa-law0/visa-bulletin/2026/visa-bulletin-for-september-2026.html'
+          echo "HTML bulletin browser UA:"
+          curl -L -sS -A 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/151.0.0.0 Safari/537.36' -o /tmp/bulletin-browser -w 'HTTP %{http_code} bytes=%{size_download}\n' 'https://travel.state.gov/content/travel/en/legal/visa-law0/visa-bulletin/2026/visa-bulletin-for-september-2026.html'
+          echo "Official bulletin PDF:"
+          curl -L -sS -o /tmp/bulletin.pdf -w 'HTTP %{http_code} bytes=%{size_download}\n' 'https://travel.state.gov/content/dam/visas/Bulletins/visabulletin_September2026.pdf'
+          echo "NVC browser UA:"
+          curl -L -sS -A 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/151.0.0.0 Safari/537.36' -o /tmp/nvc-browser -w 'HTTP %{http_code} bytes=%{size_download}\n' 'https://travel.state.gov/content/travel/en/us-visas/immigrate/national-visa-center.html'
+          file /tmp/bulletin.pdf || true
       - name: Run real source monitor
         id: monitor
         continue-on-error: true
