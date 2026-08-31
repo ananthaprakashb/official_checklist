@@ -85,6 +85,20 @@ function labelI140Option(value: string): string {
   return OPTION_LABELS[value] ?? labelOption(value);
 }
 
+function evaluateWithScheduleAGroup(answers: PassportAnswers): I140Result {
+  const result = evaluateI140(answers);
+  if (answers.i140_category === "schedule_a") {
+    const group = typeof answers.schedule_a_group === "string" ? answers.schedule_a_group : "not_sure";
+    if (group === "not_sure") {
+      if (result.status === "READY") result.status = "NEEDS_AUTHORITATIVE_CONFIRMATION";
+      result.warnings.push("Resolve the exact Schedule A Group I or Group II occupation/evidence route before treating the I-140 package as ready.");
+    } else {
+      result.conditional_items.push(`Schedule A occupation route: ${labelI140Option(group)}. Preserve the group-specific evidence in addition to the underlying EB classification.`);
+    }
+  }
+  return result;
+}
+
 function present(raw: unknown): ProcessPresentation {
   const result = raw as I140Result;
   return {
@@ -137,7 +151,7 @@ export function createI140Module(entry: ProcessCatalogEntry): ProcessModule {
       { label: "USCIS RFE / NOID Policy", url: "https://www.uscis.gov/sites/default/files/document/policy-manual-updates/20210609-RFEs%26NOIDs.pdf" },
       { label: "USCIS Form I-290B Instructions", url: "https://www.uscis.gov/sites/default/files/document/forms/i-290binstr.pdf" }
     ],
-    evaluate: (answers: PassportAnswers) => evaluateI140(answers),
+    evaluate: (answers: PassportAnswers) => evaluateWithScheduleAGroup(answers),
     present
   };
 }
