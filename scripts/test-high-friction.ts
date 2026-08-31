@@ -117,7 +117,7 @@ const citizenSpouseInside = evaluateProcess("usa-family-green-card", {
   family_inside_us_inspected_admitted_or_paroled: true
 });
 assert.equal(citizenSpouseInside.status, "READY");
-assert.equal(citizenSpouseInside.summary[0]?.value, "Immediate Relative of U.S. Citizen");
+assert.equal(citizenSpouseInside.title, "Immediate Relative of U.S. Citizen");
 assert.ok(citizenSpouseInside.conditionalItems.some((item) => item.includes("concurrently")));
 
 const lprParent = evaluateProcess("usa-family-green-card", {
