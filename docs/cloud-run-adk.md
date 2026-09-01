@@ -4,35 +4,75 @@ Civic Preflight uses Google Agent Development Kit (ADK) for agent orchestration 
 
 The Cloud Run service contains the ADK API server plus the existing deterministic Official Checklist engine. Gemini handles navigation and explanation; government-process decisions continue to come from the deterministic evaluator registry.
 
+## Google Cloud project
+
+Civic Preflight is deployed to:
+
+```text
+gen-lang-client-0244443076
+```
+
+The deployment code defaults to this project. `GOOGLE_CLOUD_PROJECT` may still override it for another environment, but the hackathon configuration, examples and deployment instructions all target `gen-lang-client-0244443076`.
+
 ## Prerequisites
 
 - Node.js 24.13+
 - Google Cloud CLI (`gcloud`)
-- a Google Cloud project with billing enabled
-- a Gemini API key stored in Google Secret Manager
+- billing enabled for `gen-lang-client-0244443076`
+- a Gemini API key stored in Google Secret Manager in this project
 
-Authenticate and select the project:
+### Windows: verify `gcloud` before deployment
 
-```bash
-gcloud auth login
-gcloud config set project YOUR_PROJECT_ID
+The TypeScript ADK Cloud Run deploy command invokes `gcloud` internally. On Windows, Google Cloud CLI must therefore be installed and visible in the same terminal where `npm run adk:deploy:cloud-run` is executed.
+
+After installing Google Cloud CLI, close the existing PowerShell/Command Prompt and open a new terminal so the updated PATH is loaded. Verify:
+
+```bat
+where gcloud
+gcloud --version
 ```
 
-Enable the required APIs:
+If either command fails, do not retry the ADK deployment yet. Fix the Google Cloud CLI installation/PATH first.
+
+Then initialize/authenticate and select the Civic Preflight project:
+
+```bash
+gcloud init
+gcloud auth login
+gcloud config set project gen-lang-client-0244443076
+gcloud config get-value project
+```
+
+The last command should print:
+
+```text
+gen-lang-client-0244443076
+```
+
+The deployment wrapper performs the `gcloud` availability check before starting ADK deployment so a missing CLI fails immediately with an actionable message.
+
+Enable the required APIs in the same project:
 
 ```bash
 gcloud services enable \
   run.googleapis.com \
   cloudbuild.googleapis.com \
   artifactregistry.googleapis.com \
-  secretmanager.googleapis.com
+  secretmanager.googleapis.com \
+  --project=gen-lang-client-0244443076
+```
+
+On Windows Command Prompt or PowerShell, run the service names on one line if the shell does not support the backslash continuation syntax:
+
+```bat
+gcloud services enable run.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com secretmanager.googleapis.com --project=gen-lang-client-0244443076
 ```
 
 ## Store the Gemini key in Secret Manager
 
 Do not put the production Gemini key in the repository or directly in the Cloud Run command.
 
-Create a Secret Manager secret named `GEMINI_API_KEY` and add the Gemini API key as its latest version. The deployment maps that secret to the Cloud Run environment variable `GEMINI_API_KEY`.
+Create a Secret Manager secret named `GEMINI_API_KEY` in `gen-lang-client-0244443076` and add the Gemini API key as its latest version. The deployment maps that secret to the Cloud Run environment variable `GEMINI_API_KEY`.
 
 If the Cloud Run runtime service account cannot read the secret, grant it `roles/secretmanager.secretAccessor` on this secret before deployment.
 
@@ -43,7 +83,7 @@ Google ADK Cloud Run deployment also uses Cloud Build. If the project's build id
 Add these values to your local `.env` file:
 
 ```text
-GOOGLE_CLOUD_PROJECT=your-project-id
+GOOGLE_CLOUD_PROJECT=gen-lang-client-0244443076
 GOOGLE_CLOUD_LOCATION=us-west1
 CIVIC_PREFLIGHT_CLOUD_RUN_SERVICE=civic-preflight-agent
 CIVIC_PREFLIGHT_MODEL=gemini-3.5-flash-lite
@@ -69,8 +109,8 @@ For the TypeScript ADK CLI, deployment runs from the current project directory. 
 
 ```text
 npx adk deploy cloud_run
-  --project=<project>
-  --region=<region>
+  --project=gen-lang-client-0244443076
+  --region=us-west1
   --service_name=civic-preflight-agent
 ```
 

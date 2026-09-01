@@ -13,6 +13,8 @@ export type CliInvocation = {
   args: string[];
 };
 
+export const DEFAULT_GOOGLE_CLOUD_PROJECT = "gen-lang-client-0244443076";
+
 const TRUTHY = new Set(["1", "true", "yes", "y", "on"]);
 
 function required(env: NodeJS.ProcessEnv, name: string): string {
@@ -35,7 +37,7 @@ export function getCloudRunDeployConfig(env: NodeJS.ProcessEnv = process.env): C
   }
 
   return {
-    project: required(env, "GOOGLE_CLOUD_PROJECT"),
+    project: env.GOOGLE_CLOUD_PROJECT?.trim() || DEFAULT_GOOGLE_CLOUD_PROJECT,
     region: required(env, "GOOGLE_CLOUD_LOCATION"),
     serviceName,
     model: env.CIVIC_PREFLIGHT_MODEL?.trim() || "gemini-3.5-flash-lite",

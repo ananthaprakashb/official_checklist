@@ -51,6 +51,25 @@ function runCaptured(invocation: CliInvocation): string {
   return result.stdout ?? "";
 }
 
+function assertGcloudAvailable(): void {
+  const result = spawnSync(
+    buildGcloudInvocation(["--version"]).command,
+    buildGcloudInvocation(["--version"]).args,
+    {
+      cwd: process.cwd(),
+      env: process.env,
+      encoding: "utf8",
+      stdio: "ignore"
+    }
+  );
+
+  if (result.error || (result.status ?? 1) !== 0) {
+    throw new Error(
+      "Google Cloud CLI (gcloud) is not available in this terminal. Install the Google Cloud CLI, reopen the terminal so PATH is refreshed, then run `gcloud --version`, `gcloud init`, and retry `npm run adk:deploy:cloud-run`."
+    );
+  }
+}
+
 loadDotEnv(resolve(process.cwd(), ".env"));
 
 try {
@@ -64,6 +83,9 @@ try {
   console.log(`Gemini secret: ${config.secretName}:latest`);
   console.log(`Public access: ${config.publicAccess ? "enabled" : "disabled"}`);
   console.log(`ADK web UI: ${config.withUi ? "enabled" : "disabled"}`);
+
+  console.log("\nPreflight: checking Google Cloud CLI...");
+  assertGcloudAvailable();
 
   console.log("\n1/4 Deploying the TypeScript ADK service...");
   const adkInvocation = buildNpxInvocation(buildAdkCloudRunArgs(config));
