@@ -6,13 +6,15 @@ import {
   buildCloudRunRuntimeUpdateArgs,
   buildGcloudInvocation,
   buildNpxInvocation,
+  DEFAULT_GOOGLE_CLOUD_PROJECT,
   getCloudRunDeployConfig
 } from "../src/adk/cloudRun";
 
-assert.throws(
-  () => getCloudRunDeployConfig({ GOOGLE_CLOUD_LOCATION: "us-west1" }),
-  /GOOGLE_CLOUD_PROJECT/
-);
+assert.equal(DEFAULT_GOOGLE_CLOUD_PROJECT, "gen-lang-client-0244443076");
+
+const defaultProjectConfig = getCloudRunDeployConfig({ GOOGLE_CLOUD_LOCATION: "us-west1" });
+assert.equal(defaultProjectConfig.project, "gen-lang-client-0244443076");
+
 assert.throws(
   () => getCloudRunDeployConfig({ GOOGLE_CLOUD_PROJECT: "demo-project" }),
   /GOOGLE_CLOUD_LOCATION/
