@@ -2,10 +2,9 @@
   "version": 1,
   "sources": {
     "source-dol-perm-aug-2026": {
-      "status": "changed",
+      "status": "healthy",
       "accepted_fingerprint": "03ba4c55e8a1be52db1b26af074015eac4285c578a5a73b026b787b65fea3f00",
-      "observed_fingerprint": "55615af93631a7dd6f2554bda9ee1ff6a2fe3b18a23efefabf933fdccdff76d0",
-      "last_changed": "2026-09-29",
+      "observed_fingerprint": "03ba4c55e8a1be52db1b26af074015eac4285c578a5a73b026b787b65fea3f00",
       "http_status": 200
     }
   }
